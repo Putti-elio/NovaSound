@@ -1,0 +1,19 @@
+services:
+  backend:
+    container_name: Rust
+    build:
+      context: ../backend/.Docker
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../backend/:/app
+    working_dir: /app
+    command: sleep infinity
+
+  frontend:
+    container_name: Vue.js
+    image: node:24.8.0-slim
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    command: sleep infinity
