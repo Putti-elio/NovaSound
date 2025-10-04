@@ -1,16 +1,11 @@
 services:
   backend:
-    container_name: Rust
     build:
-      context: ../backend/.Docker
-      dockerfile: ../.Docker/Dockerfile.dev
-    develop:
-      watch:
-        - path: ../backend/src
-          target: /app/src
-          action: sync
-    command: ["cargo", "run"]
-
+      context: ../backend
+      dockerfile: .Docker/Dockerfile.dev
+    volumes:
+      - /rust:/app/rust
+    command: sleep infinity
 
   frontend:
     build:
@@ -20,13 +15,14 @@ services:
       - "5173:5173"
     develop:
       watch:
-        - path: ../frontend/novasound-front/src
+        - path: /src
           target: /app/src
           action: sync
-        - path: ../frontend/novasound-front/package.json
+        - path: package.json
           target: /app/package.json
           action: restart
-        - path: ../frontend/novasound-front/vite.config.js
+        - path: vite.config.js
           target: /app/vite.config.js
           action: restart      
     command: ["npm", "run", "dev"]
+
