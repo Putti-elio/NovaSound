@@ -5,8 +5,11 @@ services:
       dockerfile: ../.Docker/Dockerfile.dev
     volumes:
       - ../backend/rust:/app
+    ports:
+      - "3000:3000"
 
-    command: sleep infinity
+
+    command: ["cargo", "run"]
 
   vuejs:
     build:
