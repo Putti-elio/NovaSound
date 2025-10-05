@@ -1,28 +1,30 @@
 services:
-  backend:
+  rust:
     build:
-      context: ../backend
-      dockerfile: .Docker/Dockerfile.dev
+      context: ../backend/rust
+      dockerfile: ../.Docker/Dockerfile.dev
     volumes:
-      - /rust:/app/rust
+      - ../backend/rust:/app
+
     command: sleep infinity
 
-  frontend:
+  vuejs:
     build:
-      context: ../frontend/novasound-front
+      context: ../frontend/vuejs
       dockerfile: ../.Docker/Dockerfile.dev
     ports:
       - "5173:5173"
     develop:
       watch:
-        - path: /src
+        - path: ../frontend/vuejs/src
           target: /app/src
           action: sync
-        - path: package.json
+        - path: ../frontend/vuejs/package.json
           target: /app/package.json
           action: restart
-        - path: vite.config.js
+        - path: ../frontend/vuejs/vite.config.js
           target: /app/vite.config.js
           action: restart      
     command: ["npm", "run", "dev"]
+
 
