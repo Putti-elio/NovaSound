@@ -6,10 +6,8 @@ services:
     volumes:
       - ../backend/rust:/app
     ports:
-      - "3000:3000"
-
-
-    command: ["cargo", "run"]
+      - "4000:4000"
+    command: ["sleep", "infinity"]
 
   vuejs:
     build:
