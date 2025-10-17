@@ -1,6 +1,25 @@
 DOCKER_COMPOSE_DEV=.tools/docker_compose_dev.yml 
 DOCKERFILE_DEV_RUST=rust/.Docker/Dockerfile.dev
 
+fix-rust:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust  cargo fix -p rust
+
+## RUN
+
+run-rust-release:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo run --release
+
+run-rust:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo run 
+
+run-rust-error:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust RUST_LOG=error cargo run
+
+## CHECK (Run the rust container in check mode)
+
+check-rust:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo check
+
 ## UP (Create and start all containers and images)
 up:
 	make up-rust && make up-vuejs
@@ -10,7 +29,7 @@ up-vuejs:
 	
 up-rust:
 	docker compose -f $(DOCKER_COMPOSE_DEV) up rust -d --remove-orphans 
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo build --release
+	-docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo build --release
 
 ## DOWN (Stop the container & image )
 down:
@@ -44,6 +63,8 @@ delete-vuejs:
 delete-all:
 	make delete-rust 
 	make delete-vuejs
+
+
 
 ## PROFD TODO
 prod: build-dev
