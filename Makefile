@@ -64,9 +64,14 @@ delete-all:
 	make delete-rust 
 	make delete-vuejs
 
-
-
 ## PROFD TODO
 prod: build-dev
 	docker build -f rust/.Docker/Dockerfile.prod -t novasound-rust-prod rust
 	docker run -d -p 3000:3000 --name novasound-prod novasound-rust-prod
+	
+## Importe SQL	
+import-sql:
+	@read -p "Chemin du fichier SQL à importer: " sqlfile; \
+	docker compose -f $(DOCKER_COMPOSE_DEV) cp $$sqlfile rust:/tmp/import.sql && \
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust sh -c "sqlite3 data/database.db < /tmp/import.sql && echo 'Import réussi!'" && \
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust rm /tmp/import.sql
