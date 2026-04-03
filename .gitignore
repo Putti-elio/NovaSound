@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+target/
+
+# IDE
+.zed/
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test coverage
+coverage/
+
+# Docker
+*.pid
+
+# Misc
+*.bak
+*.tmp
+
+
+ ## OTHER Files/Folders
+ document/
+ PROJECT_SUMMARY.md
+ opencode.json
+ AGENTS.md
+ 
