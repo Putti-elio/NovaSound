@@ -1,0 +1,60 @@
+edition = "2024"
+
+# =============================================================================
+# FORMATTING
+# =============================================================================
+
+max_width = 100
+hard_tabs = false
+tab_spaces = 4
+newline_style = "Unix"
+
+# =============================================================================
+# IMPORTS
+# =============================================================================
+
+reorder_imports = true
+reorder_modules = true
+group_imports = "StdExternalCrate"
+imports_granularity = "Crate"
+
+# =============================================================================
+# FUNCTIONS
+# =============================================================================
+
+fn_args_layout = "Tall"
+fn_single_line = false
+where_single_line = false
+brace_style = "SameLineWhere"
+control_brace_style = "AlwaysSameLine"
+trailing_comma = "Vertical"
+
+# =============================================================================
+# STRUCTS & ENUMS
+# =============================================================================
+
+struct_lit_single_line = false
+enum_discrim_align_threshold = 20
+struct_field_align_threshold = 20
+
+# =============================================================================
+# COMMENTS & WHITESPACE
+# =============================================================================
+
+normalize_comments = true
+normalize_doc_attributes = true
+wrap_comments = false
+blank_lines_upper_bound = 1
+blank_lines_lower_bound = 0
+
+# =============================================================================
+# MISC
+# =============================================================================
+
+remove_nested_parens = true
+use_field_init_shorthand = true
+use_try_shorthand = true
+match_arm_blocks = true
+match_arm_leading_pipes = "Always"
+match_block_trailing_comma = true
+overflow_delimited_expr = true
