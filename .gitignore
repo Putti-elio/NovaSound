@@ -34,10 +34,20 @@ coverage/
 *.bak
 *.tmp
 
+# === Cargo / Rust ===
+*.db
+Cargo.lock
+*.rs.bk
+*.rmeta
+*.d
+*.rlib
+*.so
+*.dll
+*.dylib
+*.exe
 
- ## OTHER Files/Folders
- document/
- PROJECT_SUMMARY.md
- opencode.json
- AGENTS.md
- 
+# === Other Files/Folders ===
+document/
+PROJECT_SUMMARY.md
+opencode.json
+AGENTS.md
