@@ -20,6 +20,17 @@ run-rust-error:
 check-rust:
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo check
 
+## LINT (Rust code quality checks)
+
+lint-rust:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo clippy -- -D warnings
+
+fmt-rust:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo fmt
+
+fmt-check-rust:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo fmt --check
+
 ## UP (Create and start all containers and images)
 up:
 	make up-rust && make up-vuejs
@@ -64,6 +75,11 @@ delete-all:
 	make delete-rust 
 	make delete-vuejs
 
+## TEST
+test: 
+	docker compose -f .tools/docker_compose_dev.yml exec rust cargo test
+
+
 ## PROFD TODO
 prod: build-dev
 	docker build -f rust/.Docker/Dockerfile.prod -t novasound-rust-prod rust
@@ -71,7 +87,39 @@ prod: build-dev
 	
 ## Importe SQL	
 import-sql:
-	@read -p "Chemin du fichier SQL à importer: " sqlfile; \
+	@read -p "Chemin du fichier SQL à importer: (backend/rust/data/example/example_database.sql) " sqlfile; \
 	docker compose -f $(DOCKER_COMPOSE_DEV) cp $$sqlfile rust:/tmp/import.sql && \
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust sh -c "sqlite3 data/database.db < /tmp/import.sql && echo 'Import réussi!'" && \
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust rm /tmp/import.sql
+	
+
+
+## VERSIONS (Sync all versions from .tools/VERSIONS)
+
+sync-versions:
+	sh .tools/sync-versions.sh
+
+sync-versions-dry:
+	sh .tools/sync-versions.sh --dry-run
+
+
+## HOOKS
+
+install-hooks:
+	cp .tools/pre-commit.sh .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
+	@echo "Pre-commit hook installed."
+
+
+## Clean git checkout 
+clean-git:
+git branch -vv | grep ': gone]' | awk '{print $1}' | xargs git branch -D
+
+
+## Update Backend
+update-backend:
+	cd backend && \
+	git checkout main && \
+	git pull origin main && \
+	cd .. && \
+	git add backend && \
