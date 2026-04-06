@@ -96,20 +96,6 @@ import-sql:
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust sh -c "sqlite3 data/database.db < /tmp/import.sql && echo 'Import réussi!'" && \
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust rm /tmp/import.sql
 	
-## VERSIONS
-
-sync-versions:
-	sh .tools/sync-versions.sh
-
-sync-versions-dry:
-	sh .tools/sync-versions.sh --dry-run
-
-## HOOKS
-
-install-hooks:
-	cp .tools/pre-commit.sh .git/hooks/pre-commit
-	chmod +x .git/hooks/pre-commit
-	@echo "Pre-commit hook installed."
 
 ## CLEAN
 
