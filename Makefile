@@ -1,8 +1,7 @@
-DOCKER_COMPOSE_DEV=.tools/docker_compose_dev.yml 
-DOCKERFILE_DEV_RUST=rust/.Docker/Dockerfile.dev
+DOCKER_COMPOSE_DEV=.tools/docker_compose_dev.yml
 
 fix-rust:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust  cargo fix -p rust
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo fix -p rust
 
 ## RUN
 
@@ -15,12 +14,12 @@ run-rust:
 run-rust-error:
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust RUST_LOG=error cargo run
 
-## CHECK (Run the rust container in check mode)
+## CHECK
 
 check-rust:
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo check
 
-## LINT (Rust code quality checks)
+## LINT
 
 lint-rust:
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo clippy -- -D warnings
@@ -31,7 +30,8 @@ fmt-rust:
 fmt-check-rust:
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo fmt --check
 
-## UP (Create and start all containers and images)
+## UP
+
 up:
 	make up-rust && make up-vuejs
 
@@ -42,7 +42,8 @@ up-rust:
 	docker compose -f $(DOCKER_COMPOSE_DEV) up rust -d --remove-orphans 
 	-docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo build --release
 
-## DOWN (Stop the container & image )
+## DOWN
+
 down:
 	docker compose -f $(DOCKER_COMPOSE_DEV) down
 
@@ -52,15 +53,16 @@ down-rust:
 down-vuejs:
 	docker compose -f $(DOCKER_COMPOSE_DEV) down vuejs
 
-## SH (Access an interactive shell inside the containers)
+## SH
+
 sh-rust:
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec -it rust sh
 
 sh-vuejs:
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec -it vuejs sh
 
+## DELETE
 
-## DELETE (Stop and remove X container and its image)
 delete-rust:
 	make down-rust
 	docker compose -f $(DOCKER_COMPOSE_DEV) rm -f rust
@@ -76,32 +78,31 @@ delete-all:
 	make delete-vuejs
 
 ## TEST
+
 test: 
 	docker compose -f .tools/docker_compose_dev.yml exec rust cargo test
 
+## PROD
 
-## PROFD TODO
-prod: build-dev
-	docker build -f rust/.Docker/Dockerfile.prod -t novasound-rust-prod rust
+prod:
+	docker build -f .docker/backend/Dockerfile.prod -t novasound-rust-prod rust
 	docker run -d -p 3000:3000 --name novasound-prod novasound-rust-prod
 	
-## Importe SQL	
+## Import SQL
+
 import-sql:
-	@read -p "Chemin du fichier SQL à importer: (backend/rust/data/example/example_database.sql) " sqlfile; \
+	@read -p "Chemin du fichier SQL à importer: (rust/data/example/example_database.sql) " sqlfile; \
 	docker compose -f $(DOCKER_COMPOSE_DEV) cp $$sqlfile rust:/tmp/import.sql && \
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust sh -c "sqlite3 data/database.db < /tmp/import.sql && echo 'Import réussi!'" && \
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust rm /tmp/import.sql
 	
-
-
-## VERSIONS (Sync all versions from .tools/VERSIONS)
+## VERSIONS
 
 sync-versions:
 	sh .tools/sync-versions.sh
 
 sync-versions-dry:
 	sh .tools/sync-versions.sh --dry-run
-
 
 ## HOOKS
 
@@ -110,16 +111,7 @@ install-hooks:
 	chmod +x .git/hooks/pre-commit
 	@echo "Pre-commit hook installed."
 
+## CLEAN
 
-## Clean git checkout 
 clean-git:
-git branch -vv | grep ': gone]' | awk '{print $1}' | xargs git branch -D
-
-
-## Update Backend
-update-backend:
-	cd backend && \
-	git checkout main && \
-	git pull origin main && \
-	cd .. && \
-	git add backend && \
+	git branch -vv | grep ': gone]' | awk '{print $1}' | xargs git branch -D
