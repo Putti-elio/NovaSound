@@ -1,0 +1,57 @@
+# =============================================================================
+# CLIPPY CONFIGURATION
+# =============================================================================
+
+# Minimum Supported Rust Version
+msrv = "1.94.0"
+
+# =============================================================================
+# COMPLEXITY THRESHOLDS
+# =============================================================================
+
+# Maximum cognitive complexity before warning (default: 25)
+cognitive-complexity-threshold = 20
+
+# Maximum number of function arguments before warning (default: 7)
+too-many-arguments-threshold = 5
+
+# Maximum lines in a function before suggesting refactoring (default: 100)
+too-many-lines-threshold = 100
+
+# =============================================================================
+# DOC COMMENTS
+# =============================================================================
+
+# Check private items with doc lints
+check-private-items = true
+
+# Valid identifiers allowed in doc comments
+doc-valid-idents = [
+  "SQLite",
+  "Axum",
+  "Tokio",
+  "serde",
+  "UUID",
+  "HTTP",
+  "API",
+]
+
+# =============================================================================
+# LINT BEHAVIOR
+# =============================================================================
+
+# Allow dbg! in test code
+allow-dbg-in-tests = true
+
+# Allow unwrap in test code
+allow-unwrap-in-tests = true
+
+# Avoid breaking exported API when suggesting changes
+avoid-breaking-exported-api = true
+
+# =============================================================================
+# MODULE PATHS
+# =============================================================================
+
+# Paths to modules that should be treated as test modules
+test-modules = ["tests"]
