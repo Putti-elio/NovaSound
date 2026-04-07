@@ -1,0 +1,8 @@
+# =============================================================================
+# CI tool versions
+# This file IS committed - no secrets here!
+# =============================================================================
+
+BUN_VERSION=latest
+RUST_VERSION=stable
+MAKEFILE2DOC_VERSION=v0.1.2
