@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Load tool versions
-        run: cat .ci/ci-versions | grep -v '^#' | grep -v '^\s*$' >> $GITHUB_ENV
+        run: cat setup/ci/versions | grep -v '^#' | grep -v '^\s*$' >> $GITHUB_ENV
 
       - name: Install makefile2doc
         env:

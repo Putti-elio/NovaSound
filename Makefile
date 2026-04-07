@@ -1,4 +1,4 @@
-DOCKER_COMPOSE_DEV=.tools/docker_compose_dev.yml
+DOCKER_COMPOSE_DEV=setup/docker/compose.yml
 
 ## @category Fix
 
