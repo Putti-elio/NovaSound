@@ -101,3 +101,16 @@ import-sql:
 
 clean-git:
 	git branch -vv | grep ': gone]' | awk '{print $1}' | xargs git branch -D
+
+
+
+## FOR THE PRE-COMMIT:
+
+lint-backend-PC:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec -T backend cargo clippy
+
+fmt-check-backend-PC:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec -T backend cargo fmt -- --check
+
+test-backend-PC:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec -T backend cargo test
