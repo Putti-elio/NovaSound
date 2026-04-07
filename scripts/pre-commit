@@ -13,12 +13,12 @@ fi
 echo "No secrets detected."
 
 echo "Running clippy..."
-make lint-backend-PC
+make lint-backend
 
 echo "Running fmt check..."
-make fmt-check-backend-PC
+make fmt-check-backend
 
 echo "Running tests..."
-make test-backend-PC
+make test
 
 echo "All checks passed!"

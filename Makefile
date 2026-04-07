@@ -22,13 +22,13 @@ check-backend:
 ## LINT
 
 lint-backend:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo clippy -- -D warnings
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec -T backend cargo clippy -- -D warnings
 
 fmt-backend:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo fmt
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec -T backend cargo fmt
 
 fmt-check-backend:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo fmt --check
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec -T backend cargo fmt --check
 
 ## UP
 
@@ -80,7 +80,7 @@ delete-all:
 ## TEST
 
 test: 
-	docker compose -f .tools/docker_compose_dev.yml exec backend cargo test
+	docker compose -f .tools/docker_compose_dev.yml exec -T backend cargo test
 
 ## PROD
 
@@ -101,16 +101,3 @@ import-sql:
 
 clean-git:
 	git branch -vv | grep ': gone]' | awk '{print $1}' | xargs git branch -D
-
-
-
-## FOR THE PRE-COMMIT:
-
-lint-backend-PC:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec -T backend cargo clippy
-
-fmt-check-backend-PC:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec -T backend cargo fmt -- --check
-
-test-backend-PC:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec -T backend cargo test
