@@ -1,10 +1,10 @@
 services:
-  rust:
+  backend:
     build:
-      context: ../rust
+      context: ../backend
       dockerfile: ../.docker/backend/Dockerfile.dev
     volumes:
-      - ../rust:/app
+      - ../backend:/app
     ports:
       - "4000:4000"
     command: ["sleep", "infinity"]

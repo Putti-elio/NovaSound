@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+echo "Running pre-commit checks..."
+
+echo "Checking for leaked secrets..."
+if git diff --cached --name-only | xargs grep -i -E "(api[_-]?key|secret[_-]?key|token|password|private[_-]?key)" 2>/dev/null | grep -v -E "(example|test|placeholder|//.*#)" > /dev/null; then
+    echo "ERROR: Potential API key or secret detected in staged files!"
+    echo "Please review and remove any sensitive values before committing."
+    exit 1
+fi
+echo "No secrets detected."
+
+echo "Running clippy..."
+make lint-rust
+
+echo "Running fmt check..."
+make fmt-check-rust
+
+echo "Running tests..."
+make test
+
+echo "All checks passed!"

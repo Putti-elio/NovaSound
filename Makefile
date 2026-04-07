@@ -1,72 +1,72 @@
 DOCKER_COMPOSE_DEV=.tools/docker_compose_dev.yml
 
-fix-rust:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo fix -p rust
+fix-backend:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo fix -p rust
 
 ## RUN
 
-run-rust-release:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo run --release
+run-backend-release:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo run --release
 
-run-rust:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo run 
+run-backend:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo run 
 
-run-rust-error:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust RUST_LOG=error cargo run
+run-backend-error:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend RUST_LOG=error cargo run
 
 ## CHECK
 
-check-rust:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo check
+check-backend:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo check
 
 ## LINT
 
-lint-rust:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo clippy -- -D warnings
+lint-backend:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo clippy -- -D warnings
 
-fmt-rust:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo fmt
+fmt-backend:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo fmt
 
-fmt-check-rust:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo fmt --check
+fmt-check-backend:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo fmt --check
 
 ## UP
 
 up:
-	make up-rust && make up-vuejs
-
+	make up-backend && make up-vuejs
+	
 up-vuejs:
 	docker compose -f $(DOCKER_COMPOSE_DEV) watch vuejs
 	
-up-rust:
-	docker compose -f $(DOCKER_COMPOSE_DEV) up rust -d --remove-orphans 
-	-docker compose -f $(DOCKER_COMPOSE_DEV) exec rust cargo build --release
+up-backend:
+	docker compose -f $(DOCKER_COMPOSE_DEV) up backend -d --remove-orphans 
+	-docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo build --release
 
 ## DOWN
 
 down:
 	docker compose -f $(DOCKER_COMPOSE_DEV) down
 
-down-rust:
-	docker compose -f $(DOCKER_COMPOSE_DEV) down rust
+down-backend:
+	docker compose -f $(DOCKER_COMPOSE_DEV) down backend
 
 down-vuejs:
 	docker compose -f $(DOCKER_COMPOSE_DEV) down vuejs
 
 ## SH
 
-sh-rust:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec -it rust sh
+sh-backend:
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec -it backend sh
 
 sh-vuejs:
 	docker compose -f $(DOCKER_COMPOSE_DEV) exec -it vuejs sh
 
 ## DELETE
 
-delete-rust:
-	make down-rust
-	docker compose -f $(DOCKER_COMPOSE_DEV) rm -f rust
-	docker image rm -f tools-rust
+delete-backend:
+	make down-backend
+	docker compose -f $(DOCKER_COMPOSE_DEV) rm -f backend
+	docker image rm -f tools-backend
 
 delete-vuejs:
 	make down-vuejs
@@ -74,27 +74,27 @@ delete-vuejs:
 	docker image rm -f tools-vuejs
 
 delete-all:
-	make delete-rust 
+	make delete-backend 
 	make delete-vuejs
 
 ## TEST
 
 test: 
-	docker compose -f .tools/docker_compose_dev.yml exec rust cargo test
+	docker compose -f .tools/docker_compose_dev.yml exec backend cargo test
 
 ## PROD
 
 prod:
-	docker build -f .docker/backend/Dockerfile.prod -t novasound-rust-prod rust
-	docker run -d -p 3000:3000 --name novasound-prod novasound-rust-prod
+	docker build -f .docker/backend/Dockerfile.prod -t novasound-backend-prod backend
+	docker run -d -p 3000:3000 --name novasound-prod novasound-backend-prod
 	
 ## Import SQL
 
 import-sql:
-	@read -p "Chemin du fichier SQL à importer: (rust/data/example/example_database.sql) " sqlfile; \
-	docker compose -f $(DOCKER_COMPOSE_DEV) cp $$sqlfile rust:/tmp/import.sql && \
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust sh -c "sqlite3 data/database.db < /tmp/import.sql && echo 'Import réussi!'" && \
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec rust rm /tmp/import.sql
+	@read -p "Chemin du fichier SQL à importer: (backend/data/example/example_database.sql) " sqlfile; \
+	docker compose -f $(DOCKER_COMPOSE_DEV) cp $$sqlfile backend:/tmp/import.sql && \
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend sh -c "sqlite3 data/database.db < /tmp/import.sql && echo 'Import réussi!'" && \
+	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend rm /tmp/import.sql
 	
 
 ## CLEAN
