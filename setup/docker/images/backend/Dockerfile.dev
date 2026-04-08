@@ -4,9 +4,9 @@ FROM rust:${RUST_VERSION} AS dev
 
 WORKDIR /app
 
-COPY Cargo.toml . 
+COPY backend/Cargo.toml . 
 
-COPY src/ ./src
+COPY backend/src/ ./src
 
 RUN apt-get update -y && apt-get install -y libsqlite3-dev sqlite3 && rm -rf /var/lib/apt/lists/*
 

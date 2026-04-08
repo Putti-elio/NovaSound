@@ -1,102 +1,115 @@
-DOCKER_COMPOSE_DEV=setup/docker/compose.yml
+DOCKER_DIR := setup/docker
+ENV_FILE := $(DOCKER_DIR)/.env
+COMPOSE_FILES := -f $(DOCKER_DIR)/compose.yml
+
+ifeq ($(APP_ENV),dev)
+    COMPOSE_FILES += -f $(DOCKER_DIR)/docker-compose.dev.yml
+else ifeq ($(APP_ENV),prod)
+    COMPOSE_FILES += -f $(DOCKER_DIR)/docker-compose.prod.yml
+endif
+
+COMPOSE := docker compose \
+	$(COMPOSE_FILES) \
+	--env-file $(DOCKER_DIR)/images/versions \
+	--env-file $(ENV_FILE) \
+	--project-directory .
 
 ## @category Fix
 
 ## @description Auto-fix Rust backend issues
 ## @depends up-backend
 fix-backend:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo fix -p rust
+	$(COMPOSE) exec backend cargo fix -p rust
 
 ## @category Run
 
 ## @description Run backend in release mode
 run-backend-release:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo run --release
+	$(COMPOSE) exec backend cargo run --release
 
 ## @description Run backend in development mode
 run-backend:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo run 
+	$(COMPOSE) exec backend cargo run 
 
 ## @description Run backend with error logging only
 run-backend-error:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend RUST_LOG=error cargo run
+	$(COMPOSE) exec backend RUST_LOG=error cargo run
 
 ## @category Check
 
 ## @description Check Rust backend code (fast compilation)
 ## @depends up-backend
 check-backend:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo check
+	$(COMPOSE) exec backend cargo check
 
 ## @category Lint
 
 ## @description Lint Rust backend code with Clippy
 ## @depends up-backend
 lint-backend:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec -T backend cargo clippy -- -D warnings
+	$(COMPOSE) exec -T backend cargo clippy -- -D warnings
 
 ## @description Format Rust backend code
 ## @depends up-backend
 fmt-backend:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec -T backend cargo fmt
+	$(COMPOSE) exec -T backend cargo fmt
 
 ## @description Check Rust backend code formatting
 ## @depends up-backend
 fmt-check-backend:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec -T backend cargo fmt --check
+	$(COMPOSE) exec -T backend cargo fmt --check
 
 ## @category Up
 
 ## @description Start all services (backend + frontend)
-up:
-	make up-backend && make up-vuejs
+up: up-backend up-vuejs
 
 ## @description Start frontend with hot-reload
 up-vuejs:
-	docker compose -f $(DOCKER_COMPOSE_DEV) watch vuejs
+	$(COMPOSE) up vuejs -d
 	
 ## @description Start backend service
 ## @depends check-backend
 up-backend:
-	docker compose -f $(DOCKER_COMPOSE_DEV) up backend -d --remove-orphans 
-	-docker compose -f $(DOCKER_COMPOSE_DEV) exec backend cargo build --release
+	$(COMPOSE) up backend -d --remove-orphans 
+	-$(COMPOSE) exec backend cargo build --release
 
 ## @category Down
 
 ## @description Stop all services
 down:
-	docker compose -f $(DOCKER_COMPOSE_DEV) down
+	$(COMPOSE) down
 
 ## @description Stop backend service
 down-backend:
-	docker compose -f $(DOCKER_COMPOSE_DEV) down backend
+	$(COMPOSE) down backend
 
 ## @description Stop frontend service
 down-vuejs:
-	docker compose -f $(DOCKER_COMPOSE_DEV) down vuejs
+	$(COMPOSE) down vuejs
 
 ## @category Shell
 
 ## @description Open backend container shell
 sh-backend:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec -it backend sh
+	$(COMPOSE) exec -it backend sh
 
 ## @description Open frontend container shell
 sh-vuejs:
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec -it vuejs sh
+	$(COMPOSE) exec -it vuejs sh
 
 ## @category Delete
 
 ## @description Delete backend container and image
 delete-backend:
 	make down-backend
-	docker compose -f $(DOCKER_COMPOSE_DEV) rm -f backend
+	$(COMPOSE) rm -f backend
 	docker image rm -f tools-backend
 
 ## @description Delete frontend container and image
 delete-vuejs:
 	make down-vuejs
-	docker compose -f $(DOCKER_COMPOSE_DEV) rm -f vuejs
+	$(COMPOSE) rm -f vuejs
 	docker image rm -f tools-vuejs
 
 ## @description Delete all containers and images
@@ -109,7 +122,7 @@ delete-all:
 ## @description Run backend tests
 ## @depends up-backend
 test: 
-	docker compose -f .tools/docker_compose_dev.yml exec -T backend cargo test
+	$(COMPOSE) exec -T backend cargo test
 
 ## @category Prod
 
@@ -124,9 +137,9 @@ prod:
 ## @env sqlfile
 import-sql:
 	@read -p "Chemin du fichier SQL à importer: (backend/data/example/example_database.sql) " sqlfile; \
-	docker compose -f $(DOCKER_COMPOSE_DEV) cp $$sqlfile backend:/tmp/import.sql && \
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend sh -c "sqlite3 data/database.db < /tmp/import.sql && echo 'Import réussi!'" && \
-	docker compose -f $(DOCKER_COMPOSE_DEV) exec backend rm /tmp/import.sql
+	$(COMPOSE) cp $$sqlfile backend:/tmp/import.sql && \
+	$(COMPOSE) exec backend sh -c "sqlite3 data/database.db < /tmp/import.sql && echo 'Import réussi!'" && \
+	$(COMPOSE) exec backend rm /tmp/import.sql
 	
 ## @category Clean
 

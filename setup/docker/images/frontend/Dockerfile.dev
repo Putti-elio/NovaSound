@@ -6,11 +6,11 @@ ENV NODE_ENV=development
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY frontend/package.json frontend/package-lock.json ./
 
 RUN --mount=type=cache,target=/root/.npm npm install
 
-COPY . .
+COPY frontend/. .
 
 RUN chown -R node:node /app
 
