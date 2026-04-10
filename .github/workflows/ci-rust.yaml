@@ -1,123 +1,103 @@
 name: CI Rust
 
 on:
-  push:
-    branches: [main, develop]
-    paths: [backend/**]
-  pull_request:
-    branches: [main, develop]
-    paths: [backend/**]
+    push:
+        branches: [main, develop]
+        paths:
+            - "backend/**"
+            - "setup/ci/versions"
+            - ".github/workflows/ci-rust.yaml"
+    pull_request:
+        branches: [main, develop]
+        paths:
+            - "backend/**"
+            - "setup/ci/versions"
+            - ".github/workflows/ci-rust.yaml"
+    workflow_dispatch:
 
 permissions:
-  contents: read
+    contents: read
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+env:
+    CARGO_TERM_COLOR: always
 
 jobs:
-  rust-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
+    rust-lint:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: backend
+        steps:
+            - uses: actions/checkout@v6
 
-      - name: Load tool versions
-        run: cat setup/ci/versions | grep -v '^#' | grep -v '^\s*
+            - name: Load tool versions
+              run: grep -Ev '^\s*(#|$)' ../setup/ci/versions >> "$GITHUB_ENV"
 
-      - name: Setup Rust
-        uses: dtolnay/rust-action@stable
+            - name: Setup Rust
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: ${{ env.RUST_VERSION }}
+                  components: rustfmt, clippy
 
-      - name: Rustfmt check
-        run: cargo fmt --check
+            - name: Cache Cargo
+              uses: Swatinem/rust-cache@v2
+              with:
+                  workspaces: backend -> target
 
-      - name: Clippy check
-        run: cargo clippy -- -D warnings
+            - name: Rustfmt check
+              run: cargo fmt --all -- --check
 
-  rust-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
+            - name: Clippy check
+              run: cargo clippy --all-targets -- -D warnings
 
-      - name: Load tool versions
-        run: cat .ci/ci-versions | grep -v '^#' | grep -v '^\s*$' >> $GITHUB_ENV
+    rust-test:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: backend
+        steps:
+            - uses: actions/checkout@v6
 
-      - name: Setup Rust
-        uses: dtolnay/rust-action@stable
+            - name: Load tool versions
+              run: grep -Ev '^\s*(#|$)' ../setup/ci/versions >> "$GITHUB_ENV"
 
-      - name: Run tests
-        run: cargo test
+            - name: Setup Rust
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: ${{ env.RUST_VERSION }}
 
-  rust-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
+            - name: Cache Cargo
+              uses: Swatinem/rust-cache@v2
+              with:
+                  workspaces: backend -> target
 
-      - name: Load tool versions
-        run: cat .ci/ci-versions | grep -v '^#' | grep -v '^\s*$' >> $GITHUB_ENV
+            - name: Run tests
+              run: cargo test --locked --all-targets
 
-      - name: Setup Rust
-        uses: dtolnay/rust-action@stable
+    rust-build:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: backend
+        steps:
+            - uses: actions/checkout@v6
 
-      - name: Build release
-        run: cargo build --release >> $GITHUB_ENV
+            - name: Load tool versions
+              run: grep -Ev '^\s*(#|$)' ../setup/ci/versions >> "$GITHUB_ENV"
 
-      - name: Setup Rust
-        uses: dtolnay/rust-action@stable
+            - name: Setup Rust
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: ${{ env.RUST_VERSION }}
 
-      - name: Rustfmt check
-        run: cargo fmt --check
+            - name: Cache Cargo
+              uses: Swatinem/rust-cache@v2
+              with:
+                  workspaces: backend -> target
 
-      - name: Clippy check
-        run: cargo clippy -- -D warnings
-
-  rust-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Load tool versions
-        run: cat setup/ci/versions | grep -v '^#' | grep -v '^\s*
-
-      - name: Setup Rust
-        uses: dtolnay/rust-action@stable
-
-      - name: Run tests
-        run: cargo test
-
-  rust-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Load tool versions
-        run: cat .ci/ci-versions | grep -v '^#' | grep -v '^\s*$' >> $GITHUB_ENV
-
-      - name: Setup Rust
-        uses: dtolnay/rust-action@stable
-
-      - name: Build release
-        run: cargo build --release
- >> $GITHUB_ENV
-
-      - name: Setup Rust
-        uses: dtolnay/rust-action@stable
-
-      - name: Run tests
-        run: cargo test
-
-  rust-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Load tool versions
-        run: cat setup/ci/versions | grep -v '^#' | grep -v '^\s*
-
-      - name: Setup Rust
-        uses: dtolnay/rust-action@stable
-
-      - name: Build release
-        run: cargo build --release
- >> $GITHUB_ENV
-
-      - name: Setup Rust
-        uses: dtolnay/rust-action@stable
-
-      - name: Build release
-        run: cargo build --release
+            - name: Build release
+              run: cargo build --release --locked

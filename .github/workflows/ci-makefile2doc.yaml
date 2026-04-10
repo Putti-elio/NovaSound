@@ -1,38 +1,57 @@
 name: CI Makefile2Doc
 
 on:
-  push:
-    branches: [main, develop]
-    paths: [Makefile]
-  pull_request:
-    branches: [main, develop]
-    paths: [Makefile]
+    push:
+        branches: [main, develop]
+        paths:
+            - Makefile
+            - setup/ci/versions
+            - .github/workflows/ci-makefile2doc.yaml
+    pull_request:
+        branches: [main, develop]
+        paths:
+            - Makefile
+            - setup/ci/versions
+            - .github/workflows/ci-makefile2doc.yaml
+    workflow_dispatch:
 
 permissions:
-  contents: write
+    contents: write
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
-  update-doc:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v6
+    update-doc:
+        runs-on: ubuntu-latest
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        steps:
+            - uses: actions/checkout@v6
 
-      - name: Load tool versions
-        run: cat setup/ci/versions | grep -v '^#' | grep -v '^\s*$' >> $GITHUB_ENV
+            - name: Load tool versions
+              run: grep -Ev '^\s*(#|$)' setup/ci/versions >> "$GITHUB_ENV"
 
-      - name: Install makefile2doc
-        env:
-          VERSION: ${{ env.MAKEFILE2DOC_VERSION }}
-        run: |
-          curl -L -o makefile2doc https://github.com/Merlin-Clos/makefile2doc/releases/download/${VERSION}/makefile2doc-linux-amd64
-          chmod +x makefile2doc
+            - name: Cache makefile2doc binary
+              id: cache-makefile2doc
+              uses: actions/cache@v4
+              with:
+                  path: ./makefile2doc
+                  key: ${{ runner.os }}-makefile2doc-${{ env.MAKEFILE2DOC_VERSION }}
 
-      - name: Generate Documentation
-        run: ./makefile2doc -o docs/MAKEFILE.md
+            - name: Install makefile2doc
+              if: steps.cache-makefile2doc.outputs.cache-hit != 'true'
+              env:
+                  VERSION: ${{ env.MAKEFILE2DOC_VERSION }}
+              run: |
+                  curl -fsSL -o makefile2doc "https://github.com/Merlin-Clos/makefile2doc/releases/download/${VERSION}/makefile2doc-linux-amd64"
+                  chmod +x makefile2doc
 
-      - name: Commit & Push changes
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: "docs: auto-update MAKEFILE.md [skip ci]"
-          file_pattern: docs/MAKEFILE.md
+            - name: Generate documentation
+              run: ./makefile2doc -o docs/MAKEFILE.md
+
+            - name: Commit and push changes
+              uses: stefanzweifel/git-auto-commit-action@v7
+              with:
+                  commit_message: "docs: auto-update MAKEFILE.md [skip ci]"
+                  file_pattern: docs/MAKEFILE.md
