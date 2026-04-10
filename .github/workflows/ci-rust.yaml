@@ -55,8 +55,7 @@ jobs:
         uses: dtolnay/rust-action@stable
 
       - name: Build release
-        run: cargo build --release
- >> $GITHUB_ENV
+        run: cargo build --release >> $GITHUB_ENV
 
       - name: Setup Rust
         uses: dtolnay/rust-action@stable
