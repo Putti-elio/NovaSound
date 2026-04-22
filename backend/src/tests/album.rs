@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use chrono::NaiveDate;
-    use rusqlite::{params, Connection};
+    use rusqlite::{Connection, params};
     use uuid::Uuid;
 
     use crate::models::album_model::{CreateAlbum, UpdateAlbum};
@@ -107,7 +107,7 @@ mod tests {
         .unwrap();
 
         let album = CreateAlbum {
-            name: "".to_string(),
+            name: String::new(),
             release_date: None,
             artist_id: artist_id.to_string(),
             album_type: None,
@@ -471,7 +471,7 @@ mod tests {
         .unwrap();
 
         let update = UpdateAlbum {
-            name: Some("".to_string()),
+            name: Some(String::new()),
             release_date: None,
             artist_id: None,
         };

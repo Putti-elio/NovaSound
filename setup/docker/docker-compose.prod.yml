@@ -1,0 +1,20 @@
+services:
+    backend:
+        build:
+            dockerfile: setup/docker/images/backend/Dockerfile.prod
+        image: novasound/backend-prod:${TAG:-latest}
+        environment:
+            APP_ENV: ${APP_ENV:-prod}
+            RUST_LOG: ${RUST_LOG:-info}
+        restart: unless-stopped
+        read_only: true
+        tmpfs:
+            - /tmp
+        volumes:
+            - backend_data:/app/data
+        ports:
+            - "4000:4000"
+        command: ["/app/rust"]
+
+volumes:
+    backend_data:

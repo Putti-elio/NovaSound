@@ -1,10 +1,12 @@
-use axum::{Router, routing::{get, post, put, delete}};
-use std::sync::{Arc, Mutex};
+use axum::{
+    Router,
+    routing::{delete, get, post, put},
+};
 use rusqlite::Connection;
+use std::sync::{Arc, Mutex};
 
-
-mod artist_route;
 pub mod album_route;
+mod artist_route;
 mod song_route;
 
 pub type SharedDatabase = Arc<Mutex<Connection>>;
@@ -37,5 +39,3 @@ pub fn create_router(database: SharedDatabase) -> Router {
         .route("/albums/{id}/songs", get(song_route::get_songs_by_album))
         .with_state(database)
 }
-
-

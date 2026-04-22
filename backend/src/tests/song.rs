@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use chrono::NaiveDate;
-    use rusqlite::{params, Connection};
+    use rusqlite::{Connection, params};
     use uuid::Uuid;
 
     use crate::models::song_model::{CreateSong, UpdateSong};
@@ -154,7 +154,7 @@ mod tests {
         .unwrap();
 
         let song = CreateSong {
-            name: "".to_string(),
+            name: String::new(),
             duration: 240,
             artist_id: artist_id.to_string(),
             album_id: None,
@@ -477,7 +477,7 @@ mod tests {
         .unwrap();
 
         let update = UpdateSong {
-            name: Some("".to_string()),
+            name: Some(String::new()),
             duration: None,
             release_date: None,
             track_number: None,

@@ -47,7 +47,7 @@ Cargo.lock
 *.exe
 
 # === Other Files/Folders ===
-document/
-PROJECT_SUMMARY.md
+docs/rust-learning/
+docs/PROJECT_SUMMARY.md
 opencode.json
 AGENTS.md

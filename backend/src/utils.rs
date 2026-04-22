@@ -1,4 +1,4 @@
-use anyhow::{Error};
+use anyhow::Error;
 use log::error;
 
 pub fn log_and_context_error<E>(err: E, msg: &str, file: &str, function: &str) -> Error
@@ -8,7 +8,6 @@ where
     error!("{}: {}. At {}::{}", msg, err, file, function);
     Error::new(err).context(msg.to_string())
 }
-
 
 #[macro_export]
 macro_rules! create_error {

@@ -1,5 +1,5 @@
 use chrono::NaiveTime;
-use rusqlite::{params, Connection};
+use rusqlite::{Connection, params};
 use uuid::Uuid;
 
 use crate::errors::{AppError, AppResult};
@@ -28,7 +28,7 @@ pub fn get_all_albums(conn: &Connection) -> AppResult<Vec<Album>> {
                 .and_then(|ts| chrono::DateTime::from_timestamp(ts, 0).map(|dt| dt.date_naive()));
 
             let album_type_str: String = row.get(6)?;
-            let album_type = AlbumType::from_str(&album_type_str).unwrap_or(AlbumType::Album);
+            let album_type = album_type_str.parse().unwrap_or(AlbumType::Album);
 
             Ok(Album {
                 id: row.get(0)?,
@@ -73,7 +73,7 @@ pub fn get_album_by_id(conn: &Connection, id: &str) -> AppResult<Album> {
             .and_then(|ts| chrono::DateTime::from_timestamp(ts, 0).map(|dt| dt.date_naive()));
 
         let album_type_str: String = row.get(6)?;
-        let album_type = AlbumType::from_str(&album_type_str).unwrap_or(AlbumType::Album);
+        let album_type = album_type_str.parse().unwrap_or(AlbumType::Album);
 
         Ok(Album {
             id: row.get(0)?,
@@ -86,10 +86,10 @@ pub fn get_album_by_id(conn: &Connection, id: &str) -> AppResult<Album> {
         })
     })
     .map_err(|err| match err {
-        rusqlite::Error::QueryReturnedNoRows => {
+        | rusqlite::Error::QueryReturnedNoRows => {
             AppError::NotFound(format!("Album with id '{}' not found", id))
-        }
-        _ => AppError::Internal(log_and_context_error(
+        },
+        | _ => AppError::Internal(log_and_context_error(
             err,
             "Failed to get album",
             file!(),
@@ -118,7 +118,7 @@ pub fn get_albums_by_artist(conn: &Connection, artist_id: &str) -> AppResult<Vec
                 .and_then(|ts| chrono::DateTime::from_timestamp(ts, 0).map(|dt| dt.date_naive()));
 
             let album_type_str: String = row.get(6)?;
-            let album_type = AlbumType::from_str(&album_type_str).unwrap_or(AlbumType::Album);
+            let album_type = album_type_str.parse().unwrap_or(AlbumType::Album);
 
             Ok(Album {
                 id: row.get(0)?,
@@ -190,11 +190,9 @@ pub fn create_album(conn: &Connection, album: CreateAlbum) -> AppResult<String> 
     let id = Uuid::new_v4().to_string();
     let image_path = format!("/images/albums/{}", id);
 
-    let release_date_timestamp = album.release_date.map(|d| {
-        d.and_time(NaiveTime::from_hms_opt(0, 0, 0).unwrap())
-            .and_utc()
-            .timestamp()
-    });
+    let release_date_timestamp = album
+        .release_date
+        .map(|d| d.and_time(NaiveTime::MIN).and_utc().timestamp());
 
     let album_type = album.album_type.unwrap_or(AlbumType::Album);
 
@@ -207,7 +205,7 @@ pub fn create_album(conn: &Connection, album: CreateAlbum) -> AppResult<String> 
             release_date_timestamp,
             &album.artist_id,
             &image_path,
-            album_type.as_str()
+            album_type.as_ref()
         ],
     )
     .map_err(|err| {
@@ -251,10 +249,7 @@ pub fn update_album(conn: &Connection, id: &str, album: UpdateAlbum) -> AppResul
     }
 
     if let Some(release_date) = album.release_date {
-        let timestamp = release_date
-            .and_time(NaiveTime::from_hms_opt(0, 0, 0).unwrap())
-            .and_utc()
-            .timestamp();
+        let timestamp = release_date.and_time(NaiveTime::MIN).and_utc().timestamp();
         updates.push("release_date = ?".to_string());
         params_vec.push(Box::new(timestamp));
     }

@@ -1,5 +1,5 @@
 use chrono::NaiveTime;
-use rusqlite::{params, Connection};
+use rusqlite::{Connection, params};
 use uuid::Uuid;
 
 use crate::errors::{AppError, AppResult};
@@ -89,10 +89,10 @@ pub fn get_song_by_id(conn: &Connection, id: &str) -> AppResult<Song> {
         })
     })
     .map_err(|err| match err {
-        rusqlite::Error::QueryReturnedNoRows => {
+        | rusqlite::Error::QueryReturnedNoRows => {
             AppError::NotFound(format!("Song with id '{}' not found", id))
-        }
-        _ => AppError::Internal(log_and_context_error(
+        },
+        | _ => AppError::Internal(log_and_context_error(
             err,
             "Failed to get song",
             file!(),
@@ -274,11 +274,9 @@ pub fn create_song(conn: &Connection, song: CreateSong) -> AppResult<String> {
 
     let id = Uuid::new_v4().to_string();
 
-    let release_date_timestamp = song.release_date.map(|d| {
-        d.and_time(NaiveTime::from_hms_opt(0, 0, 0).unwrap())
-            .and_utc()
-            .timestamp()
-    });
+    let release_date_timestamp = song
+        .release_date
+        .map(|d| d.and_time(NaiveTime::MIN).and_utc().timestamp());
 
     conn.execute(
         "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) 
@@ -344,10 +342,7 @@ pub fn update_song(conn: &Connection, id: &str, song: UpdateSong) -> AppResult<(
     }
 
     if let Some(release_date) = song.release_date {
-        let timestamp = release_date
-            .and_time(NaiveTime::from_hms_opt(0, 0, 0).unwrap())
-            .and_utc()
-            .timestamp();
+        let timestamp = release_date.and_time(NaiveTime::MIN).and_utc().timestamp();
         updates.push("release_date = ?".to_string());
         params_vec.push(Box::new(timestamp));
     }
@@ -443,7 +438,7 @@ pub fn get_or_create_standalone_collection(
     let existing: Option<String> = conn
         .query_row(
             "SELECT id FROM albums WHERE artist_id = ?1 AND album_type = ?2",
-            params![artist_id, AlbumType::StandaloneCollection.as_str()],
+            params![artist_id, AlbumType::StandaloneCollection.as_ref()],
             |row| row.get(0),
         )
         .ok();
@@ -467,7 +462,7 @@ pub fn get_or_create_standalone_collection(
             &collection_name,
             artist_id,
             &image_path,
-            AlbumType::StandaloneCollection.as_str()
+            AlbumType::StandaloneCollection.as_ref()
         ],
     )
     .map_err(|err| {
@@ -494,7 +489,7 @@ pub fn update_album_duration_and_type(conn: &Connection, album_id: &str) -> AppR
             log_and_context_error(err, "Failed to get album type", file!(), function_name!())
         })?;
 
-    if album_type == AlbumType::StandaloneCollection.as_str() {
+    if album_type == AlbumType::StandaloneCollection.as_ref() {
         return Ok(());
     }
 
@@ -517,7 +512,7 @@ pub fn update_album_duration_and_type(conn: &Connection, album_id: &str) -> AppR
 
     conn.execute(
         "UPDATE albums SET total_duration = ?1, album_type = ?2 WHERE id = ?3",
-        params![total_duration, new_type.as_str(), album_id],
+        params![total_duration, new_type.as_ref(), album_id],
     )
     .map_err(|err| {
         AppError::Internal(log_and_context_error(
@@ -531,6 +526,7 @@ pub fn update_album_duration_and_type(conn: &Connection, album_id: &str) -> AppR
     Ok(())
 }
 
+#[must_use]
 pub fn determine_album_type(song_count: i32, total_duration: u32) -> AlbumType {
     if song_count >= 7 || total_duration >= 1800 {
         AlbumType::Album

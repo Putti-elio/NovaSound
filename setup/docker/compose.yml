@@ -1,0 +1,9 @@
+services:
+  backend:
+    build:
+      context: .
+    working_dir: /app
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      RUST_LOG: ${RUST_LOG:-info}
+    stop_grace_period: 10s

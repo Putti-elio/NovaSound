@@ -4,15 +4,12 @@ FROM rust:${RUST_VERSION} AS dev
 
 WORKDIR /app
 
-COPY Cargo.toml . 
-
-COPY src/ ./src
-
-RUN apt-get update -y && apt-get install -y libsqlite3-dev sqlite3 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends libsqlite3-dev sqlite3 pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN rustup component add clippy rustfmt
 
 RUN mkdir -p /app/data
-
 
 EXPOSE 4000

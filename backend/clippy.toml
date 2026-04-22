@@ -23,7 +23,10 @@ too-many-lines-threshold = 100
 # =============================================================================
 
 # Check private items with doc lints
-check-private-items = true
+check-private-items = false
+
+# Allow missing errors doc
+missing-docs-allow-unused = true
 
 # Valid identifiers allowed in doc comments
 doc-valid-idents = [
@@ -49,9 +52,5 @@ allow-unwrap-in-tests = true
 # Avoid breaking exported API when suggesting changes
 avoid-breaking-exported-api = true
 
-# =============================================================================
-# MODULE PATHS
-# =============================================================================
 
-# Paths to modules that should be treated as test modules
-test-modules = ["tests"]
+

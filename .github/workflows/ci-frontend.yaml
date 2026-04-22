@@ -1,0 +1,66 @@
+name: CI Frontend
+
+on:
+    push:
+        branches: [main, develop]
+        paths:
+            - "frontend/**"
+            - "setup/ci/versions"
+    pull_request:
+        branches: [main, develop]
+        paths:
+            - "frontend/**"
+            - "setup/ci/versions"
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    frontend-build:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: frontend
+        steps:
+            - uses: actions/checkout@v6
+
+            - name: Load tool versions
+              run: grep -Ev '^\s*(#|$)' ../setup/ci/versions >> "$GITHUB_ENV"
+
+            - name: Setup Bun
+              uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: ${{ env.BUN_VERSION }}
+
+            - name: Cache Bun dependencies
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ~/.bun/install/cache
+                      frontend/node_modules
+                  key: ${{ runner.os }}-bun-${{ env.BUN_VERSION }}-${{ hashFiles('frontend/package.json', 'frontend/bun.lock', 'frontend/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-bun-${{ env.BUN_VERSION }}-
+                      ${{ runner.os }}-bun-
+
+            - name: Install dependencies
+              run: |
+                  if [ -f bun.lock ]; then
+                    bun install --frozen-lockfile
+                  else
+                    bun install
+                  fi
+
+            - name: Build
+              run: bun run build
+
+            # TODO: Add Nuxt support when switching from Vue.js to Nuxt
+            # - name: Nuxt typecheck
+            #   run: bun run typecheck
+            # - name: Nuxt lint
+            #   run: bun run lint
