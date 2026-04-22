@@ -1,5 +1,16 @@
 DOCKER_DIR := setup/docker
 ENV_FILE := $(DOCKER_DIR)/.env
+
+# Read APP_ENV from .env file if not set via command line
+ifeq ($(origin APP_ENV),undefined)
+    _APP_ENV := $(shell grep -E '^APP_ENV=' $(ENV_FILE) 2>/dev/null | cut -d= -f2)
+    ifneq ($(_APP_ENV),)
+        APP_ENV := $(_APP_ENV)
+    else
+        APP_ENV := dev
+    endif
+endif
+
 COMPOSE_FILES := -f $(DOCKER_DIR)/compose.yml
 
 ifeq ($(APP_ENV),dev)
@@ -66,13 +77,12 @@ up: up-backend up-vuejs
 
 ## @description Start frontend with hot-reload
 up-vuejs:
-	$(COMPOSE) up vuejs -d
+	@printf "Frontend Docker stack is disabled for now.\n"
 	
 ## @description Start backend service
 ## @depends check-backend
 up-backend:
 	$(COMPOSE) up backend -d --remove-orphans 
-	-$(COMPOSE) exec backend cargo build --release
 
 ## @category Down
 
@@ -86,7 +96,7 @@ down-backend:
 
 ## @description Stop frontend service
 down-vuejs:
-	$(COMPOSE) down vuejs
+	@printf "Frontend Docker stack is disabled for now.\n"
 
 ## @category Shell
 
@@ -96,26 +106,24 @@ sh-backend:
 
 ## @description Open frontend container shell
 sh-vuejs:
-	$(COMPOSE) exec -it vuejs sh
+	@printf "Frontend Docker stack is disabled for now.\n"
 
 ## @category Delete
 
 ## @description Delete backend container and image
-delete-backend:
-	make down-backend
-	$(COMPOSE) rm -f backend
-	docker image rm -f tools-backend
+clear-backend:
+	$(COMPOSE) down backend
+	-docker image rm -f novasound-backend
+	-docker image rm -f novasound/backend:latest
 
 ## @description Delete frontend container and image
-delete-vuejs:
-	make down-vuejs
-	$(COMPOSE) rm -f vuejs
-	docker image rm -f tools-vuejs
+clear-vuejs:
+	@printf "Frontend Docker stack is disabled for now.\n"
 
 ## @description Delete all containers and images
-delete-all:
-	make delete-backend 
-	make delete-vuejs
+clear:
+	make clear-backend 
+	make clear-vuejs
 
 ## @category Test
 
@@ -126,10 +134,29 @@ test:
 
 ## @category Prod
 
-## @description Build and run backend in production mode
-prod:
-	docker build -f .docker/backend/Dockerfile.prod -t novasound-backend-prod backend
-	docker run -d -p 3000:3000 --name novasound-prod novasound-backend-prod
+## @description Build and tag backend production image
+build-prod:
+	@if [ -n "$$(git describe --tags --abbrev=0 2>/dev/null)" ]; then \
+		TAG=$$(git describe --tags --abbrev=0); \
+		echo "Building with tag: $$TAG"; \
+		TAG=$$TAG docker compose -f $(DOCKER_DIR)/compose.yml -f $(DOCKER_DIR)/docker-compose.prod.yml --project-directory . build backend; \
+	else \
+		echo "No git tags found, building with latest"; \
+		docker compose -f $(DOCKER_DIR)/compose.yml -f $(DOCKER_DIR)/docker-compose.prod.yml --project-directory . build backend; \
+	fi
+
+## @description Build, tag, and run backend in production mode
+prod: build-prod
+	APP_ENV=prod docker compose -f $(DOCKER_DIR)/compose.yml -f $(DOCKER_DIR)/docker-compose.prod.yml --project-directory . up -d backend
+
+## @description Create a version tag (use TAG=v1.2.3 make tag)
+tag:
+	@if [ -z "$(TAG)" ]; then \
+		echo "Usage: make tag TAG=v1.2.3"; \
+		exit 1; \
+	fi
+	git tag -a $(TAG) -m "Release $(TAG)"
+	@echo "Tag $(TAG) created. Push with: git push origin $(TAG)"
 	
 ## @category Database
 
