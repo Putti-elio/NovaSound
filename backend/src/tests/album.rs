@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use chrono::NaiveDate;
-    use rusqlite::{params, Connection};
+    use rusqlite::{Connection, params};
     use uuid::Uuid;
 
     use crate::models::album_model::{CreateAlbum, UpdateAlbum};

@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use rusqlite::{params, Connection};
+    use rusqlite::{Connection, params};
     use uuid::Uuid;
 
     use crate::services::artist_service;

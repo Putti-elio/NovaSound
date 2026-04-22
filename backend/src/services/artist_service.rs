@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use function_name::named;
-use rusqlite::{params, Connection, Error as RusqliteError};
+use rusqlite::{Connection, Error as RusqliteError, params};
 use uuid::Uuid;
 
 use crate::create_error;
