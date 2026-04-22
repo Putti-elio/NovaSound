@@ -60,6 +60,12 @@ check-backend:
 lint-backend:
 	$(COMPOSE) exec -T backend cargo clippy -- -D warnings
 
+## @description Run CI-equivalent backend lint checks
+lint:
+	$(COMPOSE) up backend -d --remove-orphans
+	$(COMPOSE) exec -T backend cargo fmt --all -- --check
+	$(COMPOSE) exec -T backend cargo clippy --all-targets -- -D warnings
+
 ## @description Format Rust backend code
 ## @depends up-backend
 fmt-backend:

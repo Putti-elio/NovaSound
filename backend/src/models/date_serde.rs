@@ -50,18 +50,26 @@ mod tests {
             release_date: NaiveDate::from_ymd_opt(2025, 12, 31),
         };
 
-        let json = serde_json::to_string(&value).expect("serialize date wrapper");
+        let json_result = serde_json::to_string(&value);
+        assert!(json_result.is_ok());
 
-        assert_eq!(json, r#"{"release_date":"31-12-2025"}"#);
+        assert_eq!(
+            json_result.ok().as_deref(),
+            Some(r#"{"release_date":"31-12-2025"}"#)
+        );
     }
 
     #[test]
     fn deserialize_accepts_dd_mm_yyyy_format() {
         let payload = r#"{"release_date":"01-01-2026"}"#;
 
-        let parsed: DateWrapper = serde_json::from_str(payload).expect("deserialize date wrapper");
+        let parsed_result = serde_json::from_str::<DateWrapper>(payload);
+        assert!(parsed_result.is_ok());
 
-        assert_eq!(parsed.release_date, NaiveDate::from_ymd_opt(2026, 1, 1));
+        assert_eq!(
+            parsed_result.ok().and_then(|wrapper| wrapper.release_date),
+            NaiveDate::from_ymd_opt(2026, 1, 1)
+        );
     }
 
     #[test]
