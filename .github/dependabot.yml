@@ -1,0 +1,73 @@
+version: 2
+updates:
+    - package-ecosystem: github-actions
+      directory: /
+      schedule:
+          interval: weekly
+          day: monday
+          time: "06:00"
+          timezone: Europe/Paris
+      commit-message:
+          prefix: ci
+          include: scope
+      labels:
+          - dependencies
+          - ci
+      open-pull-requests-limit: 10
+
+    ## TODO BUN
+
+    - package-ecosystem: cargo
+      directory: /backend
+      schedule:
+          interval: weekly
+          day: monday
+          time: "06:30"
+          timezone: Europe/Paris
+      commit-message:
+          prefix: deps
+          include: scope
+      labels:
+          - dependencies
+          - backend
+          - rust
+      open-pull-requests-limit: 10
+      groups:
+          rust-minor-and-patch:
+              update-types:
+                  - minor
+                  - patch
+              patterns:
+                  - "*"
+
+    - package-ecosystem: docker
+      directory: /setup/docker/images/backend
+      schedule:
+          interval: weekly
+          day: monday
+          time: "06:45"
+          timezone: Europe/Paris
+      commit-message:
+          prefix: build
+          include: scope
+      labels:
+          - dependencies
+          - docker
+          - backend
+      open-pull-requests-limit: 5
+
+    - package-ecosystem: docker
+      directory: /setup/docker/images/frontend
+      schedule:
+          interval: weekly
+          day: monday
+          time: "07:00"
+          timezone: Europe/Paris
+      commit-message:
+          prefix: build
+          include: scope
+      labels:
+          - dependencies
+          - docker
+          - frontend
+      open-pull-requests-limit: 5
