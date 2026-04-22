@@ -1,0 +1,38 @@
+ARG RUST_VERSION=1.90-slim
+
+FROM rust:${RUST_VERSION} AS builder
+
+WORKDIR /app
+
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends pkg-config libsqlite3-dev ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/Cargo.toml /app/
+COPY backend/src /app/src
+
+RUN cargo build --release
+
+FROM debian:bookworm-slim AS runner
+
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends libsqlite3-0 ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && addgroup --system appgroup \
+    && adduser --system --ingroup appgroup --home /app appuser
+
+WORKDIR /app
+
+COPY --from=builder /app/target/release/rust /app/rust
+
+RUN mkdir -p /app/data /tmp \
+    && chown -R appuser:appgroup /app /tmp
+
+ENV APP_ENV=prod
+ENV RUST_LOG=info
+
+USER appuser
+
+EXPOSE 4000
+
+CMD ["/app/rust"]

@@ -1,21 +1,3 @@
-ARG NODE_VERSION=24.9.0-alpine
+FROM alpine:3.21
 
-FROM node:${NODE_VERSION} AS dev
-
-ENV NODE_ENV=development
-
-WORKDIR /app
-
-COPY frontend/package.json frontend/package-lock.json ./
-
-RUN --mount=type=cache,target=/root/.npm npm install
-
-COPY frontend/. .
-
-RUN chown -R node:node /app
-
-USER node
-
-EXPOSE 5173
-
-CMD [ "npm", "run", "dev", "--", "--host"], 
+CMD ["sh", "-c", "echo 'Frontend Docker is intentionally disabled until Nuxt+Bun migration.' && sleep infinity"]
