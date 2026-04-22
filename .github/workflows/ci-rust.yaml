@@ -76,7 +76,7 @@ jobs:
                   workspaces: backend -> target
 
             - name: Run tests
-              run: cargo test --locked --all-targets
+              run: cargo test --all-targets
 
     rust-build:
         runs-on: ubuntu-latest
@@ -100,4 +100,4 @@ jobs:
                   workspaces: backend -> target
 
             - name: Build release
-              run: cargo build --release --locked
+              run: cargo build --release
