@@ -1,0 +1,14 @@
+services:
+    backend:
+        build:
+            dockerfile: setup/docker/images/backend/Dockerfile.dev
+        image: novasound/backend-dev:${TAG:-latest}
+        volumes:
+            - ./backend:/app
+            - backend_data:/app/data
+        ports:
+            - "4000:4000"
+        command: ["sleep", "infinity"]
+
+volumes:
+    backend_data:

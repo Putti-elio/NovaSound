@@ -1,32 +1,9 @@
 services:
-    backend:
-        build:
-            context: .
-            dockerfile: setup/docker/images/backend/Dockerfile.dev
-        volumes:
-            - ./backend:/app
-        ports:
-            - "4000:4000"
-        command: ["sleep", "infinity"]
-
-    vuejs:
-        build:
-            context: .
-            dockerfile: setup/docker/images/frontend/Dockerfile.dev
-        volumes:
-            - ./frontend:/app
-            - /app/node_modules
-        ports:
-            - "5173:5173"
-        develop:
-            watch:
-                - path: ./frontend/src
-                  target: /app/src
-                  action: sync
-                - path: ./frontend/package.json
-                  target: /app/package.json
-                  action: restart
-                - path: ./frontend/vite.config.ts
-                  target: /app/vite.config.ts
-                  action: restart
-        command: ["npm", "run", "dev"]
+  backend:
+    build:
+      context: .
+    working_dir: /app
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      RUST_LOG: ${RUST_LOG:-info}
+    stop_grace_period: 10s
