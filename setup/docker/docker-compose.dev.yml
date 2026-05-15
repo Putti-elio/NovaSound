@@ -1,14 +1,32 @@
 services:
-    backend:
-        build:
-            dockerfile: setup/docker/images/backend/Dockerfile.dev
-        image: novasound/backend-dev:${TAG:-latest}
-        volumes:
-            - ./backend:/app
-            - backend_data:/app/data
-        ports:
-            - "4000:4000"
-        command: ["sleep", "infinity"]
+  backend:
+    build:
+      dockerfile: setup/docker/images/backend/Dockerfile.dev
+    image: novasound/backend-dev:${TAG:-latest}
+    volumes:
+      - ./backend:/app
+      - backend_data:/app/data
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      RUST_LOG: ${RUST_LOG:-info}
+      DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres_db:5432/${POSTGRES_DB}}
+    ports:
+      - "4000:4000"
+    command: ["sleep", "infinity"]
+
+  postgres_db:
+    build:
+      dockerfile: setup/docker/images/postgres/Dockerfile.dev
+    image: novasound/postgres-dev:${TAG:-latest}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-superpassword}
+      POSTGRES_DB: ${POSTGRES_DB:-mon_projet}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
 volumes:
-    backend_data:
+  backend_data:
+  postgres_data:
