@@ -2,7 +2,7 @@ services:
   backend:
     build:
       context: .
-      working_dir: /app
+    working_dir: /app
     depends_on:
       postgres_db:
         condition: service_healthy
