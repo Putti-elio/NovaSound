@@ -1,0 +1,8 @@
+ARG POSTGRES_VERSION=17-alpine
+
+FROM postgres:${POSTGRES_VERSION}
+
+COPY setup/docker/images/postgres/init-prod.sh /docker-entrypoint-initdb.d/init-prod.sh
+RUN chmod +x /docker-entrypoint-initdb.d/init-prod.sh
+
+EXPOSE 5432

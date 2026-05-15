@@ -1,20 +1,38 @@
 services:
-    backend:
-        build:
-            dockerfile: setup/docker/images/backend/Dockerfile.prod
-        image: novasound/backend-prod:${TAG:-latest}
-        environment:
-            APP_ENV: ${APP_ENV:-prod}
-            RUST_LOG: ${RUST_LOG:-info}
-        restart: unless-stopped
-        read_only: true
-        tmpfs:
-            - /tmp
-        volumes:
-            - backend_data:/app/data
-        ports:
-            - "4000:4000"
-        command: ["/app/rust"]
+  backend:
+    build:
+      dockerfile: setup/docker/images/backend/Dockerfile.prod
+    image: novasound/backend-prod:${TAG:-latest}
+    environment:
+      APP_ENV: ${APP_ENV:-prod}
+      RUST_LOG: ${RUST_LOG:-info}
+      DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres_db:5432/${POSTGRES_DB}}
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - backend_data:/app/data
+    ports:
+      - "4000:4000"
+    command: ["/app/rust"]
+
+  postgres_db:
+    build:
+      dockerfile: setup/docker/images/postgres/Dockerfile.prod
+    image: novasound/postgres-prod:${TAG:-latest}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-superpassword}
+      POSTGRES_DB: ${POSTGRES_DB:-mon_projet}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /run/postgresql
 
 volumes:
-    backend_data:
+  backend_data:
+  postgres_data:

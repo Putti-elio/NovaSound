@@ -3,27 +3,33 @@ ENV_FILE := $(DOCKER_DIR)/.env
 
 # Read APP_ENV from .env file if not set via command line
 ifeq ($(origin APP_ENV),undefined)
-    _APP_ENV := $(shell grep -E '^APP_ENV=' $(ENV_FILE) 2>/dev/null | cut -d= -f2)
-    ifneq ($(_APP_ENV),)
-        APP_ENV := $(_APP_ENV)
-    else
-        APP_ENV := dev
-    endif
+_APP_ENV := $(shell grep -E '^APP_ENV=' $(ENV_FILE) 2>/dev/null | cut -d= -f2)
+ifneq ($(_APP_ENV),)
+APP_ENV := $(_APP_ENV)
+else
+APP_ENV := dev
+endif
 endif
 
 COMPOSE_FILES := -f $(DOCKER_DIR)/compose.yml
 
 ifeq ($(APP_ENV),dev)
-    COMPOSE_FILES += -f $(DOCKER_DIR)/docker-compose.dev.yml
+COMPOSE_FILES += -f $(DOCKER_DIR)/docker-compose.dev.yml
 else ifeq ($(APP_ENV),prod)
-    COMPOSE_FILES += -f $(DOCKER_DIR)/docker-compose.prod.yml
+COMPOSE_FILES += -f $(DOCKER_DIR)/docker-compose.prod.yml
 endif
 
 COMPOSE := docker compose \
-	$(COMPOSE_FILES) \
-	--env-file $(DOCKER_DIR)/images/versions \
-	--env-file $(ENV_FILE) \
-	--project-directory .
+$(COMPOSE_FILES) \
+--env-file $(DOCKER_DIR)/images/versions \
+--env-file $(ENV_FILE) \
+--project-directory .
+
+# Load environment variables from .env file for use in make targets
+ifneq ($(wildcard $(ENV_FILE)),)
+include $(ENV_FILE)
+export
+endif
 
 ## @category Fix
 
@@ -40,7 +46,7 @@ run-backend-release:
 
 ## @description Run backend in development mode
 run-backend:
-	$(COMPOSE) exec backend cargo run 
+	$(COMPOSE) exec backend cargo run
 
 ## @description Run backend with error logging only
 run-backend-error:
@@ -78,17 +84,21 @@ fmt-check-backend:
 
 ## @category Up
 
-## @description Start all services (backend + frontend)
-up: up-backend up-vuejs
+## @description Start all services (backend + postgres)
+up: up-backend
 
 ## @description Start frontend with hot-reload
 up-vuejs:
 	@printf "Frontend Docker stack is disabled for now.\n"
-	
-## @description Start backend service
+
+## @description Start backend service (with postgres dependency)
 ## @depends check-backend
 up-backend:
-	$(COMPOSE) up backend -d --remove-orphans 
+	$(COMPOSE) up backend postgres_db -d --remove-orphans
+
+## @description Start postgres service only
+up-db:
+	$(COMPOSE) up postgres_db -d --remove-orphans
 
 ## @category Down
 
@@ -98,7 +108,11 @@ down:
 
 ## @description Stop backend service
 down-backend:
-	$(COMPOSE) down backend
+	$(COMPOSE) stop backend
+
+## @description Stop postgres service
+down-db:
+	$(COMPOSE) stop postgres_db
 
 ## @description Stop frontend service
 down-vuejs:
@@ -109,6 +123,10 @@ down-vuejs:
 ## @description Open backend container shell
 sh-backend:
 	$(COMPOSE) exec -it backend sh
+
+## @description Open postgres container shell (psql)
+sh-db:
+	$(COMPOSE) exec -it postgres_db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
 
 ## @description Open frontend container shell
 sh-vuejs:
@@ -122,20 +140,25 @@ clear-backend:
 	-docker image rm -f novasound-backend
 	-docker image rm -f novasound/backend:latest
 
+## @description Delete postgres container, image, and data volume
+clear-db:
+	$(COMPOSE) down postgres_db
+	-docker volume rm novasound_postgres_data
+	-docker image rm -f novasound/postgres-dev:latest
+	-docker image rm -f novasound/postgres-prod:latest
+
 ## @description Delete frontend container and image
 clear-vuejs:
 	@printf "Frontend Docker stack is disabled for now.\n"
 
-## @description Delete all containers and images
-clear:
-	make clear-backend 
-	make clear-vuejs
+## @description Delete all containers, images, and volumes
+clear: clear-backend clear-db clear-vuejs
 
 ## @category Test
 
 ## @description Run backend tests
 ## @depends up-backend
-test: 
+test:
 	$(COMPOSE) exec -T backend cargo test
 
 ## @category Prod
@@ -143,37 +166,54 @@ test:
 ## @description Build and tag backend production image
 build-prod:
 	@if [ -n "$$(git describe --tags --abbrev=0 2>/dev/null)" ]; then \
-		TAG=$$(git describe --tags --abbrev=0); \
-		echo "Building with tag: $$TAG"; \
-		TAG=$$TAG docker compose -f $(DOCKER_DIR)/compose.yml -f $(DOCKER_DIR)/docker-compose.prod.yml --project-directory . build backend; \
+	TAG=$$(git describe --tags --abbrev=0); \
+	echo "Building with tag: $$TAG"; \
+	TAG=$$TAG docker compose -f $(DOCKER_DIR)/compose.yml -f $(DOCKER_DIR)/docker-compose.prod.yml --project-directory . build backend; \
 	else \
-		echo "No git tags found, building with latest"; \
-		docker compose -f $(DOCKER_DIR)/compose.yml -f $(DOCKER_DIR)/docker-compose.prod.yml --project-directory . build backend; \
+	echo "No git tags found, building with latest"; \
+	docker compose -f $(DOCKER_DIR)/compose.yml -f $(DOCKER_DIR)/docker-compose.prod.yml --project-directory . build backend; \
 	fi
 
 ## @description Build, tag, and run backend in production mode
 prod: build-prod
-	APP_ENV=prod docker compose -f $(DOCKER_DIR)/compose.yml -f $(DOCKER_DIR)/docker-compose.prod.yml --project-directory . up -d backend
+	APP_ENV=prod docker compose -f $(DOCKER_DIR)/compose.yml -f $(DOCKER_DIR)/docker-compose.prod.yml --project-directory . up -d backend postgres_db
 
 ## @description Create a version tag (use TAG=v1.2.3 make tag)
 tag:
 	@if [ -z "$(TAG)" ]; then \
-		echo "Usage: make tag TAG=v1.2.3"; \
-		exit 1; \
+	echo "Usage: make tag TAG=v1.2.3"; \
+	exit 1; \
 	fi
 	git tag -a $(TAG) -m "Release $(TAG)"
 	@echo "Tag $(TAG) created. Push with: git push origin $(TAG)"
-	
+
 ## @category Database
 
-## @description Import SQL file into database
+## @description Export postgres database to a SQL file
+## @env EXPORT_FILE
+export-db:
+	@read -p "Export path (default: backend/data/export_$$(date +%Y%m%d_%H%M%S).sql): " export_file; \
+	export_file=$${export_file:-backend/data/export_$$(date +%Y%m%d_%H%M%S).sql}; \
+	$(COMPOSE) exec -T postgres_db pg_dump -U $(POSTGRES_USER) -d $(POSTGRES_DB) > "$$export_file"; \
+	echo "Database exported to $$export_file"
+
+## @description Import a SQL file into postgres database
+## @env sqlfile
+import-db:
+	@read -p "Path of SQL file to import: " sqlfile; \
+	$(COMPOSE) cp $$sqlfile postgres_db:/tmp/import.sql && \
+	$(COMPOSE) exec -T postgres_db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f /tmp/import.sql && \
+	$(COMPOSE) exec postgres_db rm -f /tmp/import.sql && \
+	echo "Import successful!"
+
+## @description Import SQL file into SQLite database (legacy)
 ## @env sqlfile
 import-sql:
 	@read -p "Chemin du fichier SQL à importer: (backend/data/example/example_database.sql) " sqlfile; \
 	$(COMPOSE) cp $$sqlfile backend:/tmp/import.sql && \
 	$(COMPOSE) exec backend sh -c "sqlite3 data/database.db < /tmp/import.sql && echo 'Import réussi!'" && \
 	$(COMPOSE) exec backend rm /tmp/import.sql
-	
+
 ## @category Clean
 
 ## @description Clean deleted git branches
