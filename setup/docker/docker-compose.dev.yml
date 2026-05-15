@@ -9,7 +9,7 @@ services:
     environment:
       APP_ENV: ${APP_ENV:-dev}
       RUST_LOG: ${RUST_LOG:-info}
-      DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres_db:5432/${POSTGRES_DB}}
+      DATABASE_URL: ${DATABASE_URL}
     ports:
       - "4000:4000"
     command: ["sleep", "infinity"]
@@ -20,8 +20,8 @@ services:
     image: novasound/postgres-dev:${TAG:-latest}
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-admin}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-superpassword}
-      POSTGRES_DB: ${POSTGRES_DB:-mon_projet}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
