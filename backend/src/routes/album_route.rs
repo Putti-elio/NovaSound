@@ -12,8 +12,7 @@ use crate::{
 
 #[debug_handler]
 pub async fn get_all_albums(State(database): State<SharedDatabase>) -> AppResult<Json<Vec<Album>>> {
-    let conn = database.lock()?;
-    let albums = album_service::get_all_albums(&conn)?;
+    let albums = album_service::get_all_albums(&database).await?;
     Ok(Json(albums))
 }
 
@@ -22,8 +21,7 @@ pub async fn get_album(
     State(database): State<SharedDatabase>,
     Path(id): Path<String>,
 ) -> AppResult<Json<Album>> {
-    let conn = database.lock()?;
-    let album = album_service::get_album_by_id(&conn, &id)?;
+    let album = album_service::get_album_by_id(&database, &id).await?;
     Ok(Json(album))
 }
 
@@ -32,9 +30,7 @@ pub async fn get_albums_by_artist(
     State(database): State<SharedDatabase>,
     Path(artist_id): Path<String>,
 ) -> AppResult<Json<Vec<Album>>> {
-    let conn = database.lock()?;
-    let albums = album_service::get_albums_by_artist(&conn, &artist_id)?;
-
+    let albums = album_service::get_albums_by_artist(&database, &artist_id).await?;
     Ok(Json(albums))
 }
 
@@ -43,9 +39,7 @@ pub async fn create_album(
     State(database): State<SharedDatabase>,
     Json(album): Json<CreateAlbum>,
 ) -> AppResult<Json<serde_json::Value>> {
-    let conn = database.lock()?;
-    let id = album_service::create_album(&conn, album)?;
-
+    let id = album_service::create_album(&database, album).await?;
     Ok(Json(serde_json::json!({
         "id": id,
         "message": "Album created successfully"
@@ -58,8 +52,7 @@ pub async fn update_album(
     Path(id): Path<String>,
     Json(album): Json<UpdateAlbum>,
 ) -> AppResult<Json<serde_json::Value>> {
-    let conn = database.lock()?;
-    album_service::update_album(&conn, &id, album)?;
+    album_service::update_album(&database, &id, album).await?;
     Ok(Json(serde_json::json!({
         "message": "Album updated successfully"
     })))
@@ -70,8 +63,7 @@ pub async fn delete_album(
     State(database): State<SharedDatabase>,
     Path(id): Path<String>,
 ) -> AppResult<Json<serde_json::Value>> {
-    let conn = database.lock()?;
-    album_service::delete_album(&conn, &id)?;
+    album_service::delete_album(&database, &id).await?;
     Ok(Json(serde_json::json!({
         "message": "Album deleted successfully"
     })))
