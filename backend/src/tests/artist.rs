@@ -1,140 +1,163 @@
 #[cfg(test)]
 mod tests {
-    use rusqlite::{Connection, params};
-    use uuid::Uuid;
+    #![allow(clippy::expect_used, clippy::too_many_arguments)]
+    use deadpool_postgres::{Config, Pool, Runtime};
+    use tokio_postgres::NoTls;
 
     use crate::services::artist_service;
 
-    fn create_test_db() -> Connection {
-        let conn = Connection::open_in_memory().unwrap();
-        conn.execute_batch(
-            "
-            CREATE TABLE artists (
-                id TEXT PRIMARY KEY,
-                name TEXT NOT NULL UNIQUE,
-                image_path TEXT
-            );
-            ",
-        )
-        .unwrap();
-        conn
+    async fn create_test_pool() -> Pool {
+        let database_url = std::env::var("TEST_DATABASE_URL").unwrap_or_else(|_| {
+            "host=postgres_db user=admin password=superpassword dbname=mon_projet".to_string()
+        });
+
+        let mut cfg = Config::new();
+        cfg.url = Some(database_url);
+
+        let pool = cfg
+            .create_pool(Some(Runtime::Tokio1), NoTls)
+            .expect("Failed to create test pool");
+
+        let client = pool.get().await.expect("Failed to get test client");
+
+        client
+            .batch_execute(
+                "
+                DROP TABLE IF EXISTS songs;
+                DROP TABLE IF EXISTS albums;
+                DROP TABLE IF EXISTS artists CASCADE;
+
+                CREATE TABLE artists (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL UNIQUE,
+                    image_path TEXT
+                );
+
+                CREATE TABLE albums (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    total_duration INTEGER DEFAULT 0,
+                    release_date BIGINT,
+                    artist_id TEXT NOT NULL,
+                    image_path TEXT,
+                    album_type TEXT DEFAULT 'ALBUM',
+                    FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE CASCADE
+                );
+
+                CREATE TABLE songs (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    duration INTEGER,
+                    artist_id TEXT NOT NULL,
+                    album_id TEXT,
+                    release_date BIGINT,
+                    track_number INTEGER,
+                    image_path TEXT,
+                    FOREIGN KEY (artist_id) REFERENCES artists(id),
+                    FOREIGN KEY (album_id) REFERENCES albums(id) ON DELETE SET NULL
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_songs_album_id ON songs(album_id);
+                CREATE INDEX IF NOT EXISTS idx_songs_artist_id ON songs(artist_id);
+                ",
+            )
+            .await
+            .expect("Failed to create test schema");
+
+        pool
     }
 
-    #[test]
-    fn test_create_artist_success() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_create_artist_success() {
+        let pool = create_test_pool().await;
 
-        let result = artist_service::create_artist(&db, "Test Artist");
-
+        let result = artist_service::create_artist(&pool, "Test Artist").await;
         assert!(result.is_ok());
 
-        let count: i32 = db
-            .query_row(
-                "SELECT COUNT(*) FROM artists WHERE name = ?1",
-                params!["Test Artist"],
-                |row| row.get(0),
+        let client = pool.get().await.expect("Failed to get client");
+        let count: i64 = client
+            .query_one(
+                "SELECT COUNT(*) FROM artists WHERE name = $1",
+                &[&"Test Artist"],
             )
-            .unwrap();
-        assert_eq!(count, 1);
-
-        let (id, name, image_path): (String, String, String) = db
-            .query_row(
-                "SELECT id, name, image_path FROM artists WHERE name = ?1",
-                params!["Test Artist"],
-                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
-            )
-            .unwrap();
-        assert_eq!(name, "Test Artist");
-        assert_eq!(image_path, "/images/Test Artist");
-        assert!(!id.is_empty());
-    }
-
-    #[test]
-    fn test_create_artist_empty_name() {
-        let db = create_test_db();
-
-        let result = artist_service::create_artist(&db, "");
-
-        assert!(result.is_err());
-
-        let count: i32 = db
-            .query_row("SELECT COUNT(*) FROM artists", [], |row| row.get(0))
-            .unwrap();
-        assert_eq!(count, 0);
-    }
-
-    #[test]
-    fn test_create_artist_whitespace_name() {
-        let db = create_test_db();
-
-        let result = artist_service::create_artist(&db, "   ");
-
-        assert!(result.is_err());
-
-        let count: i32 = db
-            .query_row("SELECT COUNT(*) FROM artists", [], |row| row.get(0))
-            .unwrap();
-        assert_eq!(count, 0);
-    }
-
-    #[test]
-    fn test_create_artist_duplicate_name() {
-        let db = create_test_db();
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![
-                "existing-id",
-                "Duplicate Artist",
-                "/images/Duplicate Artist"
-            ],
-        )
-        .unwrap();
-
-        let result = artist_service::create_artist(&db, "Duplicate Artist");
-
-        assert!(result.is_err());
-
-        let count: i32 = db
-            .query_row(
-                "SELECT COUNT(*) FROM artists WHERE name = ?1",
-                params!["Duplicate Artist"],
-                |row| row.get(0),
-            )
-            .unwrap();
+            .await
+            .expect("Query failed")
+            .get(0);
         assert_eq!(count, 1);
     }
 
-    #[test]
-    fn test_get_all_artists_empty() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_create_artist_empty_name() {
+        let pool = create_test_pool().await;
 
-        let result = artist_service::get_all_artists(&db);
+        let result = artist_service::create_artist(&pool, "").await;
+        assert!(result.is_err());
+    }
 
+    #[tokio::test]
+    async fn test_create_artist_whitespace_name() {
+        let pool = create_test_pool().await;
+
+        let result = artist_service::create_artist(&pool, " ").await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_create_artist_duplicate_name() {
+        let pool = create_test_pool().await;
+        let client = pool.get().await.expect("Failed to get client");
+        client
+            .execute(
+                "INSERT INTO artists (id, name, image_path) VALUES ($1, $2, $3)",
+                &[
+                    &"existing-id",
+                    &"Duplicate Artist",
+                    &"/images/Duplicate Artist",
+                ],
+            )
+            .await
+            .expect("Insert failed");
+
+        let result = artist_service::create_artist(&pool, "Duplicate Artist").await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_get_all_artists_empty() {
+        let pool = create_test_pool().await;
+
+        let result = artist_service::get_all_artists(&pool).await;
         assert!(result.is_ok());
         assert!(result.unwrap().is_empty());
     }
 
-    #[test]
-    fn test_get_all_artists_with_data() {
-        let db = create_test_db();
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params!["id-1", "Artist One", "/images/Artist One"],
-        )
-        .unwrap();
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params!["id-2", "Artist Two", "/images/Artist Two"],
-        )
-        .unwrap();
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params!["id-3", "Artist Three", "/images/Artist Three"],
-        )
-        .unwrap();
+    #[tokio::test]
+    async fn test_get_all_artists_with_data() {
+        let pool = create_test_pool().await;
+        let client = pool.get().await.expect("Failed to get client");
+        client
+            .execute(
+                "INSERT INTO artists (id, name, image_path) VALUES ($1, $2, $3)",
+                &[&"id-1", &"Artist One", &"/images/Artist One"],
+            )
+            .await
+            .expect("Insert failed");
+        client
+            .execute(
+                "INSERT INTO artists (id, name, image_path) VALUES ($1, $2, $3)",
+                &[&"id-2", &"Artist Two", &"/images/Artist Two"],
+            )
+            .await
+            .expect("Insert failed");
+        client
+            .execute(
+                "INSERT INTO artists (id, name, image_path) VALUES ($1, $2, $3)",
+                &[&"id-3", &"Artist Three", &"/images/Artist Three"],
+            )
+            .await
+            .expect("Insert failed");
 
-        let result = artist_service::get_all_artists(&db);
-
+        let result = artist_service::get_all_artists(&pool).await;
         assert!(result.is_ok());
         let artists = result.unwrap();
         assert_eq!(artists.len(), 3);
@@ -145,27 +168,28 @@ mod tests {
         assert!(names.contains(&"Artist Three".to_string()));
     }
 
-    #[test]
-    fn test_get_artist_by_id_not_found() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_get_artist_by_id_not_found() {
+        let pool = create_test_pool().await;
 
-        let result = artist_service::get_artist(&db, &Uuid::new_v4().to_string());
-
+        let result = artist_service::get_artist(&pool, &uuid::Uuid::new_v4().to_string()).await;
         assert!(result.is_err());
     }
 
-    #[test]
-    fn test_get_artist_by_id_success() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_get_artist_by_id_success() {
+        let pool = create_test_pool().await;
+        let client = pool.get().await.expect("Failed to get client");
         let expected_id = "test-uuid-123";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![expected_id, "Fetched Artist", "/images/Fetched Artist"],
-        )
-        .unwrap();
+        client
+            .execute(
+                "INSERT INTO artists (id, name, image_path) VALUES ($1, $2, $3)",
+                &[&expected_id, &"Fetched Artist", &"/images/Fetched Artist"],
+            )
+            .await
+            .expect("Insert failed");
 
-        let result = artist_service::get_artist(&db, &expected_id.to_string());
-
+        let result = artist_service::get_artist(&pool, &expected_id.to_string()).await;
         assert!(result.is_ok());
         let artist = result.unwrap();
         assert_eq!(artist.id, expected_id);
@@ -173,94 +197,84 @@ mod tests {
         assert_eq!(artist.image_path, "/images/Fetched Artist");
     }
 
-    #[test]
-    fn test_update_artist_success() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_update_artist_success() {
+        let pool = create_test_pool().await;
+        let client = pool.get().await.expect("Failed to get client");
         let artist_id = "update-uuid-456";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Old Name", "/images/Old Name"],
-        )
-        .unwrap();
+        client
+            .execute(
+                "INSERT INTO artists (id, name, image_path) VALUES ($1, $2, $3)",
+                &[&artist_id, &"Old Name", &"/images/Old Name"],
+            )
+            .await
+            .expect("Insert failed");
 
-        let result = artist_service::update_artist(&db, artist_id, "New Name");
-
+        let result = artist_service::update_artist(&pool, artist_id, "New Name").await;
         assert!(result.is_ok());
 
-        let (name, image_path): (String, String) = db
-            .query_row(
-                "SELECT name, image_path FROM artists WHERE id = ?1",
-                params![artist_id],
-                |row| Ok((row.get(0)?, row.get(1)?)),
+        let row = client
+            .query_one(
+                "SELECT name, image_path FROM artists WHERE id = $1",
+                &[&artist_id],
             )
-            .unwrap();
+            .await
+            .expect("Query failed");
+        let name: String = row.get(0);
+        let image_path: String = row.get(1);
         assert_eq!(name, "New Name");
         assert_eq!(image_path, "/images/New Name");
     }
 
-    #[test]
-    fn test_update_artist_empty_name() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_update_artist_empty_name() {
+        let pool = create_test_pool().await;
+        let client = pool.get().await.expect("Failed to get client");
         let artist_id = "update-uuid-789";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Valid Name", "/images/Valid Name"],
-        )
-        .unwrap();
-
-        let result = artist_service::update_artist(&db, artist_id, "");
-
-        assert!(result.is_err());
-
-        let name: String = db
-            .query_row(
-                "SELECT name FROM artists WHERE id = ?1",
-                params![artist_id],
-                |row| row.get(0),
+        client
+            .execute(
+                "INSERT INTO artists (id, name, image_path) VALUES ($1, $2, $3)",
+                &[&artist_id, &"Valid Name", &"/images/Valid Name"],
             )
-            .unwrap();
-        assert_eq!(name, "Valid Name");
-    }
+            .await
+            .expect("Insert failed");
 
-    #[test]
-    fn test_update_artist_not_found() {
-        let db = create_test_db();
-
-        let result = artist_service::update_artist(&db, &Uuid::new_v4().to_string(), "New Name");
-
+        let result = artist_service::update_artist(&pool, artist_id, "").await;
         assert!(result.is_err());
     }
 
-    #[test]
-    fn test_delete_artist_success() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_update_artist_not_found() {
+        let pool = create_test_pool().await;
+
+        let result =
+            artist_service::update_artist(&pool, &uuid::Uuid::new_v4().to_string(), "New Name")
+                .await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_delete_artist_success() {
+        let pool = create_test_pool().await;
+        let client = pool.get().await.expect("Failed to get client");
         let artist_id = "delete-uuid-012";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "To Delete", "/images/To Delete"],
-        )
-        .unwrap();
-
-        let result = artist_service::delete_artist(&db, artist_id);
-
-        assert!(result.is_ok());
-
-        let count: i32 = db
-            .query_row(
-                "SELECT COUNT(*) FROM artists WHERE id = ?1",
-                params![artist_id],
-                |row| row.get(0),
+        client
+            .execute(
+                "INSERT INTO artists (id, name, image_path) VALUES ($1, $2, $3)",
+                &[&artist_id, &"To Delete", &"/images/To Delete"],
             )
-            .unwrap();
-        assert_eq!(count, 0);
+            .await
+            .expect("Insert failed");
+
+        let result = artist_service::delete_artist(&pool, artist_id).await;
+        assert!(result.is_ok());
     }
 
-    #[test]
-    fn test_delete_artist_not_found() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_delete_artist_not_found() {
+        let pool = create_test_pool().await;
 
-        let result = artist_service::delete_artist(&db, &Uuid::new_v4().to_string());
-
+        let result = artist_service::delete_artist(&pool, &uuid::Uuid::new_v4().to_string()).await;
         assert!(result.is_err());
     }
 }

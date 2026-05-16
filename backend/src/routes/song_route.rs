@@ -4,19 +4,14 @@ use axum::{
     http::StatusCode,
 };
 
+use crate::errors::AppResult;
 use crate::models::song_model::{CreateSong, Song, UpdateSong};
 use crate::routes::SharedDatabase;
 use crate::services::song_service;
 
 #[debug_handler]
-pub async fn get_all_songs(
-    State(database): State<SharedDatabase>,
-) -> Result<Json<Vec<Song>>, StatusCode> {
-    let conn = database
-        .lock()
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-    let songs =
-        song_service::get_all_songs(&conn).map_err(|_e| StatusCode::INTERNAL_SERVER_ERROR)?;
+pub async fn get_all_songs(State(database): State<SharedDatabase>) -> AppResult<Json<Vec<Song>>> {
+    let songs = song_service::get_all_songs(&database).await?;
     Ok(Json(songs))
 }
 
@@ -24,12 +19,8 @@ pub async fn get_all_songs(
 pub async fn get_song(
     State(database): State<SharedDatabase>,
     Path(id): Path<String>,
-) -> Result<Json<Song>, StatusCode> {
-    let conn = database
-        .lock()
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-    let song =
-        song_service::get_song_by_id(&conn, &id).map_err(|_e| StatusCode::INTERNAL_SERVER_ERROR)?;
+) -> AppResult<Json<Song>> {
+    let song = song_service::get_song_by_id(&database, &id).await?;
     Ok(Json(song))
 }
 
@@ -37,12 +28,8 @@ pub async fn get_song(
 pub async fn get_songs_by_artist(
     State(database): State<SharedDatabase>,
     Path(id): Path<String>,
-) -> Result<Json<Vec<Song>>, StatusCode> {
-    let conn = database
-        .lock()
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-    let songs = song_service::get_songs_by_artist(&conn, &id)
-        .map_err(|_e| StatusCode::INTERNAL_SERVER_ERROR)?;
+) -> AppResult<Json<Vec<Song>>> {
+    let songs = song_service::get_songs_by_artist(&database, &id).await?;
     Ok(Json(songs))
 }
 
@@ -50,12 +37,8 @@ pub async fn get_songs_by_artist(
 pub async fn get_songs_by_album(
     State(database): State<SharedDatabase>,
     Path(id): Path<String>,
-) -> Result<Json<Vec<Song>>, StatusCode> {
-    let conn = database
-        .lock()
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-    let songs = song_service::get_songs_by_album(&conn, &id)
-        .map_err(|_e| StatusCode::INTERNAL_SERVER_ERROR)?;
+) -> AppResult<Json<Vec<Song>>> {
+    let songs = song_service::get_songs_by_album(&database, &id).await?;
     Ok(Json(songs))
 }
 
@@ -63,12 +46,8 @@ pub async fn get_songs_by_album(
 pub async fn create_song(
     State(database): State<SharedDatabase>,
     Json(song): Json<CreateSong>,
-) -> Result<(StatusCode, Json<String>), StatusCode> {
-    let conn = database
-        .lock()
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-    let id =
-        song_service::create_song(&conn, song).map_err(|_e| StatusCode::INTERNAL_SERVER_ERROR)?;
+) -> AppResult<(StatusCode, Json<String>)> {
+    let id = song_service::create_song(&database, song).await?;
     Ok((StatusCode::CREATED, Json(id)))
 }
 
@@ -77,11 +56,8 @@ pub async fn update_song(
     State(database): State<SharedDatabase>,
     Path(id): Path<String>,
     Json(song): Json<UpdateSong>,
-) -> Result<StatusCode, StatusCode> {
-    let conn = database
-        .lock()
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-    song_service::update_song(&conn, &id, song).map_err(|_e| StatusCode::INTERNAL_SERVER_ERROR)?;
+) -> AppResult<StatusCode> {
+    song_service::update_song(&database, &id, song).await?;
     Ok(StatusCode::NO_CONTENT)
 }
 
@@ -89,10 +65,7 @@ pub async fn update_song(
 pub async fn delete_song(
     State(database): State<SharedDatabase>,
     Path(id): Path<String>,
-) -> Result<StatusCode, StatusCode> {
-    let conn = database
-        .lock()
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-    song_service::delete_song(&conn, &id).map_err(|_e| StatusCode::INTERNAL_SERVER_ERROR)?;
+) -> AppResult<StatusCode> {
+    song_service::delete_song(&database, &id).await?;
     Ok(StatusCode::NO_CONTENT)
 }

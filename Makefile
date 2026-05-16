@@ -159,7 +159,7 @@ clear: clear-backend clear-db clear-vuejs
 ## @description Run backend tests
 ## @depends up-backend
 test:
-	$(COMPOSE) exec -T backend cargo test
+	$(COMPOSE) exec -T backend cargo test -- --test-threads=1
 
 ## @category Prod
 
@@ -205,14 +205,6 @@ import-db:
 	$(COMPOSE) exec -T postgres_db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f /tmp/import.sql && \
 	$(COMPOSE) exec postgres_db rm -f /tmp/import.sql && \
 	echo "Import successful!"
-
-## @description Import SQL file into SQLite database (legacy)
-## @env sqlfile
-import-sql:
-	@read -p "Chemin du fichier SQL à importer: (backend/data/example/example_database.sql) " sqlfile; \
-	$(COMPOSE) cp $$sqlfile backend:/tmp/import.sql && \
-	$(COMPOSE) exec backend sh -c "sqlite3 data/database.db < /tmp/import.sql && echo 'Import réussi!'" && \
-	$(COMPOSE) exec backend rm /tmp/import.sql
 
 ## @category Clean
 

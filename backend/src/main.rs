@@ -1,5 +1,4 @@
 use std::net::SocketAddr;
-use std::sync::{Arc, Mutex};
 
 use anyhow::Context;
 use rust::database::init_database;
@@ -9,11 +8,11 @@ use rust::routes::create_router;
 async fn main() -> anyhow::Result<()> {
     env_logger::init();
 
-    let database = init_database().context("Failed to initialize database")?;
+    let database_url = std::env::var("DATABASE_URL").context("DATABASE_URL env var not set")?;
 
-    let shared_database = Arc::new(Mutex::new(database));
+    let pool = init_database(&database_url).await?;
 
-    let app = create_router(shared_database);
+    let app = create_router(pool);
 
     let address = SocketAddr::from(([0, 0, 0, 0], 4000));
 

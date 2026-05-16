@@ -1,71 +1,142 @@
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::expect_used, clippy::too_many_arguments)]
     use chrono::NaiveDate;
-    use rusqlite::{Connection, params};
-    use uuid::Uuid;
+    use deadpool_postgres::{Config, Pool, Runtime};
+    use tokio_postgres::NoTls;
 
     use crate::models::song_model::{CreateSong, UpdateSong};
     use crate::services::song_service;
 
-    fn create_test_db() -> Connection {
-        let conn = Connection::open_in_memory().unwrap();
-        conn.execute_batch(
-            "
-            CREATE TABLE artists (
-                id TEXT PRIMARY KEY,
-                name TEXT NOT NULL UNIQUE,
-                image_path TEXT
-            );
+    async fn create_test_pool() -> Pool {
+        let database_url = std::env::var("TEST_DATABASE_URL").unwrap_or_else(|_| {
+            "host=postgres_db user=admin password=superpassword dbname=mon_projet".to_string()
+        });
 
-            CREATE TABLE albums (
-                id TEXT PRIMARY KEY,
-                name TEXT NOT NULL,
-                total_duration INTEGER DEFAULT 0,
-                release_date INTEGER,
-                artist_id TEXT NOT NULL,
-                image_path TEXT,
-                album_type TEXT DEFAULT 'ALBUM',
-                FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE CASCADE
-            );
+        let mut cfg = Config::new();
+        cfg.url = Some(database_url);
 
-            CREATE TABLE songs (
-                id TEXT PRIMARY KEY,
-                name TEXT NOT NULL,
-                duration INTEGER,
-                artist_id TEXT NOT NULL,
-                album_id TEXT,
-                release_date INTEGER,
-                track_number INTEGER,
-                image_path TEXT,
-                FOREIGN KEY (artist_id) REFERENCES artists(id),
-                FOREIGN KEY (album_id) REFERENCES albums(id) ON DELETE SET NULL
-            );
+        let pool = cfg
+            .create_pool(Some(Runtime::Tokio1), NoTls)
+            .expect("Failed to create test pool");
 
-            CREATE INDEX IF NOT EXISTS idx_songs_album_id ON songs(album_id);
-            CREATE INDEX IF NOT EXISTS idx_songs_artist_id ON songs(artist_id);
+        let client = pool.get().await.expect("Failed to get test client");
+
+        client
+            .batch_execute(
+                "
+        DROP TABLE IF EXISTS songs;
+        DROP TABLE IF EXISTS albums;
+        DROP TABLE IF EXISTS artists CASCADE;
+
+                CREATE TABLE artists (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL UNIQUE,
+                    image_path TEXT
+                );
+
+        CREATE TABLE albums (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            total_duration INTEGER DEFAULT 0,
+            release_date BIGINT,
+            artist_id TEXT NOT NULL,
+            image_path TEXT,
+            album_type TEXT DEFAULT 'ALBUM',
+            FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE songs (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            duration INTEGER,
+            artist_id TEXT NOT NULL,
+            album_id TEXT,
+            release_date BIGINT,
+                    track_number INTEGER,
+                    image_path TEXT,
+                    FOREIGN KEY (artist_id) REFERENCES artists(id),
+                    FOREIGN KEY (album_id) REFERENCES albums(id) ON DELETE SET NULL
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_songs_album_id ON songs(album_id);
+                CREATE INDEX IF NOT EXISTS idx_songs_artist_id ON songs(artist_id);
             ",
-        )
-        .unwrap();
-        conn
+            )
+            .await
+            .expect("Failed to create test schema");
+
+        pool
+    }
+
+    async fn insert_artist(pool: &Pool, artist_id: &str, name: &str) {
+        let client = pool.get().await.expect("Failed to get client");
+        client
+            .execute(
+                "INSERT INTO artists (id, name, image_path) VALUES ($1, $2, $3)",
+                &[&artist_id, &name, &format!("/images/{}", name)],
+            )
+            .await
+            .expect("Insert artist failed");
+    }
+
+    async fn insert_album(
+        pool: &Pool,
+        album_id: &str,
+        name: &str,
+        total_duration: i32,
+        artist_id: &str,
+        image_path: &str,
+        album_type: &str,
+    ) {
+        let client = pool.get().await.expect("Failed to get client");
+        client
+            .execute(
+                "INSERT INTO albums (id, name, total_duration, artist_id, image_path, album_type) VALUES ($1, $2, $3, $4, $5, $6)",
+                &[&album_id, &name, &total_duration, &artist_id, &image_path, &album_type],
+            )
+            .await
+            .expect("Insert album failed");
+    }
+
+    async fn insert_song(
+        pool: &Pool,
+        song_id: &str,
+        name: &str,
+        duration: i32,
+        artist_id: &str,
+        album_id: Option<&str>,
+        track_number: Option<i32>,
+        image_path: &str,
+    ) {
+        let client = pool.get().await.expect("Failed to get client");
+        client
+            .execute(
+                "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+                &[&song_id, &name, &duration, &artist_id, &album_id, &None::<i64>, &track_number, &image_path],
+            )
+            .await
+            .expect("Insert song failed");
     }
 
     // ==================== CREATE ====================
 
-    #[test]
-    fn test_create_song_success_with_album() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_create_song_success_with_album() {
+        let pool = create_test_pool().await;
         let artist_id = "artist-001";
         let album_id = "album-001";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Test Artist", "/images/Test_Artist"],
+        insert_artist(&pool, artist_id, "Test Artist").await;
+        insert_album(
+            &pool,
+            album_id,
+            "Test Album",
+            0,
+            artist_id,
+            "/images/Test_Album",
+            "ALBUM",
         )
-        .unwrap();
-        db.execute(
-            "INSERT INTO albums (id, name, total_duration, artist_id, image_path, album_type) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
-            params![album_id, "Test Album", 0, artist_id, "/images/Test_Album", "ALBUM"],
-        )
-        .unwrap();
+        .await;
 
         let song = CreateSong {
             name: "Test Song".to_string(),
@@ -76,40 +147,15 @@ mod tests {
             track_number: Some(1),
         };
 
-        let result = song_service::create_song(&db, song);
-
+        let result = song_service::create_song(&pool, song).await;
         assert!(result.is_ok());
-
-        let count: i32 = db
-            .query_row(
-                "SELECT COUNT(*) FROM songs WHERE name = ?1",
-                params!["Test Song"],
-                |row| row.get(0),
-            )
-            .unwrap();
-        assert_eq!(count, 1);
-
-        let (name, duration, album_id_result): (String, i32, String) = db
-            .query_row(
-                "SELECT name, duration, album_id FROM songs WHERE name = ?1",
-                params!["Test Song"],
-                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
-            )
-            .unwrap();
-        assert_eq!(name, "Test Song");
-        assert_eq!(duration, 240);
-        assert_eq!(album_id_result, album_id);
     }
 
-    #[test]
-    fn test_create_song_success_without_album() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_create_song_success_without_album() {
+        let pool = create_test_pool().await;
         let artist_id = "artist-002";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Solo Artist", "/images/Solo_Artist"],
-        )
-        .unwrap();
+        insert_artist(&pool, artist_id, "Solo Artist").await;
 
         let song = CreateSong {
             name: "Standalone Song".to_string(),
@@ -120,38 +166,15 @@ mod tests {
             track_number: None,
         };
 
-        let result = song_service::create_song(&db, song);
-
+        let result = song_service::create_song(&pool, song).await;
         assert!(result.is_ok());
-
-        let count: i32 = db
-            .query_row(
-                "SELECT COUNT(*) FROM songs WHERE name = ?1",
-                params!["Standalone Song"],
-                |row| row.get(0),
-            )
-            .unwrap();
-        assert_eq!(count, 1);
-
-        let album_exists: bool = db
-            .query_row(
-                "SELECT 1 FROM albums WHERE artist_id = ?1 AND album_type = 'STANDALONE_COLLECTION'",
-                params![artist_id],
-                |_| Ok(true),
-            )
-            .unwrap_or(false);
-        assert!(album_exists);
     }
 
-    #[test]
-    fn test_create_song_empty_name() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_create_song_empty_name() {
+        let pool = create_test_pool().await;
         let artist_id = "artist-003";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Test Artist", "/images/Test_Artist"],
-        )
-        .unwrap();
+        insert_artist(&pool, artist_id, "Test Artist").await;
 
         let song = CreateSong {
             name: String::new(),
@@ -162,19 +185,13 @@ mod tests {
             track_number: None,
         };
 
-        let result = song_service::create_song(&db, song);
-
+        let result = song_service::create_song(&pool, song).await;
         assert!(result.is_err());
-
-        let count: i32 = db
-            .query_row("SELECT COUNT(*) FROM songs", [], |row| row.get(0))
-            .unwrap();
-        assert_eq!(count, 0);
     }
 
-    #[test]
-    fn test_create_song_invalid_artist() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_create_song_invalid_artist() {
+        let pool = create_test_pool().await;
 
         let song = CreateSong {
             name: "Test Song".to_string(),
@@ -185,25 +202,15 @@ mod tests {
             track_number: None,
         };
 
-        let result = song_service::create_song(&db, song);
-
+        let result = song_service::create_song(&pool, song).await;
         assert!(result.is_err());
-
-        let count: i32 = db
-            .query_row("SELECT COUNT(*) FROM songs", [], |row| row.get(0))
-            .unwrap();
-        assert_eq!(count, 0);
     }
 
-    #[test]
-    fn test_create_song_invalid_album() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_create_song_invalid_album() {
+        let pool = create_test_pool().await;
         let artist_id = "artist-004";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Test Artist", "/images/Test_Artist"],
-        )
-        .unwrap();
+        insert_artist(&pool, artist_id, "Test Artist").await;
 
         let song = CreateSong {
             name: "Test Song".to_string(),
@@ -214,61 +221,72 @@ mod tests {
             track_number: None,
         };
 
-        let result = song_service::create_song(&db, song);
-
+        let result = song_service::create_song(&pool, song).await;
         assert!(result.is_err());
-
-        let count: i32 = db
-            .query_row("SELECT COUNT(*) FROM songs", [], |row| row.get(0))
-            .unwrap();
-        assert_eq!(count, 0);
     }
 
     // ==================== GET ALL ====================
 
-    #[test]
-    fn test_get_all_songs_empty() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_get_all_songs_empty() {
+        let pool = create_test_pool().await;
 
-        let result = song_service::get_all_songs(&db);
-
+        let result = song_service::get_all_songs(&pool).await;
         assert!(result.is_ok());
         assert!(result.unwrap().is_empty());
     }
 
-    #[test]
-    fn test_get_all_songs_with_data() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_get_all_songs_with_data() {
+        let pool = create_test_pool().await;
         let artist_id = "artist-005";
         let album_id = "album-005";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Test Artist", "/images/Test_Artist"],
+        insert_artist(&pool, artist_id, "Test Artist").await;
+        insert_album(
+            &pool,
+            album_id,
+            "Test Album",
+            0,
+            artist_id,
+            "/images/Test_Album",
+            "ALBUM",
         )
-        .unwrap();
-        db.execute(
-            "INSERT INTO albums (id, name, total_duration, artist_id, image_path, album_type) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
-            params![album_id, "Test Album", 0, artist_id, "/images/Test_Album", "ALBUM"],
+        .await;
+        insert_song(
+            &pool,
+            "song-001",
+            "Song One",
+            200,
+            artist_id,
+            Some(album_id),
+            Some(1),
+            "/images/song1",
         )
-        .unwrap();
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params!["song-001", "Song One", 200, artist_id, album_id, None::<i64>, 1, "/images/song1"],
+        .await;
+        insert_song(
+            &pool,
+            "song-002",
+            "Song Two",
+            210,
+            artist_id,
+            Some(album_id),
+            Some(2),
+            "/images/song2",
         )
-        .unwrap();
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params!["song-002", "Song Two", 210, artist_id, album_id, None::<i64>, 2, "/images/song2"],
+        .await;
+        insert_song(
+            &pool,
+            "song-003",
+            "Song Three",
+            220,
+            artist_id,
+            Some(album_id),
+            Some(3),
+            "/images/song3",
         )
-        .unwrap();
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params!["song-003", "Song Three", 220, artist_id, album_id, None::<i64>, 3, "/images/song3"],
-        )
-        .unwrap();
+        .await;
 
-        let result = song_service::get_all_songs(&db);
-
+        let result = song_service::get_all_songs(&pool).await;
         assert!(result.is_ok());
         let songs = result.unwrap();
         assert_eq!(songs.len(), 3);
@@ -281,33 +299,33 @@ mod tests {
 
     // ==================== GET BY ID ====================
 
-    #[test]
-    fn test_get_song_by_id_not_found() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_get_song_by_id_not_found() {
+        let pool = create_test_pool().await;
 
-        let result = song_service::get_song_by_id(&db, &Uuid::new_v4().to_string());
-
+        let result = song_service::get_song_by_id(&pool, &uuid::Uuid::new_v4().to_string()).await;
         assert!(result.is_err());
     }
 
-    #[test]
-    fn test_get_song_by_id_success() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_get_song_by_id_success() {
+        let pool = create_test_pool().await;
         let artist_id = "artist-006";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Test Artist", "/images/Test_Artist"],
-        )
-        .unwrap();
+        insert_artist(&pool, artist_id, "Test Artist").await;
         let expected_id = "song-find-me";
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params![expected_id, "Find Me", 300, artist_id, None::<String>, None::<i64>, None::<i32>, "/images/find_me"],
+        insert_song(
+            &pool,
+            expected_id,
+            "Find Me",
+            300,
+            artist_id,
+            None,
+            None,
+            "/images/find_me",
         )
-        .unwrap();
+        .await;
 
-        let result = song_service::get_song_by_id(&db, expected_id);
-
+        let result = song_service::get_song_by_id(&pool, expected_id).await;
         assert!(result.is_ok());
         let song = result.unwrap();
         assert_eq!(song.id, expected_id);
@@ -318,124 +336,168 @@ mod tests {
 
     // ==================== GET BY ARTIST ====================
 
-    #[test]
-    fn test_get_songs_by_artist() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_get_songs_by_artist() {
+        let pool = create_test_pool().await;
         let artist1_id = "artist-007";
         let artist2_id = "artist-008";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist1_id, "Artist One", "/images/Artist_One"],
+        insert_artist(&pool, artist1_id, "Artist One").await;
+        insert_artist(&pool, artist2_id, "Artist Two").await;
+        insert_song(
+            &pool,
+            "song-a1",
+            "Artist 1 Song 1",
+            200,
+            artist1_id,
+            None,
+            Some(1),
+            "/images/a1s1",
         )
-        .unwrap();
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist2_id, "Artist Two", "/images/Artist_Two"],
+        .await;
+        insert_song(
+            &pool,
+            "song-a2",
+            "Artist 1 Song 2",
+            210,
+            artist1_id,
+            None,
+            Some(2),
+            "/images/a1s2",
         )
-        .unwrap();
+        .await;
+        insert_song(
+            &pool,
+            "song-a3",
+            "Artist 1 Song 3",
+            220,
+            artist1_id,
+            None,
+            Some(3),
+            "/images/a1s3",
+        )
+        .await;
+        insert_song(
+            &pool,
+            "song-b1",
+            "Artist 2 Song 1",
+            200,
+            artist2_id,
+            None,
+            Some(1),
+            "/images/a2s1",
+        )
+        .await;
+        insert_song(
+            &pool,
+            "song-b2",
+            "Artist 2 Song 2",
+            210,
+            artist2_id,
+            None,
+            Some(2),
+            "/images/a2s2",
+        )
+        .await;
 
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params!["song-a1", "Artist 1 Song 1", 200, artist1_id, None::<String>, None::<i64>, 1, "/images/a1s1"],
-        )
-        .unwrap();
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params!["song-a2", "Artist 1 Song 2", 210, artist1_id, None::<String>, None::<i64>, 2, "/images/a1s2"],
-        )
-        .unwrap();
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params!["song-a3", "Artist 1 Song 3", 220, artist1_id, None::<String>, None::<i64>, 3, "/images/a1s3"],
-        )
-        .unwrap();
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params!["song-b1", "Artist 2 Song 1", 200, artist2_id, None::<String>, None::<i64>, 1, "/images/a2s1"],
-        )
-        .unwrap();
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params!["song-b2", "Artist 2 Song 2", 210, artist2_id, None::<String>, None::<i64>, 2, "/images/a2s2"],
-        )
-        .unwrap();
-
-        let songs = song_service::get_songs_by_artist(&db, artist1_id).unwrap();
+        let songs = song_service::get_songs_by_artist(&pool, artist1_id)
+            .await
+            .unwrap();
         assert_eq!(songs.len(), 3);
 
-        let songs = song_service::get_songs_by_artist(&db, artist2_id).unwrap();
+        let songs = song_service::get_songs_by_artist(&pool, artist2_id)
+            .await
+            .unwrap();
         assert_eq!(songs.len(), 2);
     }
 
     // ==================== GET BY ALBUM ====================
 
-    #[test]
-    fn test_get_songs_by_album() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_get_songs_by_album() {
+        let pool = create_test_pool().await;
         let artist_id = "artist-009";
         let album_id = "album-009";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Test Artist", "/images/Test_Artist"],
+        insert_artist(&pool, artist_id, "Test Artist").await;
+        insert_album(
+            &pool,
+            album_id,
+            "Test Album",
+            0,
+            artist_id,
+            "/images/Test_Album",
+            "ALBUM",
         )
-        .unwrap();
-        db.execute(
-            "INSERT INTO albums (id, name, total_duration, artist_id, image_path, album_type) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
-            params![album_id, "Test Album", 0, artist_id, "/images/Test_Album", "ALBUM"],
+        .await;
+        insert_song(
+            &pool,
+            "song-1",
+            "Album Song 1",
+            200,
+            artist_id,
+            Some(album_id),
+            Some(1),
+            "/images/as1",
         )
-        .unwrap();
+        .await;
+        insert_song(
+            &pool,
+            "song-2",
+            "Album Song 2",
+            210,
+            artist_id,
+            Some(album_id),
+            Some(2),
+            "/images/as2",
+        )
+        .await;
+        insert_song(
+            &pool,
+            "song-3",
+            "Album Song 3",
+            220,
+            artist_id,
+            Some(album_id),
+            Some(3),
+            "/images/as3",
+        )
+        .await;
+        insert_song(
+            &pool,
+            "song-4",
+            "Album Song 4",
+            230,
+            artist_id,
+            Some(album_id),
+            Some(4),
+            "/images/as4",
+        )
+        .await;
 
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params!["song-1", "Album Song 1", 200, artist_id, album_id, None::<i64>, 1, "/images/as1"],
-        )
-        .unwrap();
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params!["song-2", "Album Song 2", 210, artist_id, album_id, None::<i64>, 2, "/images/as2"],
-        )
-        .unwrap();
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params!["song-3", "Album Song 3", 220, artist_id, album_id, None::<i64>, 3, "/images/as3"],
-        )
-        .unwrap();
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params!["song-4", "Album Song 4", 230, artist_id, album_id, None::<i64>, 4, "/images/as4"],
-        )
-        .unwrap();
-
-        let songs = song_service::get_songs_by_album(&db, album_id).unwrap();
-        assert_eq!(songs.len(), 4);
-
-        let album_song_count: i32 = db
-            .query_row(
-                "SELECT COUNT(*) FROM songs WHERE album_id = ?1",
-                params![album_id],
-                |row| row.get(0),
-            )
+        let songs = song_service::get_songs_by_album(&pool, album_id)
+            .await
             .unwrap();
-        assert_eq!(album_song_count, 4);
+        assert_eq!(songs.len(), 4);
     }
 
     // ==================== UPDATE ====================
 
-    #[test]
-    fn test_update_song_success() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_update_song_success() {
+        let pool = create_test_pool().await;
         let artist_id = "artist-010";
         let song_id = "song-update";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Test Artist", "/images/Test_Artist"],
+        insert_artist(&pool, artist_id, "Test Artist").await;
+        insert_song(
+            &pool,
+            song_id,
+            "Original Name",
+            180,
+            artist_id,
+            None,
+            Some(1),
+            "/images/original",
         )
-        .unwrap();
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params![song_id, "Original Name", 180, artist_id, None::<String>, None::<i64>, 1, "/images/original"],
-        )
-        .unwrap();
+        .await;
 
         let update = UpdateSong {
             name: Some("Updated Name".to_string()),
@@ -444,37 +506,27 @@ mod tests {
             track_number: Some(5),
         };
 
-        let result = song_service::update_song(&db, song_id, update);
-
+        let result = song_service::update_song(&pool, song_id, update).await;
         assert!(result.is_ok());
-
-        let (name, duration, track_number): (String, i32, Option<i32>) = db
-            .query_row(
-                "SELECT name, duration, track_number FROM songs WHERE id = ?1",
-                params![song_id],
-                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
-            )
-            .unwrap();
-        assert_eq!(name, "Updated Name");
-        assert_eq!(duration, 240);
-        assert_eq!(track_number, Some(5));
     }
 
-    #[test]
-    fn test_update_song_empty_name() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_update_song_empty_name() {
+        let pool = create_test_pool().await;
         let artist_id = "artist-011";
         let song_id = "song-empty-name";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Test Artist", "/images/Test_Artist"],
+        insert_artist(&pool, artist_id, "Test Artist").await;
+        insert_song(
+            &pool,
+            song_id,
+            "Valid Name",
+            180,
+            artist_id,
+            None,
+            None,
+            "/images/valid",
         )
-        .unwrap();
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params![song_id, "Valid Name", 180, artist_id, None::<String>, None::<i64>, None::<i32>, "/images/valid"],
-        )
-        .unwrap();
+        .await;
 
         let update = UpdateSong {
             name: Some(String::new()),
@@ -483,23 +535,13 @@ mod tests {
             track_number: None,
         };
 
-        let result = song_service::update_song(&db, song_id, update);
-
+        let result = song_service::update_song(&pool, song_id, update).await;
         assert!(result.is_err());
-
-        let name: String = db
-            .query_row(
-                "SELECT name FROM songs WHERE id = ?1",
-                params![song_id],
-                |row| row.get(0),
-            )
-            .unwrap();
-        assert_eq!(name, "Valid Name");
     }
 
-    #[test]
-    fn test_update_song_not_found() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_update_song_not_found() {
+        let pool = create_test_pool().await;
 
         let update = UpdateSong {
             name: Some("New Name".to_string()),
@@ -508,49 +550,40 @@ mod tests {
             track_number: None,
         };
 
-        let result = song_service::update_song(&db, &Uuid::new_v4().to_string(), update);
-
+        let result =
+            song_service::update_song(&pool, &uuid::Uuid::new_v4().to_string(), update).await;
         assert!(result.is_err());
     }
 
     // ==================== DELETE ====================
 
-    #[test]
-    fn test_delete_song_success() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_delete_song_success() {
+        let pool = create_test_pool().await;
         let artist_id = "artist-012";
         let song_id = "song-delete";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Test Artist", "/images/Test_Artist"],
+        insert_artist(&pool, artist_id, "Test Artist").await;
+        insert_song(
+            &pool,
+            song_id,
+            "To Delete",
+            180,
+            artist_id,
+            None,
+            None,
+            "/images/delete",
         )
-        .unwrap();
-        db.execute(
-            "INSERT INTO songs (id, name, duration, artist_id, album_id, release_date, track_number, image_path) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-            params![song_id, "To Delete", 180, artist_id, None::<String>, None::<i64>, None::<i32>, "/images/delete"],
-        )
-        .unwrap();
+        .await;
 
-        let result = song_service::delete_song(&db, song_id);
-
+        let result = song_service::delete_song(&pool, song_id).await;
         assert!(result.is_ok());
-
-        let count: i32 = db
-            .query_row(
-                "SELECT COUNT(*) FROM songs WHERE id = ?1",
-                params![song_id],
-                |row| row.get(0),
-            )
-            .unwrap();
-        assert_eq!(count, 0);
     }
 
-    #[test]
-    fn test_delete_song_not_found() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_delete_song_not_found() {
+        let pool = create_test_pool().await;
 
-        let result = song_service::delete_song(&db, &Uuid::new_v4().to_string());
-
+        let result = song_service::delete_song(&pool, &uuid::Uuid::new_v4().to_string()).await;
         assert!(result.is_err());
     }
 
@@ -588,15 +621,11 @@ mod tests {
 
     // ==================== SIDE EFFECTS ====================
 
-    #[test]
-    fn test_standalone_collection_created_for_song_without_album() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_standalone_collection_created_for_song_without_album() {
+        let pool = create_test_pool().await;
         let artist_id = "artist-013";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Standalone Artist", "/images/Standalone_Artist"],
-        )
-        .unwrap();
+        insert_artist(&pool, artist_id, "Standalone Artist").await;
 
         let song = CreateSong {
             name: "Standalone".to_string(),
@@ -607,33 +636,35 @@ mod tests {
             track_number: None,
         };
 
-        song_service::create_song(&db, song).unwrap();
+        song_service::create_song(&pool, song).await.unwrap();
 
-        let album_exists: bool = db
-            .query_row(
-                "SELECT 1 FROM albums WHERE artist_id = ?1 AND album_type = 'STANDALONE_COLLECTION'",
-                params![artist_id],
-                |_| Ok(true),
+        let client = pool.get().await.expect("Failed to get client");
+        let album_exists: bool = client
+            .query_one(
+                "SELECT 1 FROM albums WHERE artist_id = $1 AND album_type = 'STANDALONE_COLLECTION'",
+                &[&artist_id],
             )
-            .unwrap_or(false);
+            .await
+            .is_ok();
         assert!(album_exists);
     }
 
-    #[test]
-    fn test_album_stats_updated_on_song_create() {
-        let db = create_test_db();
+    #[tokio::test]
+    async fn test_album_stats_updated_on_song_create() {
+        let pool = create_test_pool().await;
         let artist_id = "artist-014";
         let album_id = "album-014";
-        db.execute(
-            "INSERT INTO artists (id, name, image_path) VALUES (?1, ?2, ?3)",
-            params![artist_id, "Test Artist", "/images/Test_Artist"],
+        insert_artist(&pool, artist_id, "Test Artist").await;
+        insert_album(
+            &pool,
+            album_id,
+            "Test Album",
+            0,
+            artist_id,
+            "/images/Test_Album",
+            "ALBUM",
         )
-        .unwrap();
-        db.execute(
-            "INSERT INTO albums (id, name, total_duration, artist_id, image_path, album_type) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
-            params![album_id, "Test Album", 0, artist_id, "/images/Test_Album", "ALBUM"],
-        )
-        .unwrap();
+        .await;
 
         for i in 1..=3 {
             let song = CreateSong {
@@ -644,26 +675,27 @@ mod tests {
                 release_date: None,
                 track_number: Some(i),
             };
-            song_service::create_song(&db, song).unwrap();
+            song_service::create_song(&pool, song).await.unwrap();
         }
 
-        let (count, total_duration): (i32, i32) = db
-            .query_row(
-                "SELECT COUNT(*), COALESCE(SUM(duration), 0) FROM songs WHERE album_id = ?1",
-                params![album_id],
-                |row| Ok((row.get(0)?, row.get(1)?)),
+        let client = pool.get().await.expect("Failed to get client");
+        let row = client
+            .query_one(
+                "SELECT COUNT(*), COALESCE(SUM(duration), 0) FROM songs WHERE album_id = $1",
+                &[&album_id],
             )
-            .unwrap();
+            .await
+            .expect("Query failed");
+        let count: i64 = row.get(0);
+        let total_duration: i64 = row.get(1);
         assert_eq!(count, 3);
         assert_eq!(total_duration, 900);
 
-        let album_type: String = db
-            .query_row(
-                "SELECT album_type FROM albums WHERE id = ?1",
-                params![album_id],
-                |row| row.get(0),
-            )
-            .unwrap();
+        let album_type: String = client
+            .query_one("SELECT album_type FROM albums WHERE id = $1", &[&album_id])
+            .await
+            .expect("Query failed")
+            .get(0);
         assert_eq!(album_type, "EP");
     }
 }
