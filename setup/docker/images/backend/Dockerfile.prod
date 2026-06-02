@@ -9,6 +9,8 @@ RUN apt-get update -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY backend/Cargo.toml /app/
+COPY backend/database /app/database
+COPY backend/clorinde /app/clorinde
 COPY backend/src /app/src
 
 RUN cargo build --release
