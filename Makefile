@@ -38,6 +38,27 @@ endif
 fix-backend:
 	$(COMPOSE) exec backend cargo fix -p rust
 
+## @description Generate Clorinde query types from SQL files (requires init-db first)
+## @depends up-backend
+generate-clorinde:
+	$(COMPOSE) exec -T backend sh -c 'command -v clorinde >/dev/null 2>&1 || cargo install clorinde'
+	$(COMPOSE) exec -T postgres_db sh -c 'createdb -U "$${POSTGRES_USER}" "$${POSTGRES_DB}" 2>/dev/null || psql -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}" -c "SELECT 1" >/dev/null'
+	$(COMPOSE) exec -T -e POSTGRES_USER -e POSTGRES_PASSWORD -e POSTGRES_DB -e POSTGRES_PORT -u $(shell id -u):$(shell id -g) backend sh -c 'clorinde live "postgres://$${POSTGRES_USER}:$${POSTGRES_PASSWORD}@postgres_db:$${POSTGRES_PORT}/$${POSTGRES_DB}"'
+	$(COMPOSE) exec -T backend chown -R $(shell id -u):$(shell id -g) clorinde
+	$(COMPOSE) exec -T -u $(shell id -u):$(shell id -g) backend cargo fmt --manifest-path clorinde/Cargo.toml
+
+## @description Apply database migrations
+## @depends up-backend
+init-db:
+	$(COMPOSE) exec -T postgres_db sh -c 'createdb -U "$${POSTGRES_USER}" "$${POSTGRES_DB}" 2>/dev/null || psql -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}" -c "SELECT 1" >/dev/null'
+	$(COMPOSE) exec -T -e POSTGRES_USER -e POSTGRES_PASSWORD -e POSTGRES_DB -e POSTGRES_PORT backend sh -c 'DATABASE_URL="postgres://$${POSTGRES_USER}:$${POSTGRES_PASSWORD}@postgres_db:$${POSTGRES_PORT}/$${POSTGRES_DB}" cargo run --bin database_setup'
+
+## @description Drop application tables and re-apply database migrations
+## @depends up-backend
+reset-db:
+	$(COMPOSE) exec -T postgres_db sh -c 'createdb -U "$${POSTGRES_USER}" "$${POSTGRES_DB}" 2>/dev/null || psql -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}" -c "SELECT 1" >/dev/null'
+	$(COMPOSE) exec -T -e POSTGRES_USER -e POSTGRES_PASSWORD -e POSTGRES_DB -e POSTGRES_PORT backend sh -c 'DATABASE_URL="postgres://$${POSTGRES_USER}:$${POSTGRES_PASSWORD}@postgres_db:$${POSTGRES_PORT}/$${POSTGRES_DB}" cargo run --bin database_setup -- --reset'
+
 ## @category Run
 
 ## @description Run backend in release mode
@@ -159,7 +180,8 @@ clear: clear-backend clear-db clear-vuejs
 ## @description Run backend tests
 ## @depends up-backend
 test:
-	$(COMPOSE) exec -T backend cargo test -- --test-threads=1
+	$(COMPOSE) exec -T postgres_db sh -c 'test_db="$${POSTGRES_DB}_test"; createdb -U "$${POSTGRES_USER}" "$$test_db" 2>/dev/null || psql -U "$${POSTGRES_USER}" -d "$$test_db" -c "SELECT 1" >/dev/null'
+	$(COMPOSE) exec -T -e POSTGRES_USER -e POSTGRES_PASSWORD -e POSTGRES_DB -e POSTGRES_PORT backend sh -c 'TEST_DATABASE_URL="postgres://$${POSTGRES_USER}:$${POSTGRES_PASSWORD}@postgres_db:$${POSTGRES_PORT}/$${POSTGRES_DB}_test" cargo test -- --test-threads=1'
 
 ## @category Prod
 
