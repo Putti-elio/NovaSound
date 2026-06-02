@@ -35,7 +35,6 @@ coverage/
 *.tmp
 
 # === Cargo / Rust ===
- backend/clorinde/
 *.db
 Cargo.lock
 *.rs.bk
@@ -52,3 +51,8 @@ docs/rust-learning/
 docs/PROJECT_SUMMARY.md
 opencode.json
 AGENTS.md
+
+# MemPalace per-project files (issue #185)
+mempalace.yaml
+entities.json
+.mempalace/
