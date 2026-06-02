@@ -9,6 +9,33 @@ use crate::models::song_model::AlbumType;
 use crate::utils::log_and_context_error;
 
 #[named]
+fn map_album(album: clorinde::queries::albums::Album) -> AppResult<Album> {
+    let total_duration = u32::try_from(album.total_duration).map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Invalid album total_duration value in DB",
+            file!(),
+            function_name!(),
+        ))
+    })?;
+
+    let release_date = album
+        .release_date
+        .and_then(|ts| chrono::DateTime::from_timestamp(ts, 0).map(|dt| dt.date_naive()));
+    let album_type = album.album_type.parse().unwrap_or(AlbumType::Album);
+
+    Ok(Album {
+        id: album.id,
+        name: album.name,
+        total_duration,
+        release_date,
+        artist_id: album.artist_id,
+        image_path: album.image_path,
+        album_type,
+    })
+}
+
+#[named]
 pub async fn get_all_albums(pool: &Pool) -> AppResult<Vec<Album>> {
     let client = pool.get().await.map_err(|err| {
         AppError::Internal(log_and_context_error(
@@ -19,43 +46,23 @@ pub async fn get_all_albums(pool: &Pool) -> AppResult<Vec<Album>> {
         ))
     })?;
 
-    let rows = client
-        .query(
-            "SELECT id, name, total_duration, release_date, artist_id, image_path, album_type FROM albums",
-            &[],
-        )
+    let albums = clorinde::queries::albums::get_all_albums()
+        .bind(&client)
+        .all()
         .await
         .map_err(|err| {
             AppError::Internal(log_and_context_error(
                 err,
-        "Failed to query albums",
-            file!(),
-            function_name!(),
-        ))
-    })?;
+                "Failed to query albums",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
-    let albums = rows
-        .iter()
-        .map(|row| {
-            let total_duration_i32: i32 = row.get(2);
-            let release_date_timestamp: Option<i64> = row.get(3);
-            let release_date = release_date_timestamp
-                .and_then(|ts| chrono::DateTime::from_timestamp(ts, 0).map(|dt| dt.date_naive()));
-
-            let album_type_str: String = row.get(6);
-            let album_type = album_type_str.parse().unwrap_or(AlbumType::Album);
-
-            Album {
-                id: row.get(0),
-                name: row.get(1),
-                total_duration: total_duration_i32 as u32,
-                release_date,
-                artist_id: row.get(4),
-                image_path: row.get(5),
-                album_type,
-            }
-        })
-        .collect();
+    let albums = albums
+        .into_iter()
+        .map(map_album)
+        .collect::<AppResult<Vec<_>>>()?;
 
     Ok(albums)
 }
@@ -71,39 +78,21 @@ pub async fn get_album_by_id(pool: &Pool, id: &str) -> AppResult<Album> {
         ))
     })?;
 
-    let row = client
-        .query_opt(
-            "SELECT id, name, total_duration, release_date, artist_id, image_path, album_type FROM albums WHERE id = $1",
-            &[&id],
-        )
+    let album = clorinde::queries::albums::get_album_by_id()
+        .bind(&client, &id)
+        .opt()
         .await
         .map_err(|err| {
             AppError::Internal(log_and_context_error(
                 err,
-        "Failed to get album",
-            file!(),
-            function_name!(),
-        ))
-    })?
-    .ok_or_else(|| AppError::NotFound(format!("Album with id '{}' not found", id)))?;
+                "Failed to get album",
+                file!(),
+                function_name!(),
+            ))
+        })?
+        .ok_or_else(|| AppError::NotFound(format!("Album with id '{}' not found", id)))?;
 
-    let total_duration_i32: i32 = row.get(2);
-    let release_date_timestamp: Option<i64> = row.get(3);
-    let release_date = release_date_timestamp
-        .and_then(|ts| chrono::DateTime::from_timestamp(ts, 0).map(|dt| dt.date_naive()));
-
-    let album_type_str: String = row.get(6);
-    let album_type = album_type_str.parse().unwrap_or(AlbumType::Album);
-
-    Ok(Album {
-        id: row.get(0),
-        name: row.get(1),
-        total_duration: total_duration_i32 as u32,
-        release_date,
-        artist_id: row.get(4),
-        image_path: row.get(5),
-        album_type,
-    })
+    map_album(album)
 }
 
 #[named]
@@ -117,43 +106,23 @@ pub async fn get_albums_by_artist(pool: &Pool, artist_id: &str) -> AppResult<Vec
         ))
     })?;
 
-    let rows = client
-        .query(
-            "SELECT id, name, total_duration, release_date, artist_id, image_path, album_type FROM albums WHERE artist_id = $1",
-            &[&artist_id],
-        )
+    let albums = clorinde::queries::albums::get_albums_by_artist()
+        .bind(&client, &artist_id)
+        .all()
         .await
         .map_err(|err| {
             AppError::Internal(log_and_context_error(
                 err,
-        "Failed to query albums by artist",
-            file!(),
-            function_name!(),
-        ))
-    })?;
+                "Failed to query albums by artist",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
-    let albums = rows
-        .iter()
-        .map(|row| {
-            let total_duration_i32: i32 = row.get(2);
-            let release_date_timestamp: Option<i64> = row.get(3);
-            let release_date = release_date_timestamp
-                .and_then(|ts| chrono::DateTime::from_timestamp(ts, 0).map(|dt| dt.date_naive()));
-
-            let album_type_str: String = row.get(6);
-            let album_type = album_type_str.parse().unwrap_or(AlbumType::Album);
-
-            Album {
-                id: row.get(0),
-                name: row.get(1),
-                total_duration: total_duration_i32 as u32,
-                release_date,
-                artist_id: row.get(4),
-                image_path: row.get(5),
-                album_type,
-            }
-        })
-        .collect();
+    let albums = albums
+        .into_iter()
+        .map(map_album)
+        .collect::<AppResult<Vec<_>>>()?;
 
     Ok(albums)
 }
@@ -175,10 +144,19 @@ pub async fn create_album(pool: &Pool, album: CreateAlbum) -> AppResult<String> 
         ))
     })?;
 
-    let artist_exists: bool = client
-        .query_one("SELECT 1 FROM artists WHERE id = $1", &[&album.artist_id])
+    let artist_exists = clorinde::queries::artists::check_artist_by_id()
+        .bind(&client, &album.artist_id)
+        .opt()
         .await
-        .is_ok();
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to check artist existence",
+                file!(),
+                function_name!(),
+            ))
+        })?
+        .is_some();
 
     if !artist_exists {
         return Err(AppError::Validation(format!(
@@ -187,13 +165,19 @@ pub async fn create_album(pool: &Pool, album: CreateAlbum) -> AppResult<String> 
         )));
     }
 
-    let existing: bool = client
-        .query_one(
-            "SELECT 1 FROM albums WHERE name = $1 AND artist_id = $2",
-            &[&album.name, &album.artist_id],
-        )
+    let existing = clorinde::queries::albums::check_album_by_name_and_artist()
+        .bind(&client, &album.name, &album.artist_id)
+        .opt()
         .await
-        .is_ok();
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to check album existence",
+                file!(),
+                function_name!(),
+            ))
+        })?
+        .is_some();
 
     if existing {
         return Err(AppError::Validation(format!(
@@ -210,19 +194,17 @@ pub async fn create_album(pool: &Pool, album: CreateAlbum) -> AppResult<String> 
         .map(|d| d.and_time(NaiveTime::MIN).and_utc().timestamp());
 
     let album_type = album.album_type.unwrap_or(AlbumType::Album);
+    let album_type_str = album_type.as_ref();
 
-    client
-        .execute(
-            "INSERT INTO albums (id, name, total_duration, release_date, artist_id, image_path, album_type)
-            VALUES ($1, $2, 0, $3, $4, $5, $6)",
-            &[
-                &id as &(dyn tokio_postgres::types::ToSql + Sync),
-                &album.name,
-                &release_date_timestamp,
-                &album.artist_id,
-                &image_path,
-                &album_type.as_ref() as &(dyn tokio_postgres::types::ToSql + Sync),
-            ],
+    clorinde::queries::albums::insert_album()
+        .bind(
+            &client,
+            &id,
+            &album.name,
+            &release_date_timestamp,
+            &album.artist_id,
+            &image_path,
+            &album_type_str,
         )
         .await
         .map_err(|err| {
@@ -248,10 +230,19 @@ pub async fn update_album(pool: &Pool, id: &str, album: UpdateAlbum) -> AppResul
         ))
     })?;
 
-    let existing: bool = client
-        .query_one("SELECT 1 FROM albums WHERE id = $1", &[&id])
+    let existing = clorinde::queries::albums::check_album_by_id()
+        .bind(&client, &id)
+        .opt()
         .await
-        .is_ok();
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to check album existence",
+                file!(),
+                function_name!(),
+            ))
+        })?
+        .is_some();
 
     if !existing {
         return Err(AppError::NotFound(format!(
@@ -260,33 +251,28 @@ pub async fn update_album(pool: &Pool, id: &str, album: UpdateAlbum) -> AppResul
         )));
     }
 
-    let mut set_clauses = Vec::new();
-    let mut param_idx = 1;
-    let mut params: Vec<Box<dyn tokio_postgres::types::ToSql + Send + Sync>> = Vec::new();
-
-    if let Some(name) = album.name {
-        if name.trim().is_empty() {
-            return Err(AppError::Validation(
-                "Album name cannot be empty".to_string(),
-            ));
-        }
-        set_clauses.push(format!("name = ${}", param_idx));
-        params.push(Box::new(name));
-        param_idx += 1;
+    if let Some(ref name) = album.name
+        && name.trim().is_empty()
+    {
+        return Err(AppError::Validation(
+            "Album name cannot be empty".to_string(),
+        ));
     }
 
-    if let Some(release_date) = album.release_date {
-        let timestamp = release_date.and_time(NaiveTime::MIN).and_utc().timestamp();
-        set_clauses.push(format!("release_date = ${}", param_idx));
-        params.push(Box::new(timestamp));
-        param_idx += 1;
-    }
-
-    if let Some(artist_id) = album.artist_id {
-        let artist_exists: bool = client
-            .query_one("SELECT 1 FROM artists WHERE id = $1", &[&artist_id])
+    if let Some(ref artist_id) = album.artist_id {
+        let artist_exists = clorinde::queries::artists::check_artist_by_id()
+            .bind(&client, &artist_id)
+            .opt()
             .await
-            .is_ok();
+            .map_err(|err| {
+                AppError::Internal(log_and_context_error(
+                    err,
+                    "Failed to check artist existence",
+                    file!(),
+                    function_name!(),
+                ))
+            })?
+            .is_some();
 
         if !artist_exists {
             return Err(AppError::Validation(format!(
@@ -294,32 +280,31 @@ pub async fn update_album(pool: &Pool, id: &str, album: UpdateAlbum) -> AppResul
                 artist_id
             )));
         }
-
-        set_clauses.push(format!("artist_id = ${}", param_idx));
-        params.push(Box::new(artist_id));
-        param_idx += 1;
     }
 
-    if set_clauses.is_empty() {
+    if album.name.is_none() && album.release_date.is_none() && album.artist_id.is_none() {
         return Ok(());
     }
 
-    set_clauses.push(format!("id = ${}", param_idx));
-    params.push(Box::new(id.to_string()));
+    let release_date_timestamp = album
+        .release_date
+        .map(|d| d.and_time(NaiveTime::MIN).and_utc().timestamp());
 
-    let query = format!(
-        "UPDATE albums SET {} WHERE id = ${}",
-        set_clauses.join(", "),
-        param_idx
-    );
+    let total_duration: Option<i32> = None;
+    let image_path: Option<String> = None;
+    let album_type: Option<String> = None;
 
-    let param_refs: Vec<&(dyn tokio_postgres::types::ToSql + Sync)> = params
-        .iter()
-        .map(|p| p.as_ref() as &(dyn tokio_postgres::types::ToSql + Sync))
-        .collect();
-
-    client
-        .execute(&query, param_refs.as_slice())
+    clorinde::queries::albums::update_album_partial()
+        .bind(
+            &client,
+            &album.name,
+            &release_date_timestamp,
+            &album.artist_id,
+            &total_duration,
+            &image_path,
+            &album_type,
+            &id,
+        )
         .await
         .map_err(|err| {
             AppError::Internal(log_and_context_error(
@@ -344,8 +329,8 @@ pub async fn delete_album(pool: &Pool, id: &str) -> AppResult<()> {
         ))
     })?;
 
-    let rows_deleted = client
-        .execute("DELETE FROM albums WHERE id = $1", &[&id])
+    let rows_deleted = clorinde::queries::albums::delete_album()
+        .bind(&client, &id)
         .await
         .map_err(|err| {
             AppError::Internal(log_and_context_error(
@@ -377,11 +362,9 @@ pub async fn update_album_duration(pool: &Pool, album_id: &str) -> AppResult<()>
         ))
     })?;
 
-    let total_duration: i32 = client
-        .query_one(
-            "SELECT COALESCE(SUM(duration), 0) FROM songs WHERE album_id = $1",
-            &[&album_id],
-        )
+    let total_duration_i64 = clorinde::queries::albums::calc_album_duration()
+        .bind(&client, &album_id)
+        .one()
         .await
         .map_err(|err| {
             AppError::Internal(log_and_context_error(
@@ -390,14 +373,19 @@ pub async fn update_album_duration(pool: &Pool, album_id: &str) -> AppResult<()>
                 file!(),
                 function_name!(),
             ))
-        })?
-        .get::<_, i64>(0) as i32;
+        })?;
 
-    client
-        .execute(
-            "UPDATE albums SET total_duration = $1 WHERE id = $2",
-            &[&total_duration, &album_id],
-        )
+    let total_duration = i32::try_from(total_duration_i64).map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Album duration is out of range",
+            file!(),
+            function_name!(),
+        ))
+    })?;
+
+    clorinde::queries::albums::update_album_duration()
+        .bind(&client, &total_duration, &album_id)
         .await
         .map_err(|err| {
             AppError::Internal(log_and_context_error(
