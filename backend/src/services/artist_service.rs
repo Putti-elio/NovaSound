@@ -6,6 +6,14 @@ use crate::errors::{AppError, AppResult};
 use crate::models::artist_model::Artist;
 use crate::utils::log_and_context_error;
 
+fn map_artist(artist: clorinde::queries::artists::Artist) -> Artist {
+    Artist {
+        id: artist.id,
+        name: artist.name,
+        image_path: artist.image_path,
+    }
+}
+
 #[named]
 pub async fn get_all_artists(pool: &Pool) -> AppResult<Vec<Artist>> {
     let client = pool.get().await.map_err(|err| {
@@ -17,28 +25,20 @@ pub async fn get_all_artists(pool: &Pool) -> AppResult<Vec<Artist>> {
         ))
     })?;
 
-    let rows = client
-        .query("SELECT id, name, image_path FROM artists", &[])
+    let artists = clorinde::queries::artists::get_all_artists()
+        .bind(&client)
+        .all()
         .await
         .map_err(|err| {
             AppError::Internal(log_and_context_error(
                 err,
-                "Failed to execute the artist query",
+                "Failed to get artists",
                 file!(),
                 function_name!(),
             ))
         })?;
 
-    let artists = rows
-        .iter()
-        .map(|row| Artist {
-            id: row.get(0),
-            name: row.get(1),
-            image_path: row.get(2),
-        })
-        .collect();
-
-    Ok(artists)
+    Ok(artists.into_iter().map(map_artist).collect())
 }
 
 #[named]
@@ -58,10 +58,19 @@ pub async fn create_artist(pool: &Pool, name: &str) -> AppResult<()> {
         ))
     })?;
 
-    let exists: bool = client
-        .query_one("SELECT 1 FROM artists WHERE name = $1", &[&name])
+    let exists = clorinde::queries::artists::check_artist_by_name()
+        .bind(&client, &name)
+        .opt()
         .await
-        .is_ok();
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to check artist existence",
+                file!(),
+                function_name!(),
+            ))
+        })?
+        .is_some();
 
     if exists {
         return Err(AppError::Validation(format!(
@@ -73,11 +82,8 @@ pub async fn create_artist(pool: &Pool, name: &str) -> AppResult<()> {
     let id = Uuid::new_v4().to_string();
     let image_path = "/images/".to_owned() + name;
 
-    client
-        .execute(
-            "INSERT INTO artists (id, name, image_path) VALUES ($1, $2, $3)",
-            &[&id, &name, &image_path],
-        )
+    clorinde::queries::artists::insert_artist()
+        .bind(&client, &id, &name, &image_path)
         .await
         .map_err(|err| {
             AppError::Internal(log_and_context_error(
@@ -102,27 +108,21 @@ pub async fn get_artist(pool: &Pool, id: &String) -> AppResult<Artist> {
         ))
     })?;
 
-    let row = client
-        .query_opt(
-            "SELECT id, name, image_path FROM artists WHERE id = $1",
-            &[id],
-        )
+    let artist = clorinde::queries::artists::get_artist_by_id()
+        .bind(&client, id)
+        .opt()
         .await
         .map_err(|err| {
             AppError::Internal(log_and_context_error(
                 err,
-                "Failed to execute the artist query",
+                "Failed to get artist",
                 file!(),
                 function_name!(),
             ))
         })?
         .ok_or_else(|| AppError::NotFound(format!("Artist with id '{}' not found", id)))?;
 
-    Ok(Artist {
-        id: row.get(0),
-        name: row.get(1),
-        image_path: row.get(2),
-    })
+    Ok(map_artist(artist))
 }
 
 #[named]
@@ -142,11 +142,10 @@ pub async fn update_artist(pool: &Pool, id: &str, name: &str) -> AppResult<()> {
         ))
     })?;
 
-    let rows_updated = client
-        .execute(
-            "UPDATE artists SET name = $1, image_path = $2 WHERE id = $3",
-            &[&name, &format!("/images/{}", name), &id],
-        )
+    let image_path = format!("/images/{name}");
+
+    let rows_updated = clorinde::queries::artists::update_artist()
+        .bind(&client, &name, &image_path, &id)
         .await
         .map_err(|err| {
             AppError::Internal(log_and_context_error(
@@ -178,8 +177,8 @@ pub async fn delete_artist(pool: &Pool, id: &str) -> AppResult<()> {
         ))
     })?;
 
-    let rows_deleted = client
-        .execute("DELETE FROM artists WHERE id = $1", &[&id])
+    let rows_deleted = clorinde::queries::artists::delete_artist()
+        .bind(&client, &id)
         .await
         .map_err(|err| {
             AppError::Internal(log_and_context_error(

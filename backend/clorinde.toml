@@ -1,0 +1,14 @@
+queries = "database/queries"
+destination = "clorinde"
+sync = false
+async = true
+params-only = false
+
+[types]
+derive-traits = []
+
+[manifest.package]
+name = "clorinde"
+version = "0.1.0"
+edition = "2021"
+publish = false
