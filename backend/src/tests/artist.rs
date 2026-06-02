@@ -4,12 +4,13 @@ mod tests {
     use deadpool_postgres::{Config, Pool, Runtime};
     use tokio_postgres::NoTls;
 
+    use crate::migrations::{apply_migrations, reset_database};
     use crate::services::artist_service;
 
     async fn create_test_pool() -> Pool {
-        let database_url = std::env::var("TEST_DATABASE_URL").unwrap_or_else(|_| {
-            "host=postgres_db user=admin password=superpassword dbname=mon_projet".to_string()
-        });
+        let database_url = std::env::var("TEST_DATABASE_URL")
+            .or_else(|_| std::env::var("DATABASE_URL"))
+            .expect("TEST_DATABASE_URL or DATABASE_URL must be set");
 
         let mut cfg = Config::new();
         cfg.url = Some(database_url);
@@ -18,51 +19,15 @@ mod tests {
             .create_pool(Some(Runtime::Tokio1), NoTls)
             .expect("Failed to create test pool");
 
-        let client = pool.get().await.expect("Failed to get test client");
+        let mut client = pool.get().await.expect("Failed to get test client");
 
-        client
-            .batch_execute(
-                "
-                DROP TABLE IF EXISTS songs;
-                DROP TABLE IF EXISTS albums;
-                DROP TABLE IF EXISTS artists CASCADE;
-
-                CREATE TABLE artists (
-                    id TEXT PRIMARY KEY,
-                    name TEXT NOT NULL UNIQUE,
-                    image_path TEXT
-                );
-
-                CREATE TABLE albums (
-                    id TEXT PRIMARY KEY,
-                    name TEXT NOT NULL,
-                    total_duration INTEGER DEFAULT 0,
-                    release_date BIGINT,
-                    artist_id TEXT NOT NULL,
-                    image_path TEXT,
-                    album_type TEXT DEFAULT 'ALBUM',
-                    FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE CASCADE
-                );
-
-                CREATE TABLE songs (
-                    id TEXT PRIMARY KEY,
-                    name TEXT NOT NULL,
-                    duration INTEGER,
-                    artist_id TEXT NOT NULL,
-                    album_id TEXT,
-                    release_date BIGINT,
-                    track_number INTEGER,
-                    image_path TEXT,
-                    FOREIGN KEY (artist_id) REFERENCES artists(id),
-                    FOREIGN KEY (album_id) REFERENCES albums(id) ON DELETE SET NULL
-                );
-
-                CREATE INDEX IF NOT EXISTS idx_songs_album_id ON songs(album_id);
-                CREATE INDEX IF NOT EXISTS idx_songs_artist_id ON songs(artist_id);
-                ",
-            )
+        reset_database(&client)
             .await
-            .expect("Failed to create test schema");
+            .expect("Failed to reset test schema");
+
+        apply_migrations(&mut client)
+            .await
+            .expect("Failed to apply test migrations");
 
         pool
     }
