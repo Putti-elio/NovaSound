@@ -11,6 +11,7 @@
 
 pub mod database;
 pub mod errors;
+pub mod migrations;
 pub mod models;
 pub mod routes;
 pub mod services;
