@@ -22,4 +22,5 @@ mod tests {
     mod album;
     mod artist;
     mod song;
+    pub mod test_helpers;
 }
