@@ -5,6 +5,9 @@
 | Command | Category | Description |
 | :--- | :--- | :--- |
 | [`make fix-backend`](#fix) | Fix | Auto-fix Rust backend issues |
+| [`make generate-clorinde`](#fix) | Fix | Generate Clorinde query types from SQL files (requires init-db first) |
+| [`make init-db`](#fix) | Fix | Apply database migrations |
+| [`make reset-db`](#fix) | Fix | Drop application tables and re-apply database migrations |
 | [`make run-backend-release`](#run) | Run | Run backend in release mode |
 | [`make run-backend`](#run) | Run | Run backend in development mode |
 | [`make run-backend-error`](#run) | Run | Run backend with error logging only |
@@ -13,22 +16,27 @@
 | [`make lint`](#lint) | Lint | Run CI-equivalent backend lint checks |
 | [`make fmt-backend`](#lint) | Lint | Format Rust backend code |
 | [`make fmt-check-backend`](#lint) | Lint | Check Rust backend code formatting |
-| [`make up`](#up) | Up | Start all services (backend + frontend) |
+| [`make up`](#up) | Up | Start all services (backend + postgres) |
 | [`make up-vuejs`](#up) | Up | Start frontend with hot-reload |
-| [`make up-backend`](#up) | Up | Start backend service |
+| [`make up-backend`](#up) | Up | Start backend service (with postgres dependency) |
+| [`make up-db`](#up) | Up | Start postgres service only |
 | [`make down`](#down) | Down | Stop all services |
 | [`make down-backend`](#down) | Down | Stop backend service |
+| [`make down-db`](#down) | Down | Stop postgres service |
 | [`make down-vuejs`](#down) | Down | Stop frontend service |
 | [`make sh-backend`](#shell) | Shell | Open backend container shell |
+| [`make sh-db`](#shell) | Shell | Open postgres container shell (psql) |
 | [`make sh-vuejs`](#shell) | Shell | Open frontend container shell |
 | [`make clear-backend`](#delete) | Delete | Delete backend container and image |
+| [`make clear-db`](#delete) | Delete | Delete postgres container, image, and data volume |
 | [`make clear-vuejs`](#delete) | Delete | Delete frontend container and image |
-| [`make clear`](#delete) | Delete | Delete all containers and images |
+| [`make clear`](#delete) | Delete | Delete all containers, images, and volumes |
 | [`make test`](#test) | Test | Run backend tests |
 | [`make build-prod`](#prod) | Prod | Build and tag backend production image |
 | [`make prod`](#prod) | Prod | Build, tag, and run backend in production mode |
 | [`make tag`](#prod) | Prod | Create a version tag (use TAG=v1.2.3 make tag) |
-| [`make import-sql`](#database) | Database | Import SQL file into database |
+| [`make export-db`](#database) | Database | Export postgres database to a SQL file |
+| [`make import-db`](#database) | Database | Import a SQL file into postgres database |
 | [`make clean-git`](#clean) | Clean | Clean deleted git branches |
 
 ---
@@ -38,10 +46,16 @@
 flowchart LR
     subgraph Fix[Fix]
         fix-backend(fix-backend)
+        generate-clorinde(generate-clorinde)
+        init-db(init-db)
+        reset-db(reset-db)
     end
     style Fix fill:transparent,stroke-dasharray: 5 5
     classDef cat0 fill:#E1F5FE,stroke:#01579B,stroke-width:2px,color:#000;
     class fix-backend cat0
+    class generate-clorinde cat0
+    class init-db cat0
+    class reset-db cat0
     subgraph Run[Run]
         run-backend-release(run-backend-release)
         run-backend(run-backend)
@@ -74,38 +88,46 @@ flowchart LR
         up(up)
         up-vuejs(up-vuejs)
         up-backend(up-backend)
+        up-db(up-db)
     end
     style Up fill:transparent,stroke-dasharray: 5 5
     classDef cat4 fill:#FFEBEE,stroke:#B71C1C,stroke-width:2px,color:#000;
     class up cat4
     class up-vuejs cat4
     class up-backend cat4
+    class up-db cat4
     subgraph Down[Down]
         down(down)
         down-backend(down-backend)
+        down-db(down-db)
         down-vuejs(down-vuejs)
     end
     style Down fill:transparent,stroke-dasharray: 5 5
     classDef cat5 fill:#ECEFF1,stroke:#263238,stroke-width:2px,color:#000;
     class down cat5
     class down-backend cat5
+    class down-db cat5
     class down-vuejs cat5
     subgraph Shell[Shell]
         sh-backend(sh-backend)
+        sh-db(sh-db)
         sh-vuejs(sh-vuejs)
     end
     style Shell fill:transparent,stroke-dasharray: 5 5
     classDef cat6 fill:#E1F5FE,stroke:#01579B,stroke-width:2px,color:#000;
     class sh-backend cat6
+    class sh-db cat6
     class sh-vuejs cat6
     subgraph Delete[Delete]
         clear-backend(clear-backend)
+        clear-db(clear-db)
         clear-vuejs(clear-vuejs)
         clear(clear)
     end
     style Delete fill:transparent,stroke-dasharray: 5 5
     classDef cat7 fill:#E8F5E9,stroke:#1B5E20,stroke-width:2px,color:#000;
     class clear-backend cat7
+    class clear-db cat7
     class clear-vuejs cat7
     class clear cat7
     subgraph Test[Test]
@@ -125,11 +147,13 @@ flowchart LR
     class prod cat9
     class tag cat9
     subgraph Database[Database]
-        import-sql(import-sql)
+        export-db(export-db)
+        import-db(import-db)
     end
     style Database fill:transparent,stroke-dasharray: 5 5
     classDef cat10 fill:#FFEBEE,stroke:#B71C1C,stroke-width:2px,color:#000;
-    class import-sql cat10
+    class export-db cat10
+    class import-db cat10
     subgraph Clean[Clean]
         clean-git(clean-git)
     end
@@ -138,6 +162,9 @@ flowchart LR
     class clean-git cat11
 
     fix-backend --> up-backend
+    generate-clorinde --> up-backend
+    init-db --> up-backend
+    reset-db --> up-backend
     check-backend --> up-backend
     lint-backend --> up-backend
     fmt-backend --> up-backend
@@ -154,6 +181,9 @@ flowchart LR
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
 | `make fix-backend` | Auto-fix Rust backend issues | `up-backend` | - |
+| `make generate-clorinde` | Generate Clorinde query types from SQL files (requires init-db first) | `up-backend` | - |
+| `make init-db` | Apply database migrations | `up-backend` | - |
+| `make reset-db` | Drop application tables and re-apply database migrations | `up-backend` | - |
 
 ### Run
 | Command | Description | Dependencies | Required Variables |
@@ -178,29 +208,33 @@ flowchart LR
 ### Up
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make up` | Start all services (backend + frontend) | - | - |
+| `make up` | Start all services (backend + postgres) | - | - |
 | `make up-vuejs` | Start frontend with hot-reload | - | - |
-| `make up-backend` | Start backend service | `check-backend` | - |
+| `make up-backend` | Start backend service (with postgres dependency) | `check-backend` | - |
+| `make up-db` | Start postgres service only | - | - |
 
 ### Down
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
 | `make down` | Stop all services | - | - |
 | `make down-backend` | Stop backend service | - | - |
+| `make down-db` | Stop postgres service | - | - |
 | `make down-vuejs` | Stop frontend service | - | - |
 
 ### Shell
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
 | `make sh-backend` | Open backend container shell | - | - |
+| `make sh-db` | Open postgres container shell (psql) | - | - |
 | `make sh-vuejs` | Open frontend container shell | - | - |
 
 ### Delete
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
 | `make clear-backend` | Delete backend container and image | - | - |
+| `make clear-db` | Delete postgres container, image, and data volume | - | - |
 | `make clear-vuejs` | Delete frontend container and image | - | - |
-| `make clear` | Delete all containers and images | - | - |
+| `make clear` | Delete all containers, images, and volumes | - | - |
 
 ### Test
 | Command | Description | Dependencies | Required Variables |
@@ -217,7 +251,8 @@ flowchart LR
 ### Database
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make import-sql` | Import SQL file into database | - | `sqlfile` |
+| `make export-db` | Export postgres database to a SQL file | - | `EXPORT_FILE` |
+| `make import-db` | Import a SQL file into postgres database | - | `sqlfile` |
 
 ### Clean
 | Command | Description | Dependencies | Required Variables |
