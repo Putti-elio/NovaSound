@@ -2,37 +2,11 @@
 mod tests {
     #![allow(clippy::expect_used, clippy::too_many_arguments)]
     use chrono::NaiveDate;
-    use deadpool_postgres::{Config, Pool, Runtime};
-    use tokio_postgres::NoTls;
+    use deadpool_postgres::Pool;
 
-    use crate::migrations::{apply_migrations, reset_database};
+    use crate::get_test_pool;
     use crate::models::song_model::{CreateSong, UpdateSong};
     use crate::services::song_service;
-
-    async fn create_test_pool() -> Pool {
-        let database_url = std::env::var("TEST_DATABASE_URL")
-            .or_else(|_| std::env::var("DATABASE_URL"))
-            .expect("TEST_DATABASE_URL or DATABASE_URL must be set");
-
-        let mut cfg = Config::new();
-        cfg.url = Some(database_url);
-
-        let pool = cfg
-            .create_pool(Some(Runtime::Tokio1), NoTls)
-            .expect("Failed to create test pool");
-
-        let mut client = pool.get().await.expect("Failed to get test client");
-
-        reset_database(&client)
-            .await
-            .expect("Failed to reset test schema");
-
-        apply_migrations(&mut client)
-            .await
-            .expect("Failed to apply test migrations");
-
-        pool
-    }
 
     async fn insert_artist(pool: &Pool, artist_id: &str, name: &str) {
         let client = pool.get().await.expect("Failed to get client");
@@ -88,7 +62,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_create_song_success_with_album() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let artist_id = "artist-001";
         let album_id = "album-001";
         insert_artist(&pool, artist_id, "Test Artist").await;
@@ -118,7 +92,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_create_song_success_without_album() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let artist_id = "artist-002";
         insert_artist(&pool, artist_id, "Solo Artist").await;
 
@@ -137,7 +111,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_create_song_empty_name() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let artist_id = "artist-003";
         insert_artist(&pool, artist_id, "Test Artist").await;
 
@@ -156,7 +130,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_create_song_invalid_artist() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
 
         let song = CreateSong {
             name: "Test Song".to_string(),
@@ -173,7 +147,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_create_song_invalid_album() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let artist_id = "artist-004";
         insert_artist(&pool, artist_id, "Test Artist").await;
 
@@ -194,7 +168,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_all_songs_empty() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
 
         let result = song_service::get_all_songs(&pool).await;
         assert!(result.is_ok());
@@ -203,7 +177,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_all_songs_with_data() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let artist_id = "artist-005";
         let album_id = "album-005";
         insert_artist(&pool, artist_id, "Test Artist").await;
@@ -266,7 +240,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_song_by_id_not_found() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
 
         let result = song_service::get_song_by_id(&pool, &uuid::Uuid::new_v4().to_string()).await;
         assert!(result.is_err());
@@ -274,7 +248,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_song_by_id_success() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let artist_id = "artist-006";
         insert_artist(&pool, artist_id, "Test Artist").await;
         let expected_id = "song-find-me";
@@ -303,7 +277,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_songs_by_artist() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let artist1_id = "artist-007";
         let artist2_id = "artist-008";
         insert_artist(&pool, artist1_id, "Artist One").await;
@@ -379,7 +353,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_songs_by_album() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let artist_id = "artist-009";
         let album_id = "album-009";
         insert_artist(&pool, artist_id, "Test Artist").await;
@@ -448,7 +422,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_update_song_success() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let artist_id = "artist-010";
         let song_id = "song-update";
         insert_artist(&pool, artist_id, "Test Artist").await;
@@ -477,7 +451,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_update_song_empty_name() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let artist_id = "artist-011";
         let song_id = "song-empty-name";
         insert_artist(&pool, artist_id, "Test Artist").await;
@@ -506,7 +480,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_update_song_not_found() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
 
         let update = UpdateSong {
             name: Some("New Name".to_string()),
@@ -524,7 +498,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_delete_song_success() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let artist_id = "artist-012";
         let song_id = "song-delete";
         insert_artist(&pool, artist_id, "Test Artist").await;
@@ -546,7 +520,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_delete_song_not_found() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
 
         let result = song_service::delete_song(&pool, &uuid::Uuid::new_v4().to_string()).await;
         assert!(result.is_err());
@@ -588,7 +562,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_standalone_collection_created_for_song_without_album() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let artist_id = "artist-013";
         insert_artist(&pool, artist_id, "Standalone Artist").await;
 
@@ -616,7 +590,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_album_stats_updated_on_song_create() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let artist_id = "artist-014";
         let album_id = "album-014";
         insert_artist(&pool, artist_id, "Test Artist").await;

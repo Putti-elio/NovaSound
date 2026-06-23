@@ -1,40 +1,12 @@
 #[cfg(test)]
 mod tests {
     #![allow(clippy::expect_used, clippy::too_many_arguments)]
-    use deadpool_postgres::{Config, Pool, Runtime};
-    use tokio_postgres::NoTls;
-
-    use crate::migrations::{apply_migrations, reset_database};
+    use crate::get_test_pool;
     use crate::services::artist_service;
-
-    async fn create_test_pool() -> Pool {
-        let database_url = std::env::var("TEST_DATABASE_URL")
-            .or_else(|_| std::env::var("DATABASE_URL"))
-            .expect("TEST_DATABASE_URL or DATABASE_URL must be set");
-
-        let mut cfg = Config::new();
-        cfg.url = Some(database_url);
-
-        let pool = cfg
-            .create_pool(Some(Runtime::Tokio1), NoTls)
-            .expect("Failed to create test pool");
-
-        let mut client = pool.get().await.expect("Failed to get test client");
-
-        reset_database(&client)
-            .await
-            .expect("Failed to reset test schema");
-
-        apply_migrations(&mut client)
-            .await
-            .expect("Failed to apply test migrations");
-
-        pool
-    }
 
     #[tokio::test]
     async fn test_create_artist_success() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
 
         let result = artist_service::create_artist(&pool, "Test Artist").await;
         assert!(result.is_ok());
@@ -53,7 +25,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_create_artist_empty_name() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
 
         let result = artist_service::create_artist(&pool, "").await;
         assert!(result.is_err());
@@ -61,7 +33,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_create_artist_whitespace_name() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
 
         let result = artist_service::create_artist(&pool, " ").await;
         assert!(result.is_err());
@@ -69,7 +41,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_create_artist_duplicate_name() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let client = pool.get().await.expect("Failed to get client");
         client
             .execute(
@@ -89,7 +61,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_all_artists_empty() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
 
         let result = artist_service::get_all_artists(&pool).await;
         assert!(result.is_ok());
@@ -98,7 +70,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_all_artists_with_data() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let client = pool.get().await.expect("Failed to get client");
         client
             .execute(
@@ -135,7 +107,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_artist_by_id_not_found() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
 
         let result = artist_service::get_artist(&pool, &uuid::Uuid::new_v4().to_string()).await;
         assert!(result.is_err());
@@ -143,7 +115,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_artist_by_id_success() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let client = pool.get().await.expect("Failed to get client");
         let expected_id = "test-uuid-123";
         client
@@ -164,7 +136,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_update_artist_success() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let client = pool.get().await.expect("Failed to get client");
         let artist_id = "update-uuid-456";
         client
@@ -193,7 +165,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_update_artist_empty_name() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let client = pool.get().await.expect("Failed to get client");
         let artist_id = "update-uuid-789";
         client
@@ -210,7 +182,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_update_artist_not_found() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
 
         let result =
             artist_service::update_artist(&pool, &uuid::Uuid::new_v4().to_string(), "New Name")
@@ -220,7 +192,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_delete_artist_success() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
         let client = pool.get().await.expect("Failed to get client");
         let artist_id = "delete-uuid-012";
         client
@@ -237,7 +209,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_delete_artist_not_found() {
-        let pool = create_test_pool().await;
+        let pool = get_test_pool!();
 
         let result = artist_service::delete_artist(&pool, &uuid::Uuid::new_v4().to_string()).await;
         assert!(result.is_err());

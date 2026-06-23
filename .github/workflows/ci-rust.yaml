@@ -1,103 +1,130 @@
 name: CI Rust
 
 on:
-    push:
-        branches: [main, develop]
-        paths:
-            - "backend/**"
-            - "setup/ci/versions"
-            - ".github/workflows/ci-rust.yaml"
-    pull_request:
-        branches: [main, develop]
-        paths:
-            - "backend/**"
-            - "setup/ci/versions"
-            - ".github/workflows/ci-rust.yaml"
-    workflow_dispatch:
+  push:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+      - "setup/ci/versions"
+      - ".github/workflows/ci-rust.yaml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+      - "setup/ci/versions"
+      - ".github/workflows/ci-rust.yaml"
+  workflow_dispatch:
 
 permissions:
-    contents: read
+  contents: read
 
 concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
-    CARGO_TERM_COLOR: always
+  CARGO_TERM_COLOR: always
 
 jobs:
-    rust-lint:
-        runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: backend
-        steps:
-            - uses: actions/checkout@v6
+  rust-lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v6
 
-            - name: Load tool versions
-              run: grep -Ev '^\s*(#|$)' ../setup/ci/versions >> "$GITHUB_ENV"
+      - name: Load tool versions
+        run: grep -Ev '^\s*(#|$)' ../setup/ci/versions >> "$GITHUB_ENV"
 
-            - name: Setup Rust
-              uses: dtolnay/rust-toolchain@stable
-              with:
-                  toolchain: ${{ env.RUST_VERSION }}
-                  components: rustfmt, clippy
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          components: rustfmt, clippy
 
-            - name: Cache Cargo
-              uses: Swatinem/rust-cache@v2
-              with:
-                  workspaces: backend -> target
+      - name: Cache Cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: backend -> target
 
-            - name: Rustfmt check
-              run: cargo fmt --all -- --check
+      - name: Rustfmt check
+        run: cargo fmt --all -- --check
 
-            - name: Clippy check
-              run: cargo clippy --all-targets -- -D warnings
+      - name: Clippy check
+        run: cargo clippy --all-targets -- -D warnings
 
-    rust-test:
-        runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: backend
-        steps:
-            - uses: actions/checkout@v6
+  rust-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
 
-            - name: Load tool versions
-              run: grep -Ev '^\s*(#|$)' ../setup/ci/versions >> "$GITHUB_ENV"
+    env:
+      POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+      POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+      POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+      POSTGRES_HOST: ${{ vars.POSTGRES_HOST }}
 
-            - name: Setup Rust
-              uses: dtolnay/rust-toolchain@stable
-              with:
-                  toolchain: ${{ env.RUST_VERSION }}
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
-            - name: Cache Cargo
-              uses: Swatinem/rust-cache@v2
-              with:
-                  workspaces: backend -> target
+    steps:
+      - uses: actions/checkout@v6
 
-            - name: Run tests
-              run: cargo test --all-targets
+      - name: Load tool versions
+        run: grep -Ev '^\s*(#|$)' ../setup/ci/versions >> "$GITHUB_ENV"
 
-    rust-build:
-        runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: backend
-        steps:
-            - uses: actions/checkout@v6
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
 
-            - name: Load tool versions
-              run: grep -Ev '^\s*(#|$)' ../setup/ci/versions >> "$GITHUB_ENV"
+      - name: Cache Cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: backend -> target
 
-            - name: Setup Rust
-              uses: dtolnay/rust-toolchain@stable
-              with:
-                  toolchain: ${{ env.RUST_VERSION }}
+      - name: Run tests
+        run: cargo test --workspace --all-targets -- --test-threads=1
+        env:
+          TEST_DATABASE_URL: postgres://${{ env.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@${{ env.POSTGRES_HOST }}:${{ env.POSTGRES_PORT }}/${{ env.POSTGRES_DB }}
 
-            - name: Cache Cargo
-              uses: Swatinem/rust-cache@v2
-              with:
-                  workspaces: backend -> target
+      - name: Run doc tests
+        run: cargo test --workspace --doc
 
-            - name: Build release
-              run: cargo build --release
+  rust-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Load tool versions
+        run: grep -Ev '^\s*(#|$)' ../setup/ci/versions >> "$GITHUB_ENV"
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+
+      - name: Cache Cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: backend -> target
+
+      - name: Build release
+        run: cargo build --release
