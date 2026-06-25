@@ -14,6 +14,10 @@ pub mod errors;
 pub mod migrations;
 pub mod models;
 pub mod routes;
+#[cfg(not(clippy))]
+pub mod rpc;
+#[cfg(clippy)]
+pub mod rpc {}
 pub mod services;
 pub mod utils;
 

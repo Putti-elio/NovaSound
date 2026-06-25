@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package novasound.artist.v1;
+
+message Artist {
+  string id = 1;
+  string name = 2;
+  string image_path = 3;
+}
+
+message GetArtistRequest {
+  string id = 1;
+}
+
+message ListArtistsRequest {}
+
+message ListArtistsResponse {
+  repeated Artist artists = 1;
+}
+
+message CreateArtistRequest {
+  string name = 1;
+}
+
+message CreateArtistResponse {
+  Artist artist = 1;
+}
+
+message UpdateArtistRequest {
+  string id = 1;
+  string name = 2;
+}
+
+message UpdateArtistResponse {
+  Artist artist = 1;
+}
+
+message DeleteArtistRequest {
+  string id = 1;
+}
+
+message DeleteArtistResponse {}
+
+service ArtistService {
+  rpc GetArtist(GetArtistRequest) returns (Artist);
+  rpc ListArtists(ListArtistsRequest) returns (ListArtistsResponse);
+  rpc CreateArtist(CreateArtistRequest) returns (CreateArtistResponse);
+  rpc UpdateArtist(UpdateArtistRequest) returns (UpdateArtistResponse);
+  rpc DeleteArtist(DeleteArtistRequest) returns (DeleteArtistResponse);
+}

@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package novasound.album.v1;
+
+enum AlbumType {
+  ALBUM_TYPE_UNSPECIFIED = 0;
+  ALBUM_TYPE_ALBUM = 1;
+  ALBUM_TYPE_EP = 2;
+  ALBUM_TYPE_SINGLE = 3;
+  ALBUM_TYPE_STANDALONE_COLLECTION = 4;
+}
+
+message Album {
+  string id = 1;
+  string name = 2;
+  uint32 total_duration = 3;
+  optional string release_date = 4;
+  string artist_id = 5;
+  optional string image_path = 6;
+  AlbumType album_type = 7;
+}
+
+message GetAlbumRequest {
+  string id = 1;
+}
+
+message ListAlbumsRequest {}
+
+message ListAlbumsResponse {
+  repeated Album albums = 1;
+}
+
+message CreateAlbumRequest {
+  string name = 1;
+  optional string release_date = 2;
+  string artist_id = 3;
+  optional AlbumType album_type = 4;
+}
+
+message CreateAlbumResponse {
+  Album album = 1;
+}
+
+message UpdateAlbumRequest {
+  string id = 1;
+  optional string name = 2;
+  optional string release_date = 3;
+  optional string artist_id = 4;
+}
+
+message UpdateAlbumResponse {
+  Album album = 1;
+}
+
+message DeleteAlbumRequest {
+  string id = 1;
+}
+
+message DeleteAlbumResponse {}
+
+service AlbumService {
+  rpc GetAlbum(GetAlbumRequest) returns (Album);
+  rpc ListAlbums(ListAlbumsRequest) returns (ListAlbumsResponse);
+  rpc CreateAlbum(CreateAlbumRequest) returns (CreateAlbumResponse);
+  rpc UpdateAlbum(UpdateAlbumRequest) returns (UpdateAlbumResponse);
+  rpc DeleteAlbum(DeleteAlbumRequest) returns (DeleteAlbumResponse);
+}
