@@ -128,7 +128,7 @@ pub async fn get_albums_by_artist(pool: &Pool, artist_id: &str) -> AppResult<Vec
 }
 
 #[named]
-pub async fn create_album(pool: &Pool, album: CreateAlbum) -> AppResult<String> {
+pub async fn create_album(pool: &Pool, album: CreateAlbum) -> AppResult<Album> {
     if album.name.trim().is_empty() {
         return Err(AppError::Validation(
             "Album name cannot be empty".to_string(),
@@ -216,11 +216,19 @@ pub async fn create_album(pool: &Pool, album: CreateAlbum) -> AppResult<String> 
             ))
         })?;
 
-    Ok(id)
+    Ok(Album {
+        id,
+        name: album.name,
+        total_duration: 0,
+        release_date: album.release_date,
+        artist_id: album.artist_id,
+        image_path: Some(image_path),
+        album_type,
+    })
 }
 
 #[named]
-pub async fn update_album(pool: &Pool, id: &str, album: UpdateAlbum) -> AppResult<()> {
+pub async fn update_album(pool: &Pool, id: &str, album: UpdateAlbum) -> AppResult<Album> {
     let client = pool.get().await.map_err(|err| {
         AppError::Internal(log_and_context_error(
             err,
@@ -230,7 +238,7 @@ pub async fn update_album(pool: &Pool, id: &str, album: UpdateAlbum) -> AppResul
         ))
     })?;
 
-    let existing = clorinde::queries::albums::check_album_by_id()
+    let existing_album = clorinde::queries::albums::get_album_by_id()
         .bind(&client, &id)
         .opt()
         .await
@@ -241,15 +249,12 @@ pub async fn update_album(pool: &Pool, id: &str, album: UpdateAlbum) -> AppResul
                 file!(),
                 function_name!(),
             ))
-        })?
-        .is_some();
+        })?;
 
-    if !existing {
-        return Err(AppError::NotFound(format!(
-            "Album with id '{}' not found",
-            id
-        )));
-    }
+    let existing_album = existing_album
+        .map(map_album)
+        .transpose()?
+        .ok_or_else(|| AppError::NotFound(format!("Album with id '{}' not found", id)))?;
 
     if let Some(ref name) = album.name
         && name.trim().is_empty()
@@ -283,7 +288,7 @@ pub async fn update_album(pool: &Pool, id: &str, album: UpdateAlbum) -> AppResul
     }
 
     if album.name.is_none() && album.release_date.is_none() && album.artist_id.is_none() {
-        return Ok(());
+        return Ok(existing_album);
     }
 
     let release_date_timestamp = album
@@ -315,7 +320,15 @@ pub async fn update_album(pool: &Pool, id: &str, album: UpdateAlbum) -> AppResul
             ))
         })?;
 
-    Ok(())
+    Ok(Album {
+        id: existing_album.id,
+        name: album.name.unwrap_or(existing_album.name),
+        total_duration: existing_album.total_duration,
+        release_date: album.release_date.or(existing_album.release_date),
+        artist_id: album.artist_id.unwrap_or(existing_album.artist_id),
+        image_path: existing_album.image_path,
+        album_type: existing_album.album_type,
+    })
 }
 
 #[named]

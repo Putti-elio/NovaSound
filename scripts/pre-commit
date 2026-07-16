@@ -2,15 +2,31 @@
 
 set -e
 
+COMPOSE="docker compose -f setup/docker/compose.yml -f setup/docker/docker-compose.dev.yml --env-file setup/docker/images/versions --env-file setup/docker/.env --project-directory ."
+
 echo "Running pre-commit checks..."
 
 echo "Checking for leaked secrets..."
-if git diff --cached --name-only | xargs grep -i -E "(api[_-]?key|secret[_-]?key|token|password|private[_-]?key)" 2>/dev/null | grep -v -E "(example|test|placeholder|//.*#)" > /dev/null; then
-    echo "ERROR: Potential API key or secret detected in staged files!"
-    echo "Please review and remove any sensitive values before committing."
-    exit 1
-fi
+
+# If the grep pipeline finds a match, it returns 0 (true), meaning a secret WAS found.
+if git diff --cached --name-only | \
+  xargs grep -n -I -E \
+  '((api[_-]?key|secret[_-]?key|access[_-]?token|refresh[_-]?token)[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9_./~+=-]{16,}|authorization[[:space:]]*[:=][[:space:]]*["'"'"']?Bearer[[:space:]]+[A-Za-z0-9_.-]+)' \
+  2>/dev/null | \
+  grep -v -E \
+  '(\$\{\{\s*secrets\.|\$\{\{\s*vars\.|process\.env|std::env|os\.environ|example|test|placeholder|dummy|mock|fixture)' \
+  > /dev/null; then
+  
+  echo "ERROR: Potential leaked secrets detected! Commit aborted."
+  exit 1
+else
 echo "No secrets detected."
+fi
+
+echo "Ensuring protoc is available in backend container..."
+if ! $COMPOSE exec -T backend sh -c 'command -v protoc >/dev/null'; then
+  $COMPOSE exec -T backend sh -c 'apt-get update && apt-get install -y protobuf-compiler'
+fi
 
 echo "Running clippy..."
 make lint-backend

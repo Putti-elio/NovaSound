@@ -1,8 +1,9 @@
 use std::net::SocketAddr;
 
 use anyhow::Context;
+use axum::Router;
 use rust::database::init_database;
-use rust::routes::create_router;
+use rust::services::connect::create_connect_router;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -12,7 +13,8 @@ async fn main() -> anyhow::Result<()> {
 
     let pool = init_database(&database_url).await?;
 
-    let app = create_router(pool);
+    let connect_router = create_connect_router(pool);
+    let app = Router::new().fallback_service(connect_router.into_axum_service());
 
     let address = SocketAddr::from(([0, 0, 0, 0], 4000));
 

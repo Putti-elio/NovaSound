@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package novasound.song.v1;
+
+message Song {
+  string id = 1;
+  string name = 2;
+  uint32 duration = 3;
+  string artist_id = 4;
+  optional string album_id = 5;
+  optional string release_date = 6;
+  optional int32 track_number = 7;
+  optional string image_path = 8;
+}
+
+message GetSongRequest {
+  string id = 1;
+}
+
+message GetSongsRequest {}
+
+message GetSongsResponse {
+  repeated Song songs = 1;
+}
+
+message CreateSongRequest {
+  string name = 1;
+  uint32 duration = 2;
+  string artist_id = 3;
+  optional string album_id = 4;
+  optional string release_date = 5;
+  optional int32 track_number = 6;
+}
+
+message CreateSongResponse {
+  Song song = 1;
+}
+
+message UpdateSongRequest {
+  string id = 1;
+  optional string name = 2;
+  optional uint32 duration = 3;
+  optional string release_date = 4;
+  optional int32 track_number = 5;
+}
+
+message UpdateSongResponse {
+  Song song = 1;
+}
+
+message DeleteSongRequest {
+  string id = 1;
+}
+
+message DeleteSongResponse {}
+
+service SongService {
+  rpc GetSong(GetSongRequest) returns (Song);
+  rpc GetSongs(GetSongsRequest) returns (GetSongsResponse);
+  rpc CreateSong(CreateSongRequest) returns (CreateSongResponse);
+  rpc UpdateSong(UpdateSongRequest) returns (UpdateSongResponse);
+  rpc DeleteSong(DeleteSongRequest) returns (DeleteSongResponse);
+}
