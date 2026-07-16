@@ -42,7 +42,7 @@ pub async fn get_all_artists(pool: &Pool) -> AppResult<Vec<Artist>> {
 }
 
 #[named]
-pub async fn create_artist(pool: &Pool, name: &str) -> AppResult<()> {
+pub async fn create_artist(pool: &Pool, name: &str) -> AppResult<Artist> {
     if name.trim().is_empty() {
         return Err(AppError::Validation(
             "Artist name cannot be empty".to_string(),
@@ -94,11 +94,15 @@ pub async fn create_artist(pool: &Pool, name: &str) -> AppResult<()> {
             ))
         })?;
 
-    Ok(())
+    Ok(Artist {
+        id,
+        name: name.to_string(),
+        image_path,
+    })
 }
 
 #[named]
-pub async fn get_artist(pool: &Pool, id: &String) -> AppResult<Artist> {
+pub async fn get_artist(pool: &Pool, id: &str) -> AppResult<Artist> {
     let client = pool.get().await.map_err(|err| {
         AppError::Internal(log_and_context_error(
             err,
@@ -109,7 +113,7 @@ pub async fn get_artist(pool: &Pool, id: &String) -> AppResult<Artist> {
     })?;
 
     let artist = clorinde::queries::artists::get_artist_by_id()
-        .bind(&client, id)
+        .bind(&client, &id)
         .opt()
         .await
         .map_err(|err| {
@@ -126,7 +130,7 @@ pub async fn get_artist(pool: &Pool, id: &String) -> AppResult<Artist> {
 }
 
 #[named]
-pub async fn update_artist(pool: &Pool, id: &str, name: &str) -> AppResult<()> {
+pub async fn update_artist(pool: &Pool, id: &str, name: &str) -> AppResult<Artist> {
     if name.trim().is_empty() {
         return Err(AppError::Validation(
             "Artist name cannot be empty".to_string(),
@@ -163,7 +167,11 @@ pub async fn update_artist(pool: &Pool, id: &str, name: &str) -> AppResult<()> {
         )));
     }
 
-    Ok(())
+    Ok(Artist {
+        id: id.to_string(),
+        name: name.to_string(),
+        image_path,
+    })
 }
 
 #[named]

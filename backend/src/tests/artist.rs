@@ -126,7 +126,7 @@ mod tests {
             .await
             .expect("Insert failed");
 
-        let result = artist_service::get_artist(&pool, &expected_id.to_string()).await;
+        let result = artist_service::get_artist(&pool, expected_id).await;
         assert!(result.is_ok());
         let artist = result.unwrap();
         assert_eq!(artist.id, expected_id);

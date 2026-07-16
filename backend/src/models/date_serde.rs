@@ -1,4 +1,4 @@
-const DATE_FORMAT: &str = "%d-%m-%Y";
+pub const DATE_FORMAT: &str = "%d-%m-%Y";
 
 pub mod option_naive_date_dmy {
     use chrono::NaiveDate;

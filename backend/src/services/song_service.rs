@@ -229,7 +229,7 @@ pub async fn get_songs_by_album(pool: &Pool, album_id: &str) -> AppResult<Vec<So
 }
 
 #[named]
-pub async fn create_song(pool: &Pool, song: CreateSong) -> AppResult<String> {
+pub async fn create_song(pool: &Pool, song: CreateSong) -> AppResult<Song> {
     if song.name.trim().is_empty() {
         return Err(AppError::Validation(
             "Song name cannot be empty".to_string(),
@@ -303,11 +303,20 @@ pub async fn create_song(pool: &Pool, song: CreateSong) -> AppResult<String> {
         update_album_duration_and_type(pool, alb_id).await?;
     }
 
-    Ok(id)
+    Ok(Song {
+        id,
+        name: song.name,
+        duration: song.duration,
+        artist_id: song.artist_id,
+        album_id,
+        release_date: song.release_date,
+        track_number: song.track_number,
+        image_path,
+    })
 }
 
 #[named]
-pub async fn update_song(pool: &Pool, id: &str, song: UpdateSong) -> AppResult<()> {
+pub async fn update_song(pool: &Pool, id: &str, song: UpdateSong) -> AppResult<Song> {
     let client = pool.get().await.map_err(|err| {
         AppError::Internal(log_and_context_error(
             err,
@@ -317,7 +326,7 @@ pub async fn update_song(pool: &Pool, id: &str, song: UpdateSong) -> AppResult<(
         ))
     })?;
 
-    let existing = clorinde::queries::songs::check_song_by_id()
+    let existing_song = clorinde::queries::songs::get_song_by_id()
         .bind(&client, &id)
         .opt()
         .await
@@ -328,15 +337,12 @@ pub async fn update_song(pool: &Pool, id: &str, song: UpdateSong) -> AppResult<(
                 file!(),
                 function_name!(),
             ))
-        })?
-        .is_some();
+        })?;
 
-    if !existing {
-        return Err(AppError::NotFound(format!(
-            "Song with id '{}' not found",
-            id
-        )));
-    }
+    let existing_song = existing_song
+        .map(map_song)
+        .transpose()?
+        .ok_or_else(|| AppError::NotFound(format!("Song with id '{}' not found", id)))?;
 
     if let Some(ref name) = song.name
         && name.trim().is_empty()
@@ -351,7 +357,7 @@ pub async fn update_song(pool: &Pool, id: &str, song: UpdateSong) -> AppResult<(
         && song.release_date.is_none()
         && song.track_number.is_none()
     {
-        return Ok(());
+        return Ok(existing_song);
     }
 
     let duration_i32 = song
@@ -408,7 +414,16 @@ pub async fn update_song(pool: &Pool, id: &str, song: UpdateSong) -> AppResult<(
         update_album_duration_and_type(pool, &alb_id).await?;
     }
 
-    Ok(())
+    Ok(Song {
+        id: existing_song.id,
+        name: song.name.unwrap_or(existing_song.name),
+        duration: song.duration.unwrap_or(existing_song.duration),
+        artist_id: existing_song.artist_id,
+        album_id: existing_song.album_id,
+        release_date: song.release_date.or(existing_song.release_date),
+        track_number: song.track_number.or(existing_song.track_number),
+        image_path: existing_song.image_path,
+    })
 }
 
 #[named]
