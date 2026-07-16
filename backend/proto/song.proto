@@ -17,9 +17,9 @@ message GetSongRequest {
   string id = 1;
 }
 
-message ListSongsRequest {}
+message GetSongsRequest {}
 
-message ListSongsResponse {
+message GetSongsResponse {
   repeated Song songs = 1;
 }
 
@@ -56,7 +56,7 @@ message DeleteSongResponse {}
 
 service SongService {
   rpc GetSong(GetSongRequest) returns (Song);
-  rpc ListSongs(ListSongsRequest) returns (ListSongsResponse);
+  rpc GetSongs(GetSongsRequest) returns (GetSongsResponse);
   rpc CreateSong(CreateSongRequest) returns (CreateSongResponse);
   rpc UpdateSong(UpdateSongRequest) returns (UpdateSongResponse);
   rpc DeleteSong(DeleteSongRequest) returns (DeleteSongResponse);

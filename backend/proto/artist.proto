@@ -12,9 +12,9 @@ message GetArtistRequest {
   string id = 1;
 }
 
-message ListArtistsRequest {}
+message GetArtistsRequest {}
 
-message ListArtistsResponse {
+message GetArtistsResponse {
   repeated Artist artists = 1;
 }
 
@@ -43,7 +43,7 @@ message DeleteArtistResponse {}
 
 service ArtistService {
   rpc GetArtist(GetArtistRequest) returns (Artist);
-  rpc ListArtists(ListArtistsRequest) returns (ListArtistsResponse);
+  rpc GetArtists(GetArtistsRequest) returns (GetArtistsResponse);
   rpc CreateArtist(CreateArtistRequest) returns (CreateArtistResponse);
   rpc UpdateArtist(UpdateArtistRequest) returns (UpdateArtistResponse);
   rpc DeleteArtist(DeleteArtistRequest) returns (DeleteArtistResponse);

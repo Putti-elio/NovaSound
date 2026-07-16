@@ -24,9 +24,9 @@ message GetAlbumRequest {
   string id = 1;
 }
 
-message ListAlbumsRequest {}
+message GetAlbumsRequest {}
 
-message ListAlbumsResponse {
+message GetAlbumsResponse {
   repeated Album albums = 1;
 }
 
@@ -60,7 +60,7 @@ message DeleteAlbumResponse {}
 
 service AlbumService {
   rpc GetAlbum(GetAlbumRequest) returns (Album);
-  rpc ListAlbums(ListAlbumsRequest) returns (ListAlbumsResponse);
+  rpc GetAlbums(GetAlbumsRequest) returns (GetAlbumsResponse);
   rpc CreateAlbum(CreateAlbumRequest) returns (CreateAlbumResponse);
   rpc UpdateAlbum(UpdateAlbumRequest) returns (UpdateAlbumResponse);
   rpc DeleteAlbum(DeleteAlbumRequest) returns (DeleteAlbumResponse);
