@@ -24,7 +24,7 @@ thiserror = "1.0"
 serde_json = "1.0"
 
 [build-dependencies]
-connectrpc-build = "0.3"
+connectrpc-build = "0.8"
 
 [lints.clippy]
 unwrap_used = "warn"
