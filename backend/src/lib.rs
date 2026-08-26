@@ -15,6 +15,7 @@ pub mod migrations;
 pub mod models;
 pub mod rpc;
 pub mod services;
+pub mod state;
 pub mod utils;
 
 #[cfg(test)]
