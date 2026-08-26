@@ -4,40 +4,40 @@
 ## Cheat Sheet
 | Command | Category | Description |
 | :--- | :--- | :--- |
-| [`make fix-backend`](#fix) | Fix | Auto-fix Rust backend issues |
-| [`make generate-clorinde`](#fix) | Fix | Generate Clorinde query types from SQL files (requires init-db first) |
-| [`make init-db`](#fix) | Fix | Apply database migrations |
-| [`make reset-db`](#fix) | Fix | Drop application tables and re-apply database migrations |
-| [`make run-backend-release`](#run) | Run | Run backend in release mode |
-| [`make run-backend`](#run) | Run | Run backend in development mode |
-| [`make run-backend-error`](#run) | Run | Run backend with error logging only |
-| [`make check-backend`](#check) | Check | Check Rust backend code (fast compilation) |
-| [`make lint-backend`](#lint) | Lint | Lint Rust backend code with Clippy |
-| [`make lint`](#lint) | Lint | Run CI-equivalent backend lint checks |
-| [`make fmt-backend`](#lint) | Lint | Format Rust backend code |
-| [`make fmt-check-backend`](#lint) | Lint | Check Rust backend code formatting |
-| [`make up`](#up) | Up | Start all services (backend + postgres) |
-| [`make up-vuejs`](#up) | Up | Start frontend with hot-reload |
-| [`make up-backend`](#up) | Up | Start backend service (with postgres dependency) |
-| [`make up-db`](#up) | Up | Start postgres service only |
-| [`make down`](#down) | Down | Stop all services |
-| [`make down-backend`](#down) | Down | Stop backend service |
-| [`make down-db`](#down) | Down | Stop postgres service |
-| [`make down-vuejs`](#down) | Down | Stop frontend service |
-| [`make sh-backend`](#shell) | Shell | Open backend container shell |
-| [`make sh-db`](#shell) | Shell | Open postgres container shell (psql) |
-| [`make sh-vuejs`](#shell) | Shell | Open frontend container shell |
-| [`make clear-backend`](#delete) | Delete | Delete backend container and image |
-| [`make clear-db`](#delete) | Delete | Delete postgres container, image, and data volume |
-| [`make clear-vuejs`](#delete) | Delete | Delete frontend container and image |
-| [`make clear`](#delete) | Delete | Delete all containers, images, and volumes |
-| [`make test`](#test) | Test | Run backend tests |
-| [`make build-prod`](#prod) | Prod | Build and tag backend production image |
-| [`make prod`](#prod) | Prod | Build, tag, and run backend in production mode |
-| [`make tag`](#prod) | Prod | Create a version tag (use TAG=v1.2.3 make tag) |
-| [`make export-db`](#database) | Database | Export postgres database to a SQL file |
-| [`make import-db`](#database) | Database | Import a SQL file into postgres database |
-| [`make clean-git`](#clean) | Clean | Clean deleted git branches |
+| [`make fix-backend`](#cmd-fix-backend) | [Fix](#cat-fix) | Auto-fix Rust backend issues |
+| [`make generate-clorinde`](#cmd-generate-clorinde) | [Fix](#cat-fix) | Generate Clorinde query types from SQL files (requires init-db first) |
+| [`make init-db`](#cmd-init-db) | [Fix](#cat-fix) | Apply database migrations |
+| [`make reset-db`](#cmd-reset-db) | [Fix](#cat-fix) | Drop application tables and re-apply database migrations |
+| [`make run-backend-release`](#cmd-run-backend-release) | [Run](#cat-run) | Run backend in release mode |
+| [`make run-backend`](#cmd-run-backend) | [Run](#cat-run) | Run backend in development mode |
+| [`make run-backend-error`](#cmd-run-backend-error) | [Run](#cat-run) | Run backend with error logging only |
+| [`make check-backend`](#cmd-check-backend) | [Check](#cat-check) | Check Rust backend code (fast compilation) |
+| [`make lint-backend`](#cmd-lint-backend) | [Lint](#cat-lint) | Lint Rust backend code with Clippy |
+| [`make lint`](#cmd-lint) | [Lint](#cat-lint) | Run CI-equivalent backend lint checks |
+| [`make fmt-backend`](#cmd-fmt-backend) | [Lint](#cat-lint) | Format Rust backend code |
+| [`make fmt-check-backend`](#cmd-fmt-check-backend) | [Lint](#cat-lint) | Check Rust backend code formatting |
+| [`make up`](#cmd-up) | [Up](#cat-up) | Start all services (backend + postgres) |
+| [`make up-vuejs`](#cmd-up-vuejs) | [Up](#cat-up) | Start frontend with hot-reload |
+| [`make up-backend`](#cmd-up-backend) | [Up](#cat-up) | Start backend service (with postgres dependency) |
+| [`make up-db`](#cmd-up-db) | [Up](#cat-up) | Start postgres service only |
+| [`make down`](#cmd-down) | [Down](#cat-down) | Stop all services |
+| [`make down-backend`](#cmd-down-backend) | [Down](#cat-down) | Stop backend service |
+| [`make down-db`](#cmd-down-db) | [Down](#cat-down) | Stop postgres service |
+| [`make down-vuejs`](#cmd-down-vuejs) | [Down](#cat-down) | Stop frontend service |
+| [`make sh-backend`](#cmd-sh-backend) | [Shell](#cat-shell) | Open backend container shell |
+| [`make sh-db`](#cmd-sh-db) | [Shell](#cat-shell) | Open postgres container shell (psql) |
+| [`make sh-vuejs`](#cmd-sh-vuejs) | [Shell](#cat-shell) | Open frontend container shell |
+| [`make clear-backend`](#cmd-clear-backend) | [Delete](#cat-delete) | Delete backend container and image |
+| [`make clear-db`](#cmd-clear-db) | [Delete](#cat-delete) | Delete postgres container, image, and data volume |
+| [`make clear-vuejs`](#cmd-clear-vuejs) | [Delete](#cat-delete) | Delete frontend container and image |
+| [`make clear`](#cmd-clear) | [Delete](#cat-delete) | Delete all containers, images, and volumes |
+| [`make test`](#cmd-test) | [Test](#cat-test) | Run backend tests |
+| [`make build-prod`](#cmd-build-prod) | [Prod](#cat-prod) | Build and tag backend production image |
+| [`make prod`](#cmd-prod) | [Prod](#cat-prod) | Build, tag, and run backend in production mode |
+| [`make tag`](#cmd-tag) | [Prod](#cat-prod) | Create a version tag (use TAG=v1.2.3 make tag) |
+| [`make export-db`](#cmd-export-db) | [Database](#cat-database) | Export postgres database to a SQL file |
+| [`make import-db`](#cmd-import-db) | [Database](#cat-database) | Import a SQL file into postgres database |
+| [`make clean-git`](#cmd-clean-git) | [Clean](#cat-clean) | Clean deleted git branches |
 
 ---
 
@@ -177,84 +177,96 @@ flowchart LR
 
 ## Section Details
 
+<a id="cat-fix"></a>
 ### Fix
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make fix-backend` | Auto-fix Rust backend issues | `up-backend` | - |
-| `make generate-clorinde` | Generate Clorinde query types from SQL files (requires init-db first) | `up-backend` | - |
-| `make init-db` | Apply database migrations | `up-backend` | - |
-| `make reset-db` | Drop application tables and re-apply database migrations | `up-backend` | - |
+| <a id="cmd-fix-backend"></a>`make fix-backend` | Auto-fix Rust backend issues | `up-backend` | - |
+| <a id="cmd-generate-clorinde"></a>`make generate-clorinde` | Generate Clorinde query types from SQL files (requires init-db first) | `up-backend` | - |
+| <a id="cmd-init-db"></a>`make init-db` | Apply database migrations | `up-backend` | - |
+| <a id="cmd-reset-db"></a>`make reset-db` | Drop application tables and re-apply database migrations | `up-backend` | - |
 
+<a id="cat-run"></a>
 ### Run
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make run-backend-release` | Run backend in release mode | - | - |
-| `make run-backend` | Run backend in development mode | - | - |
-| `make run-backend-error` | Run backend with error logging only | - | - |
+| <a id="cmd-run-backend-release"></a>`make run-backend-release` | Run backend in release mode | - | - |
+| <a id="cmd-run-backend"></a>`make run-backend` | Run backend in development mode | - | - |
+| <a id="cmd-run-backend-error"></a>`make run-backend-error` | Run backend with error logging only | - | - |
 
+<a id="cat-check"></a>
 ### Check
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make check-backend` | Check Rust backend code (fast compilation) | `up-backend` | - |
+| <a id="cmd-check-backend"></a>`make check-backend` | Check Rust backend code (fast compilation) | `up-backend` | - |
 
+<a id="cat-lint"></a>
 ### Lint
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make lint-backend` | Lint Rust backend code with Clippy | `up-backend` | - |
-| `make lint` | Run CI-equivalent backend lint checks | - | - |
-| `make fmt-backend` | Format Rust backend code | `up-backend` | - |
-| `make fmt-check-backend` | Check Rust backend code formatting | `up-backend` | - |
+| <a id="cmd-lint-backend"></a>`make lint-backend` | Lint Rust backend code with Clippy | `up-backend` | - |
+| <a id="cmd-lint"></a>`make lint` | Run CI-equivalent backend lint checks | - | - |
+| <a id="cmd-fmt-backend"></a>`make fmt-backend` | Format Rust backend code | `up-backend` | - |
+| <a id="cmd-fmt-check-backend"></a>`make fmt-check-backend` | Check Rust backend code formatting | `up-backend` | - |
 
+<a id="cat-up"></a>
 ### Up
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make up` | Start all services (backend + postgres) | - | - |
-| `make up-vuejs` | Start frontend with hot-reload | - | - |
-| `make up-backend` | Start backend service (with postgres dependency) | `check-backend` | - |
-| `make up-db` | Start postgres service only | - | - |
+| <a id="cmd-up"></a>`make up` | Start all services (backend + postgres) | - | - |
+| <a id="cmd-up-vuejs"></a>`make up-vuejs` | Start frontend with hot-reload | - | - |
+| <a id="cmd-up-backend"></a>`make up-backend` | Start backend service (with postgres dependency) | `check-backend` | - |
+| <a id="cmd-up-db"></a>`make up-db` | Start postgres service only | - | - |
 
+<a id="cat-down"></a>
 ### Down
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make down` | Stop all services | - | - |
-| `make down-backend` | Stop backend service | - | - |
-| `make down-db` | Stop postgres service | - | - |
-| `make down-vuejs` | Stop frontend service | - | - |
+| <a id="cmd-down"></a>`make down` | Stop all services | - | - |
+| <a id="cmd-down-backend"></a>`make down-backend` | Stop backend service | - | - |
+| <a id="cmd-down-db"></a>`make down-db` | Stop postgres service | - | - |
+| <a id="cmd-down-vuejs"></a>`make down-vuejs` | Stop frontend service | - | - |
 
+<a id="cat-shell"></a>
 ### Shell
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make sh-backend` | Open backend container shell | - | - |
-| `make sh-db` | Open postgres container shell (psql) | - | - |
-| `make sh-vuejs` | Open frontend container shell | - | - |
+| <a id="cmd-sh-backend"></a>`make sh-backend` | Open backend container shell | - | - |
+| <a id="cmd-sh-db"></a>`make sh-db` | Open postgres container shell (psql) | - | - |
+| <a id="cmd-sh-vuejs"></a>`make sh-vuejs` | Open frontend container shell | - | - |
 
+<a id="cat-delete"></a>
 ### Delete
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make clear-backend` | Delete backend container and image | - | - |
-| `make clear-db` | Delete postgres container, image, and data volume | - | - |
-| `make clear-vuejs` | Delete frontend container and image | - | - |
-| `make clear` | Delete all containers, images, and volumes | - | - |
+| <a id="cmd-clear-backend"></a>`make clear-backend` | Delete backend container and image | - | - |
+| <a id="cmd-clear-db"></a>`make clear-db` | Delete postgres container, image, and data volume | - | - |
+| <a id="cmd-clear-vuejs"></a>`make clear-vuejs` | Delete frontend container and image | - | - |
+| <a id="cmd-clear"></a>`make clear` | Delete all containers, images, and volumes | - | - |
 
+<a id="cat-test"></a>
 ### Test
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make test` | Run backend tests | `up-backend` | - |
+| <a id="cmd-test"></a>`make test` | Run backend tests | `up-backend` | - |
 
+<a id="cat-prod"></a>
 ### Prod
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make build-prod` | Build and tag backend production image | - | - |
-| `make prod` | Build, tag, and run backend in production mode | - | - |
-| `make tag` | Create a version tag (use TAG=v1.2.3 make tag) | - | - |
+| <a id="cmd-build-prod"></a>`make build-prod` | Build and tag backend production image | - | - |
+| <a id="cmd-prod"></a>`make prod` | Build, tag, and run backend in production mode | - | - |
+| <a id="cmd-tag"></a>`make tag` | Create a version tag (use TAG=v1.2.3 make tag) | - | - |
 
+<a id="cat-database"></a>
 ### Database
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make export-db` | Export postgres database to a SQL file | - | `EXPORT_FILE` |
-| `make import-db` | Import a SQL file into postgres database | - | `sqlfile` |
+| <a id="cmd-export-db"></a>`make export-db` | Export postgres database to a SQL file | - | `EXPORT_FILE` |
+| <a id="cmd-import-db"></a>`make import-db` | Import a SQL file into postgres database | - | `sqlfile` |
 
+<a id="cat-clean"></a>
 ### Clean
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make clean-git` | Clean deleted git branches | - | - |
+| <a id="cmd-clean-git"></a>`make clean-git` | Clean deleted git branches | - | - |
