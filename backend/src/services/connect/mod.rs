@@ -3,7 +3,6 @@ use std::sync::Arc;
 use chrono::NaiveDate;
 use connectrpc::Router;
 
-use crate::errors::AppError;
 use crate::models::date_serde::DATE_FORMAT;
 use crate::rpc::novasound::album::v1::AlbumServiceExt;
 use crate::rpc::novasound::artist::v1::ArtistServiceExt;
@@ -27,14 +26,6 @@ pub fn create_connect_router(state: AppState) -> Router {
     .register(router);
 
     Arc::new(song_service::ConnectSongService::new(state.db_pool)).register(router)
-}
-
-fn map_app_error(error: AppError) -> connectrpc::ConnectError {
-    match error {
-        | AppError::NotFound(message) => connectrpc::ConnectError::not_found(message),
-        | AppError::Validation(message) => connectrpc::ConnectError::invalid_argument(message),
-        | AppError::Internal(error) => connectrpc::ConnectError::internal(error.to_string()),
-    }
 }
 
 #[allow(clippy::result_large_err)]
