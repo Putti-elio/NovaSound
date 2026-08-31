@@ -1,3 +1,4 @@
-FROM alpine:3.21
+ARG BUN_VERSION=1.4
+FROM oven/bun:${BUN_VERSION}
 
-CMD ["sh", "-c", "echo 'Frontend Docker is intentionally disabled until Nuxt+Bun migration.' && sleep infinity"]
+WORKDIR /app
