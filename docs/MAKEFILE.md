@@ -4,276 +4,257 @@
 ## Cheat Sheet
 | Command | Category | Description |
 | :--- | :--- | :--- |
-| [`make up`](#development) | Development | Start all development containers |
-| [`make up-frontend`](#development) | Development | Start the frontend container with Vite hot reload |
-| [`make up-backend`](#development) | Development | Start the backend and PostgreSQL containers |
-| [`make up-db`](#development) | Development | Start only the PostgreSQL container |
-| [`make run-backend`](#development) | Development | Run the backend in development mode |
-| [`make run-backend-release`](#development) | Development | Run the backend in release mode |
-| [`make run-backend-error`](#development) | Development | Run the backend with error-only logging |
-| [`make down`](#development) | Development | Stop all containers |
-| [`make down-frontend`](#development) | Development | Stop the frontend container |
-| [`make down-backend`](#development) | Development | Stop the backend container |
-| [`make down-db`](#development) | Development | Stop the PostgreSQL container |
-| [`make restart`](#development) | Development | Restart all development containers |
-| [`make restart-frontend`](#development) | Development | Restart the frontend container |
-| [`make restart-backend`](#development) | Development | Restart the backend and PostgreSQL containers |
-| [`make restart-db`](#development) | Development | Restart the PostgreSQL container |
-| [`make init-db`](#database) | Database | Apply database migrations and load demo data |
-| [`make seed-db`](#database) | Database | Load demo artists, albums, and songs |
-| [`make reset-db`](#database) | Database | Recreate the database schema and reload demo data |
-| [`make generate-clorinde`](#database) | Database | Regenerate Clorinde Rust query types from SQL files |
-| [`make export-db`](#database) | Database | Export PostgreSQL data to a SQL file |
-| [`make import-db`](#database) | Database | Import a SQL file into PostgreSQL |
-| [`make check-backend`](#quality) | Quality | Check that the backend compiles |
-| [`make lint`](#quality) | Quality | Run backend formatting and Clippy checks used by CI |
-| [`make lint-backend`](#quality) | Quality | Run Clippy on the backend |
-| [`make fmt-backend`](#quality) | Quality | Format backend Rust code |
-| [`make fmt-check-backend`](#quality) | Quality | Check backend Rust formatting |
-| [`make fix-backend`](#quality) | Quality | Apply automatic Rust fixes to the backend |
-| [`make test`](#quality) | Quality | Run all backend tests |
-| [`make build-frontend`](#build) | Build | Build frontend assets in Docker for Tauri |
-| [`make build-tauri`](#build) | Build | Build Linux desktop packages on the host |
-| [`make build-prod`](#build) | Build | Build the production backend image |
-| [`make prod`](#build) | Build | Build and start the production backend and PostgreSQL services |
-| [`make sh-frontend`](#shell) | Shell | Open a shell in the frontend container |
-| [`make sh-backend`](#shell) | Shell | Open a shell in the backend container |
-| [`make sh-db`](#shell) | Shell | Open a PostgreSQL shell |
-| [`make clear`](#cleanup) | Cleanup | Delete all application containers, images, and data volumes |
-| [`make clear-frontend`](#cleanup) | Cleanup | Delete the frontend container, image, and dependency volume |
-| [`make clear-backend`](#cleanup) | Cleanup | Delete backend containers and images |
-| [`make clear-db`](#cleanup) | Cleanup | Delete PostgreSQL containers, images, and data volumes |
-| [`make clean-git`](#cleanup) | Cleanup | Delete local branches whose remote branch was removed |
-| [`make tag`](#release) | Release | Create an annotated version tag, for example TAG=v1.2.3 |
-| [`make docs`](#documentation) | Documentation | Generate Markdown documentation from the Makefile |
+| [`make fix-backend`](#fix) | Fix | Auto-fix Rust backend issues |
+| [`make generate-clorinde`](#fix) | Fix | Generate Clorinde query types from SQL files (requires init-db first) |
+| [`make init-db`](#fix) | Fix | Apply database migrations |
+| [`make reset-db`](#fix) | Fix | Drop application tables and re-apply database migrations |
+| [`make run-backend-release`](#run) | Run | Run backend in release mode |
+| [`make run-backend`](#run) | Run | Run backend in development mode |
+| [`make run-backend-error`](#run) | Run | Run backend with error logging only |
+| [`make check-backend`](#check) | Check | Check Rust backend code (fast compilation) |
+| [`make lint-backend`](#lint) | Lint | Lint Rust backend code with Clippy |
+| [`make lint`](#lint) | Lint | Run CI-equivalent backend lint checks |
+| [`make fmt-backend`](#lint) | Lint | Format Rust backend code |
+| [`make fmt-check-backend`](#lint) | Lint | Check Rust backend code formatting |
+| [`make up`](#up) | Up | Start all services (backend + postgres) |
+| [`make up-vuejs`](#up) | Up | Start frontend with hot-reload |
+| [`make up-backend`](#up) | Up | Start backend service (with postgres dependency) |
+| [`make up-db`](#up) | Up | Start postgres service only |
+| [`make down`](#down) | Down | Stop all services |
+| [`make down-backend`](#down) | Down | Stop backend service |
+| [`make down-db`](#down) | Down | Stop postgres service |
+| [`make down-vuejs`](#down) | Down | Stop frontend service |
+| [`make sh-backend`](#shell) | Shell | Open backend container shell |
+| [`make sh-db`](#shell) | Shell | Open postgres container shell (psql) |
+| [`make sh-vuejs`](#shell) | Shell | Open frontend container shell |
+| [`make clear-backend`](#delete) | Delete | Delete backend container and image |
+| [`make clear-db`](#delete) | Delete | Delete postgres container, image, and data volume |
+| [`make clear-vuejs`](#delete) | Delete | Delete frontend container and image |
+| [`make clear`](#delete) | Delete | Delete all containers, images, and volumes |
+| [`make test`](#test) | Test | Run backend tests |
+| [`make build-prod`](#prod) | Prod | Build and tag backend production image |
+| [`make prod`](#prod) | Prod | Build, tag, and run backend in production mode |
+| [`make tag`](#prod) | Prod | Create a version tag (use TAG=v1.2.3 make tag) |
+| [`make export-db`](#database) | Database | Export postgres database to a SQL file |
+| [`make import-db`](#database) | Database | Import a SQL file into postgres database |
+| [`make clean-git`](#clean) | Clean | Clean deleted git branches |
 
 ---
 
 ## Workflow Graph
 ```mermaid
 flowchart LR
-    subgraph Development[Development]
+    subgraph Fix[Fix]
+        fix-backend(fix-backend)
+        generate-clorinde(generate-clorinde)
+        init-db(init-db)
+        reset-db(reset-db)
+    end
+    style Fix fill:transparent,stroke-dasharray: 5 5
+    classDef cat0 fill:#E1F5FE,stroke:#01579B,stroke-width:2px,color:#000;
+    class fix-backend cat0
+    class generate-clorinde cat0
+    class init-db cat0
+    class reset-db cat0
+    subgraph Run[Run]
+        run-backend-release(run-backend-release)
+        run-backend(run-backend)
+        run-backend-error(run-backend-error)
+    end
+    style Run fill:transparent,stroke-dasharray: 5 5
+    classDef cat1 fill:#E8F5E9,stroke:#1B5E20,stroke-width:2px,color:#000;
+    class run-backend-release cat1
+    class run-backend cat1
+    class run-backend-error cat1
+    subgraph Check[Check]
+        check-backend(check-backend)
+    end
+    style Check fill:transparent,stroke-dasharray: 5 5
+    classDef cat2 fill:#FFF3E0,stroke:#E65100,stroke-width:2px,color:#000;
+    class check-backend cat2
+    subgraph Lint[Lint]
+        lint-backend(lint-backend)
+        lint(lint)
+        fmt-backend(fmt-backend)
+        fmt-check-backend(fmt-check-backend)
+    end
+    style Lint fill:transparent,stroke-dasharray: 5 5
+    classDef cat3 fill:#F3E5F5,stroke:#4A148C,stroke-width:2px,color:#000;
+    class lint-backend cat3
+    class lint cat3
+    class fmt-backend cat3
+    class fmt-check-backend cat3
+    subgraph Up[Up]
         up(up)
-        up-frontend(up-frontend)
+        up-vuejs(up-vuejs)
         up-backend(up-backend)
         up-db(up-db)
-        run-backend(run-backend)
-        run-backend-release(run-backend-release)
-        run-backend-error(run-backend-error)
+    end
+    style Up fill:transparent,stroke-dasharray: 5 5
+    classDef cat4 fill:#FFEBEE,stroke:#B71C1C,stroke-width:2px,color:#000;
+    class up cat4
+    class up-vuejs cat4
+    class up-backend cat4
+    class up-db cat4
+    subgraph Down[Down]
         down(down)
-        down-frontend(down-frontend)
         down-backend(down-backend)
         down-db(down-db)
-        restart(restart)
-        restart-frontend(restart-frontend)
-        restart-backend(restart-backend)
-        restart-db(restart-db)
+        down-vuejs(down-vuejs)
     end
-    style Development fill:transparent,stroke-dasharray: 5 5
-    classDef cat0 fill:#E1F5FE,stroke:#01579B,stroke-width:2px,color:#000;
-    class up cat0
-    class up-frontend cat0
-    class up-backend cat0
-    class up-db cat0
-    class run-backend cat0
-    class run-backend-release cat0
-    class run-backend-error cat0
-    class down cat0
-    class down-frontend cat0
-    class down-backend cat0
-    class down-db cat0
-    class restart cat0
-    class restart-frontend cat0
-    class restart-backend cat0
-    class restart-db cat0
+    style Down fill:transparent,stroke-dasharray: 5 5
+    classDef cat5 fill:#ECEFF1,stroke:#263238,stroke-width:2px,color:#000;
+    class down cat5
+    class down-backend cat5
+    class down-db cat5
+    class down-vuejs cat5
+    subgraph Shell[Shell]
+        sh-backend(sh-backend)
+        sh-db(sh-db)
+        sh-vuejs(sh-vuejs)
+    end
+    style Shell fill:transparent,stroke-dasharray: 5 5
+    classDef cat6 fill:#E1F5FE,stroke:#01579B,stroke-width:2px,color:#000;
+    class sh-backend cat6
+    class sh-db cat6
+    class sh-vuejs cat6
+    subgraph Delete[Delete]
+        clear-backend(clear-backend)
+        clear-db(clear-db)
+        clear-vuejs(clear-vuejs)
+        clear(clear)
+    end
+    style Delete fill:transparent,stroke-dasharray: 5 5
+    classDef cat7 fill:#E8F5E9,stroke:#1B5E20,stroke-width:2px,color:#000;
+    class clear-backend cat7
+    class clear-db cat7
+    class clear-vuejs cat7
+    class clear cat7
+    subgraph Test[Test]
+        test(test)
+    end
+    style Test fill:transparent,stroke-dasharray: 5 5
+    classDef cat8 fill:#FFF3E0,stroke:#E65100,stroke-width:2px,color:#000;
+    class test cat8
+    subgraph Prod[Prod]
+        build-prod(build-prod)
+        prod(prod)
+        tag(tag)
+    end
+    style Prod fill:transparent,stroke-dasharray: 5 5
+    classDef cat9 fill:#F3E5F5,stroke:#4A148C,stroke-width:2px,color:#000;
+    class build-prod cat9
+    class prod cat9
+    class tag cat9
     subgraph Database[Database]
-        init-db(init-db)
-        seed-db(seed-db)
-        reset-db(reset-db)
-        generate-clorinde(generate-clorinde)
         export-db(export-db)
         import-db(import-db)
     end
     style Database fill:transparent,stroke-dasharray: 5 5
-    classDef cat1 fill:#E8F5E9,stroke:#1B5E20,stroke-width:2px,color:#000;
-    class init-db cat1
-    class seed-db cat1
-    class reset-db cat1
-    class generate-clorinde cat1
-    class export-db cat1
-    class import-db cat1
-    subgraph Quality[Quality]
-        check-backend(check-backend)
-        lint(lint)
-        lint-backend(lint-backend)
-        fmt-backend(fmt-backend)
-        fmt-check-backend(fmt-check-backend)
-        fix-backend(fix-backend)
-        test(test)
-    end
-    style Quality fill:transparent,stroke-dasharray: 5 5
-    classDef cat2 fill:#FFF3E0,stroke:#E65100,stroke-width:2px,color:#000;
-    class check-backend cat2
-    class lint cat2
-    class lint-backend cat2
-    class fmt-backend cat2
-    class fmt-check-backend cat2
-    class fix-backend cat2
-    class test cat2
-    subgraph Build[Build]
-        build-frontend(build-frontend)
-        build-tauri(build-tauri)
-        build-prod(build-prod)
-        prod(prod)
-    end
-    style Build fill:transparent,stroke-dasharray: 5 5
-    classDef cat3 fill:#F3E5F5,stroke:#4A148C,stroke-width:2px,color:#000;
-    class build-frontend cat3
-    class build-tauri cat3
-    class build-prod cat3
-    class prod cat3
-    subgraph Shell[Shell]
-        sh-frontend(sh-frontend)
-        sh-backend(sh-backend)
-        sh-db(sh-db)
-    end
-    style Shell fill:transparent,stroke-dasharray: 5 5
-    classDef cat4 fill:#FFEBEE,stroke:#B71C1C,stroke-width:2px,color:#000;
-    class sh-frontend cat4
-    class sh-backend cat4
-    class sh-db cat4
-    subgraph Cleanup[Cleanup]
-        clear(clear)
-        clear-frontend(clear-frontend)
-        clear-backend(clear-backend)
-        clear-db(clear-db)
+    classDef cat10 fill:#FFEBEE,stroke:#B71C1C,stroke-width:2px,color:#000;
+    class export-db cat10
+    class import-db cat10
+    subgraph Clean[Clean]
         clean-git(clean-git)
     end
-    style Cleanup fill:transparent,stroke-dasharray: 5 5
-    classDef cat5 fill:#ECEFF1,stroke:#263238,stroke-width:2px,color:#000;
-    class clear cat5
-    class clear-frontend cat5
-    class clear-backend cat5
-    class clear-db cat5
-    class clean-git cat5
-    subgraph Release[Release]
-        tag(tag)
-    end
-    style Release fill:transparent,stroke-dasharray: 5 5
-    classDef cat6 fill:#E1F5FE,stroke:#01579B,stroke-width:2px,color:#000;
-    class tag cat6
-    subgraph Documentation[Documentation]
-        docs(docs)
-    end
-    style Documentation fill:transparent,stroke-dasharray: 5 5
-    classDef cat7 fill:#E8F5E9,stroke:#1B5E20,stroke-width:2px,color:#000;
-    class docs cat7
+    style Clean fill:transparent,stroke-dasharray: 5 5
+    classDef cat11 fill:#ECEFF1,stroke:#263238,stroke-width:2px,color:#000;
+    class clean-git cat11
 
-    up --> up-backend
-    up --> up-frontend
-    run-backend --> up-backend
-    run-backend-release --> up-backend
-    run-backend-error --> up-backend
-    restart --> down
-    restart --> up
-    restart-frontend --> down-frontend
-    restart-frontend --> up-frontend
-    restart-backend --> down-backend
-    restart-backend --> up-backend
-    restart-db --> down-db
-    restart-db --> up-db
+    fix-backend --> up-backend
+    generate-clorinde --> up-backend
     init-db --> up-backend
-    seed-db --> up-backend
     reset-db --> up-backend
-    generate-clorinde --> init-db
     check-backend --> up-backend
-    lint --> up-backend
     lint-backend --> up-backend
     fmt-backend --> up-backend
     fmt-check-backend --> up-backend
-    fix-backend --> up-backend
+    up-backend --> check-backend
     test --> up-backend
-    build-tauri --> build-frontend
-    prod --> build-prod
-    clear --> clear-frontend
-    clear --> clear-backend
-    clear --> clear-db
 ```
 
 ---
 
 ## Section Details
 
-### Development
+### Fix
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make up` | Start all development containers | `up-backend`, `up-frontend` | - |
-| `make up-frontend` | Start the frontend container with Vite hot reload | - | - |
-| `make up-backend` | Start the backend and PostgreSQL containers | - | - |
-| `make up-db` | Start only the PostgreSQL container | - | - |
-| `make run-backend` | Run the backend in development mode | `up-backend` | - |
-| `make run-backend-release` | Run the backend in release mode | `up-backend` | - |
-| `make run-backend-error` | Run the backend with error-only logging | `up-backend` | - |
-| `make down` | Stop all containers | - | - |
-| `make down-frontend` | Stop the frontend container | - | - |
-| `make down-backend` | Stop the backend container | - | - |
-| `make down-db` | Stop the PostgreSQL container | - | - |
-| `make restart` | Restart all development containers | `down`, `up` | - |
-| `make restart-frontend` | Restart the frontend container | `down-frontend`, `up-frontend` | - |
-| `make restart-backend` | Restart the backend and PostgreSQL containers | `down-backend`, `up-backend` | - |
-| `make restart-db` | Restart the PostgreSQL container | `down-db`, `up-db` | - |
+| `make fix-backend` | Auto-fix Rust backend issues | `up-backend` | - |
+| `make generate-clorinde` | Generate Clorinde query types from SQL files (requires init-db first) | `up-backend` | - |
+| `make init-db` | Apply database migrations | `up-backend` | - |
+| `make reset-db` | Drop application tables and re-apply database migrations | `up-backend` | - |
 
-### Database
+### Run
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make init-db` | Apply database migrations and load demo data | `up-backend` | - |
-| `make seed-db` | Load demo artists, albums, and songs | `up-backend` | - |
-| `make reset-db` | Recreate the database schema and reload demo data | `up-backend` | - |
-| `make generate-clorinde` | Regenerate Clorinde Rust query types from SQL files | `init-db` | - |
-| `make export-db` | Export PostgreSQL data to a SQL file | - | - |
-| `make import-db` | Import a SQL file into PostgreSQL | - | - |
+| `make run-backend-release` | Run backend in release mode | - | - |
+| `make run-backend` | Run backend in development mode | - | - |
+| `make run-backend-error` | Run backend with error logging only | - | - |
 
-### Quality
+### Check
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make check-backend` | Check that the backend compiles | `up-backend` | - |
-| `make lint` | Run backend formatting and Clippy checks used by CI | `up-backend` | - |
-| `make lint-backend` | Run Clippy on the backend | `up-backend` | - |
-| `make fmt-backend` | Format backend Rust code | `up-backend` | - |
-| `make fmt-check-backend` | Check backend Rust formatting | `up-backend` | - |
-| `make fix-backend` | Apply automatic Rust fixes to the backend | `up-backend` | - |
-| `make test` | Run all backend tests | `up-backend` | - |
+| `make check-backend` | Check Rust backend code (fast compilation) | `up-backend` | - |
 
-### Build
+### Lint
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make build-frontend` | Build frontend assets in Docker for Tauri | - | - |
-| `make build-tauri` | Build Linux desktop packages on the host | `build-frontend` | - |
-| `make build-prod` | Build the production backend image | - | - |
-| `make prod` | Build and start the production backend and PostgreSQL services | `build-prod` | - |
+| `make lint-backend` | Lint Rust backend code with Clippy | `up-backend` | - |
+| `make lint` | Run CI-equivalent backend lint checks | - | - |
+| `make fmt-backend` | Format Rust backend code | `up-backend` | - |
+| `make fmt-check-backend` | Check Rust backend code formatting | `up-backend` | - |
+
+### Up
+| Command | Description | Dependencies | Required Variables |
+| :--- | :--- | :--- | :--- |
+| `make up` | Start all services (backend + postgres) | - | - |
+| `make up-vuejs` | Start frontend with hot-reload | - | - |
+| `make up-backend` | Start backend service (with postgres dependency) | `check-backend` | - |
+| `make up-db` | Start postgres service only | - | - |
+
+### Down
+| Command | Description | Dependencies | Required Variables |
+| :--- | :--- | :--- | :--- |
+| `make down` | Stop all services | - | - |
+| `make down-backend` | Stop backend service | - | - |
+| `make down-db` | Stop postgres service | - | - |
+| `make down-vuejs` | Stop frontend service | - | - |
 
 ### Shell
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make sh-frontend` | Open a shell in the frontend container | - | - |
-| `make sh-backend` | Open a shell in the backend container | - | - |
-| `make sh-db` | Open a PostgreSQL shell | - | - |
+| `make sh-backend` | Open backend container shell | - | - |
+| `make sh-db` | Open postgres container shell (psql) | - | - |
+| `make sh-vuejs` | Open frontend container shell | - | - |
 
-### Cleanup
+### Delete
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make clear` | Delete all application containers, images, and data volumes | `clear-frontend`, `clear-backend`, `clear-db` | - |
-| `make clear-frontend` | Delete the frontend container, image, and dependency volume | - | - |
-| `make clear-backend` | Delete backend containers and images | - | - |
-| `make clear-db` | Delete PostgreSQL containers, images, and data volumes | - | - |
-| `make clean-git` | Delete local branches whose remote branch was removed | - | - |
+| `make clear-backend` | Delete backend container and image | - | - |
+| `make clear-db` | Delete postgres container, image, and data volume | - | - |
+| `make clear-vuejs` | Delete frontend container and image | - | - |
+| `make clear` | Delete all containers, images, and volumes | - | - |
 
-### Release
+### Test
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make tag` | Create an annotated version tag, for example TAG=v1.2.3 | - | `TAG` |
+| `make test` | Run backend tests | `up-backend` | - |
 
-### Documentation
+### Prod
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| `make docs` | Generate Markdown documentation from the Makefile | - | - |
+| `make build-prod` | Build and tag backend production image | - | - |
+| `make prod` | Build, tag, and run backend in production mode | - | - |
+| `make tag` | Create a version tag (use TAG=v1.2.3 make tag) | - | - |
+
+### Database
+| Command | Description | Dependencies | Required Variables |
+| :--- | :--- | :--- | :--- |
+| `make export-db` | Export postgres database to a SQL file | - | `EXPORT_FILE` |
+| `make import-db` | Import a SQL file into postgres database | - | `sqlfile` |
+
+### Clean
+| Command | Description | Dependencies | Required Variables |
+| :--- | :--- | :--- | :--- |
+| `make clean-git` | Clean deleted git branches | - | - |

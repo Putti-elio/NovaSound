@@ -3,16 +3,22 @@ use deadpool_postgres::{Client, Pool};
 use function_name::named;
 use uuid::Uuid;
 
-use crate::create_error;
 use crate::errors::{AppError, AppResult};
 use crate::models::song_model::{AlbumType, CreateSong, Song, UpdateSong};
+use crate::utils::log_and_context_error;
 
 const STANDALONE_COLLECTION_SUFFIX: &str = "Standalone Collection";
 
 #[named]
 fn map_song(song: clorinde::queries::songs::Song) -> AppResult<Song> {
-    let duration = u32::try_from(song.duration)
-        .map_err(|err| create_error!(err, "Invalid song duration value in DB"))?;
+    let duration = u32::try_from(song.duration).map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Invalid song duration value in DB",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
     let release_date = song
         .release_date
@@ -41,7 +47,14 @@ async fn resolve_song_album_and_image(
             .bind(client, album_id)
             .opt()
             .await
-            .map_err(|err| create_error!(err, "Failed to check album existence"))?
+            .map_err(|err| {
+                AppError::Internal(log_and_context_error(
+                    err,
+                    "Failed to check album existence",
+                    file!(),
+                    function_name!(),
+                ))
+            })?
             .is_some();
 
         if !album_exists {
@@ -55,7 +68,14 @@ async fn resolve_song_album_and_image(
             .bind(client, album_id)
             .one()
             .await
-            .map_err(|err| create_error!(err, "Failed to get album image path"))?;
+            .map_err(|err| {
+                AppError::Internal(log_and_context_error(
+                    err,
+                    "Failed to get album image path",
+                    file!(),
+                    function_name!(),
+                ))
+            })?;
 
         return Ok((Some(album_id.clone()), image_path));
     }
@@ -65,7 +85,14 @@ async fn resolve_song_album_and_image(
         .bind(client, &song.artist_id)
         .one()
         .await
-        .map_err(|err| create_error!(err, "Failed to get artist name"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to get artist name",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     let image_path = Some(format!(
         "/images/artists/{}/{}/{}",
@@ -79,16 +106,27 @@ async fn resolve_song_album_and_image(
 
 #[named]
 pub async fn get_all_songs(pool: &Pool) -> AppResult<Vec<Song>> {
-    let client = pool
-        .get()
-        .await
-        .map_err(|err| create_error!(err, "Failed to get DB client"))?;
+    let client = pool.get().await.map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Failed to get DB client",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
     let songs = clorinde::queries::songs::get_all_songs()
         .bind(&client)
         .all()
         .await
-        .map_err(|err| create_error!(err, "Failed to query songs"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to query songs",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     let songs = songs
         .into_iter()
@@ -100,16 +138,27 @@ pub async fn get_all_songs(pool: &Pool) -> AppResult<Vec<Song>> {
 
 #[named]
 pub async fn get_song_by_id(pool: &Pool, id: &str) -> AppResult<Song> {
-    let client = pool
-        .get()
-        .await
-        .map_err(|err| create_error!(err, "Failed to get DB client"))?;
+    let client = pool.get().await.map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Failed to get DB client",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
     let song = clorinde::queries::songs::get_song_by_id()
         .bind(&client, &id)
         .opt()
         .await
-        .map_err(|err| create_error!(err, "Failed to get song"))?
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to get song",
+                file!(),
+                function_name!(),
+            ))
+        })?
         .ok_or_else(|| AppError::NotFound(format!("Song with id '{}' not found", id)))?;
 
     map_song(song)
@@ -117,16 +166,27 @@ pub async fn get_song_by_id(pool: &Pool, id: &str) -> AppResult<Song> {
 
 #[named]
 pub async fn get_songs_by_artist(pool: &Pool, artist_id: &str) -> AppResult<Vec<Song>> {
-    let client = pool
-        .get()
-        .await
-        .map_err(|err| create_error!(err, "Failed to get DB client"))?;
+    let client = pool.get().await.map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Failed to get DB client",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
     let songs = clorinde::queries::songs::get_songs_by_artist()
         .bind(&client, &artist_id)
         .all()
         .await
-        .map_err(|err| create_error!(err, "Failed to query songs by artist"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to query songs by artist",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     let songs = songs
         .into_iter()
@@ -138,16 +198,27 @@ pub async fn get_songs_by_artist(pool: &Pool, artist_id: &str) -> AppResult<Vec<
 
 #[named]
 pub async fn get_songs_by_album(pool: &Pool, album_id: &str) -> AppResult<Vec<Song>> {
-    let client = pool
-        .get()
-        .await
-        .map_err(|err| create_error!(err, "Failed to get DB client"))?;
+    let client = pool.get().await.map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Failed to get DB client",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
     let songs = clorinde::queries::songs::get_songs_by_album()
         .bind(&client, &album_id)
         .all()
         .await
-        .map_err(|err| create_error!(err, "Failed to query songs by album"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to query songs by album",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     let songs = songs
         .into_iter()
@@ -165,16 +236,27 @@ pub async fn create_song(pool: &Pool, song: CreateSong) -> AppResult<Song> {
         ));
     }
 
-    let client = pool
-        .get()
-        .await
-        .map_err(|err| create_error!(err, "Failed to get DB client"))?;
+    let client = pool.get().await.map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Failed to get DB client",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
     let artist_exists = clorinde::queries::artists::check_artist_by_id()
         .bind(&client, &song.artist_id)
         .opt()
         .await
-        .map_err(|err| create_error!(err, "Failed to check artist existence"))?
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to check artist existence",
+                file!(),
+                function_name!(),
+            ))
+        })?
         .is_some();
 
     if !artist_exists {
@@ -208,7 +290,14 @@ pub async fn create_song(pool: &Pool, song: CreateSong) -> AppResult<Song> {
             &image_path,
         )
         .await
-        .map_err(|err| create_error!(err, "Failed to create song"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to create song",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     if let Some(ref alb_id) = album_id {
         update_album_duration_and_type(pool, alb_id).await?;
@@ -228,16 +317,27 @@ pub async fn create_song(pool: &Pool, song: CreateSong) -> AppResult<Song> {
 
 #[named]
 pub async fn update_song(pool: &Pool, id: &str, song: UpdateSong) -> AppResult<Song> {
-    let client = pool
-        .get()
-        .await
-        .map_err(|err| create_error!(err, "Failed to get DB client"))?;
+    let client = pool.get().await.map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Failed to get DB client",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
     let existing_song = clorinde::queries::songs::get_song_by_id()
         .bind(&client, &id)
         .opt()
         .await
-        .map_err(|err| create_error!(err, "Failed to check song existence"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to check song existence",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     let existing_song = existing_song
         .map(map_song)
@@ -288,13 +388,27 @@ pub async fn update_song(pool: &Pool, id: &str, song: UpdateSong) -> AppResult<S
             &id,
         )
         .await
-        .map_err(|err| create_error!(err, "Failed to update song"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to update song",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     let album_id = clorinde::queries::songs::get_song_album_id()
         .bind(&client, &id)
         .one()
         .await
-        .map_err(|err| create_error!(err, "Failed to get song album id"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to get song album id",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     if let Some(alb_id) = album_id {
         update_album_duration_and_type(pool, &alb_id).await?;
@@ -314,21 +428,39 @@ pub async fn update_song(pool: &Pool, id: &str, song: UpdateSong) -> AppResult<S
 
 #[named]
 pub async fn delete_song(pool: &Pool, id: &str) -> AppResult<()> {
-    let client = pool
-        .get()
-        .await
-        .map_err(|err| create_error!(err, "Failed to get DB client"))?;
+    let client = pool.get().await.map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Failed to get DB client",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
     let album_id = clorinde::queries::songs::get_song_album_id()
         .bind(&client, &id)
         .one()
         .await
-        .map_err(|err| create_error!(err, "Failed to get song album id"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to get song album id",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     let rows_deleted = clorinde::queries::songs::delete_song()
         .bind(&client, &id)
         .await
-        .map_err(|err| create_error!(err, "Failed to delete song"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to delete song",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     if rows_deleted == 0 {
         return Err(AppError::NotFound(format!(
@@ -349,16 +481,27 @@ pub async fn get_or_create_standalone_collection(
     pool: &Pool,
     artist_id: &str,
 ) -> AppResult<String> {
-    let client = pool
-        .get()
-        .await
-        .map_err(|err| create_error!(err, "Failed to get DB client"))?;
+    let client = pool.get().await.map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Failed to get DB client",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
     let artist_name = clorinde::queries::artists::get_artist_name_by_id()
         .bind(&client, &artist_id)
         .one()
         .await
-        .map_err(|err| create_error!(err, "Failed to get artist name"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to get artist name",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     let collection_name = format!("{} {}", artist_name, STANDALONE_COLLECTION_SUFFIX);
 
@@ -367,7 +510,14 @@ pub async fn get_or_create_standalone_collection(
         .bind(&client, &artist_id, &standalone_type)
         .opt()
         .await
-        .map_err(|err| create_error!(err, "Failed to get standalone collection"))?
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to get standalone collection",
+                file!(),
+                function_name!(),
+            ))
+        })?
         .flatten();
 
     if let Some(id) = existing {
@@ -391,23 +541,41 @@ pub async fn get_or_create_standalone_collection(
             &standalone_type,
         )
         .await
-        .map_err(|err| create_error!(err, "Failed to create standalone collection"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to create standalone collection",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     Ok(id)
 }
 
 #[named]
 pub async fn update_album_duration_and_type(pool: &Pool, album_id: &str) -> AppResult<()> {
-    let client = pool
-        .get()
-        .await
-        .map_err(|err| create_error!(err, "Failed to get DB client"))?;
+    let client = pool.get().await.map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Failed to get DB client",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
     let album_type = clorinde::queries::albums::get_album_type_by_id()
         .bind(&client, &album_id)
         .one()
         .await
-        .map_err(|err| create_error!(err, "Failed to get album type"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to get album type",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     if album_type == AlbumType::StandaloneCollection.as_ref() {
         return Ok(());
@@ -417,24 +585,56 @@ pub async fn update_album_duration_and_type(pool: &Pool, album_id: &str) -> AppR
         .bind(&client, &album_id)
         .one()
         .await
-        .map_err(|err| create_error!(err, "Failed to calculate album stats"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to calculate album stats",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     let song_count = stats.song_count;
     let total_duration = stats.total_duration;
 
-    let song_count_i32 = i32::try_from(song_count)
-        .map_err(|err| create_error!(err, "Album song_count is out of range"))?;
-    let total_duration_u32 = u32::try_from(total_duration)
-        .map_err(|err| create_error!(err, "Album total_duration is out of range"))?;
+    let song_count_i32 = i32::try_from(song_count).map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Album song_count is out of range",
+            file!(),
+            function_name!(),
+        ))
+    })?;
+    let total_duration_u32 = u32::try_from(total_duration).map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Album total_duration is out of range",
+            file!(),
+            function_name!(),
+        ))
+    })?;
     let new_type = determine_album_type(song_count_i32, total_duration_u32);
 
-    let total_duration_db_i32 = i32::try_from(total_duration)
-        .map_err(|err| create_error!(err, "Album total_duration is out of range"))?;
+    let total_duration_db_i32 = i32::try_from(total_duration).map_err(|err| {
+        AppError::Internal(log_and_context_error(
+            err,
+            "Album total_duration is out of range",
+            file!(),
+            function_name!(),
+        ))
+    })?;
     let new_type_str = new_type.as_ref();
     clorinde::queries::albums::update_album_duration_and_type()
         .bind(&client, &total_duration_db_i32, &new_type_str, &album_id)
         .await
-        .map_err(|err| create_error!(err, "Failed to update album duration and type"))?;
+        .map_err(|err| {
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to update album duration and type",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     Ok(())
 }

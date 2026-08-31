@@ -5,7 +5,9 @@ use crate::rpc::novasound::album::v1::{
     UpdateAlbumRequestView, UpdateAlbumResponse,
 };
 use crate::services::album_service;
-use crate::services::connect::{album_to_proto, parse_optional_date, proto_album_type_to_model};
+use crate::services::connect::{
+    album_to_proto, map_app_error, parse_optional_date, proto_album_type_to_model,
+};
 use connectrpc::Context;
 use deadpool_postgres::Pool;
 
@@ -28,7 +30,7 @@ impl AlbumService for ConnectAlbumService {
     ) -> Result<(crate::rpc::novasound::album::v1::Album, Context), connectrpc::ConnectError> {
         let album = album_service::get_album_by_id(&self.pool, request.id)
             .await
-            .map_err(connectrpc::ConnectError::from)?;
+            .map_err(map_app_error)?;
 
         Ok((album_to_proto(album), ctx))
     }
@@ -40,7 +42,7 @@ impl AlbumService for ConnectAlbumService {
     ) -> Result<(GetAlbumsResponse, Context), connectrpc::ConnectError> {
         let albums = album_service::get_all_albums(&self.pool)
             .await
-            .map_err(connectrpc::ConnectError::from)?;
+            .map_err(map_app_error)?;
 
         Ok((
             GetAlbumsResponse {
@@ -65,7 +67,7 @@ impl AlbumService for ConnectAlbumService {
 
         let created_album = album_service::create_album(&self.pool, album)
             .await
-            .map_err(connectrpc::ConnectError::from)?;
+            .map_err(map_app_error)?;
 
         Ok((
             CreateAlbumResponse {
@@ -89,7 +91,7 @@ impl AlbumService for ConnectAlbumService {
 
         let updated_album = album_service::update_album(&self.pool, request.id, album)
             .await
-            .map_err(connectrpc::ConnectError::from)?;
+            .map_err(map_app_error)?;
 
         Ok((
             UpdateAlbumResponse {
@@ -107,7 +109,7 @@ impl AlbumService for ConnectAlbumService {
     ) -> Result<(DeleteAlbumResponse, Context), connectrpc::ConnectError> {
         album_service::delete_album(&self.pool, request.id)
             .await
-            .map_err(connectrpc::ConnectError::from)?;
+            .map_err(map_app_error)?;
 
         Ok((DeleteAlbumResponse::default(), ctx))
     }

@@ -8,7 +8,6 @@ mod tests {
 
     use crate::rpc::novasound::{album::v1 as album_v1, artist::v1, song::v1 as song_v1};
     use crate::services::connect::create_connect_router;
-    use crate::state::AppState;
     use crate::tests::test_helpers::{TestSetupError, create_test_pool};
 
     async fn spawn_connect_test_server() -> Option<axum::http::Uri> {
@@ -26,9 +25,7 @@ mod tests {
                 panic!("Test database setup failed: {error}");
             },
         };
-        let app_state = AppState::new(pool);
-        let app =
-            Router::new().fallback_service(create_connect_router(app_state).into_axum_service());
+        let app = Router::new().fallback_service(create_connect_router(pool).into_axum_service());
         let listener = TcpListener::bind("127.0.0.1:0")
             .await
             .expect("bind listener");

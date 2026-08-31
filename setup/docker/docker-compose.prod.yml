@@ -6,7 +6,7 @@ services:
     environment:
       APP_ENV: ${APP_ENV:-prod}
       RUST_LOG: ${RUST_LOG:-info}
-      DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres_db:${POSTGRES_PORT}/${POSTGRES_DB}"
+      DATABASE_URL: ${DATABASE_URL}
     restart: unless-stopped
     read_only: true
     tmpfs:

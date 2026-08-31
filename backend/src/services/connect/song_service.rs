@@ -7,7 +7,7 @@ use crate::rpc::novasound::song::v1::{
     GetSongRequestView, GetSongsRequestView, GetSongsResponse, SongService, UpdateSongRequestView,
     UpdateSongResponse,
 };
-use crate::services::connect::{parse_optional_date, song_to_proto};
+use crate::services::connect::{map_app_error, parse_optional_date, song_to_proto};
 use crate::services::song_service;
 
 #[derive(Clone)]
@@ -29,7 +29,7 @@ impl SongService for ConnectSongService {
     ) -> Result<(crate::rpc::novasound::song::v1::Song, Context), connectrpc::ConnectError> {
         let song = song_service::get_song_by_id(&self.pool, request.id)
             .await
-            .map_err(connectrpc::ConnectError::from)?;
+            .map_err(map_app_error)?;
 
         Ok((song_to_proto(song), ctx))
     }
@@ -41,7 +41,7 @@ impl SongService for ConnectSongService {
     ) -> Result<(GetSongsResponse, Context), connectrpc::ConnectError> {
         let songs = song_service::get_all_songs(&self.pool)
             .await
-            .map_err(connectrpc::ConnectError::from)?;
+            .map_err(map_app_error)?;
 
         Ok((
             GetSongsResponse {
@@ -68,7 +68,7 @@ impl SongService for ConnectSongService {
 
         let created_song = song_service::create_song(&self.pool, song)
             .await
-            .map_err(connectrpc::ConnectError::from)?;
+            .map_err(map_app_error)?;
 
         Ok((
             CreateSongResponse {
@@ -93,7 +93,7 @@ impl SongService for ConnectSongService {
 
         let updated_song = song_service::update_song(&self.pool, request.id, song)
             .await
-            .map_err(connectrpc::ConnectError::from)?;
+            .map_err(map_app_error)?;
 
         Ok((
             UpdateSongResponse {
@@ -111,7 +111,7 @@ impl SongService for ConnectSongService {
     ) -> Result<(DeleteSongResponse, Context), connectrpc::ConnectError> {
         song_service::delete_song(&self.pool, request.id)
             .await
-            .map_err(connectrpc::ConnectError::from)?;
+            .map_err(map_app_error)?;
 
         Ok((DeleteSongResponse::default(), ctx))
     }
