@@ -17,6 +17,7 @@ pub mod rpc;
 pub mod services;
 pub mod state;
 pub mod utils;
+pub mod web;
 
 #[cfg(test)]
 mod tests {
