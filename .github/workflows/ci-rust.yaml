@@ -32,7 +32,7 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Load tool versions
         run: grep -Ev '^\s*(#|$)' ../setup/ci/versions >> "$GITHUB_ENV"
@@ -85,7 +85,7 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Load tool versions
         run: grep -Ev '^\s*(#|$)' ../setup/ci/versions >> "$GITHUB_ENV"
@@ -117,7 +117,7 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Load tool versions
         run: grep -Ev '^\s*(#|$)' ../setup/ci/versions >> "$GITHUB_ENV"
