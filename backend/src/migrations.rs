@@ -1,11 +1,11 @@
 use std::{fs, path::PathBuf};
 
 use function_name::named;
-use log::info;
+use log::{error, info};
 use tokio_postgres::Client;
 
-use crate::create_error;
 use crate::errors::{AppError, AppResult};
+use crate::utils::log_and_context_error;
 
 struct Migration {
     version: String,
@@ -32,13 +32,38 @@ pub async fn apply_migrations(client: &mut Client) -> AppResult<()> {
 #[named]
 fn load_migrations() -> AppResult<Vec<Migration>> {
     let migrations_dir = PathBuf::from("database/migrations");
-    let entries = fs::read_dir(&migrations_dir)
-        .map_err(|err| create_error!(err, "Failed to read migrations directory"))?;
+    let entries = fs::read_dir(&migrations_dir).map_err(|err| {
+        error!(
+            "Failed to read migrations directory {}: {}. At {}::{}",
+            migrations_dir.display(),
+            err,
+            file!(),
+            function_name!()
+        );
+        AppError::Internal(log_and_context_error(
+            err,
+            "Failed to read migrations directory",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
     let mut migrations = Vec::new();
     for entry in entries {
-        let entry =
-            entry.map_err(|err| create_error!(err, "Failed to read migration directory entry"))?;
+        let entry = entry.map_err(|err| {
+            error!(
+                "Failed to read migration directory entry: {}. At {}::{}",
+                err,
+                file!(),
+                function_name!()
+            );
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to read migration directory entry",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
         let path = entry.path();
         if path.extension().and_then(|extension| extension.to_str()) != Some("sql") {
@@ -50,8 +75,21 @@ fn load_migrations() -> AppResult<Vec<Migration>> {
             .and_then(|file_stem| file_stem.to_str())
             .ok_or_else(|| AppError::Internal(anyhow::anyhow!("Invalid migration file name")))?
             .to_string();
-        let sql = fs::read_to_string(&path)
-            .map_err(|err| create_error!(err, "Failed to read migration file"))?;
+        let sql = fs::read_to_string(&path).map_err(|err| {
+            error!(
+                "Failed to read migration file {}: {}. At {}::{}",
+                path.display(),
+                err,
+                file!(),
+                function_name!()
+            );
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to read migration file",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
         migrations.push(Migration { version, sql });
     }
@@ -72,7 +110,20 @@ pub async fn reset_database(client: &Client) -> AppResult<()> {
             ",
         )
         .await
-        .map_err(|err| create_error!(err, "Failed to reset database schema"))?;
+        .map_err(|err| {
+            error!(
+                "Failed to reset database schema: {}. At {}::{}",
+                err,
+                file!(),
+                function_name!()
+            );
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to reset database schema",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     info!("Database schema reset successfully.");
     Ok(())
@@ -90,7 +141,20 @@ async fn ensure_migration_table(client: &Client) -> AppResult<()> {
             ",
         )
         .await
-        .map_err(|err| create_error!(err, "Failed to ensure schema_migrations table exists"))?;
+        .map_err(|err| {
+            error!(
+                "Failed to ensure schema_migrations table exists: {}. At {}::{}",
+                err,
+                file!(),
+                function_name!()
+            );
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to ensure schema_migrations table exists",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     Ok(())
 }
@@ -103,7 +167,21 @@ async fn is_migration_applied(client: &Client, version: &str) -> AppResult<bool>
             &[&version],
         )
         .await
-        .map_err(|err| create_error!(err, "Failed to check migration status"))?;
+        .map_err(|err| {
+            error!(
+                "Failed to check migration status for {}: {}. At {}::{}",
+                version,
+                err,
+                file!(),
+                function_name!()
+            );
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to check migration status",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
     Ok(row.is_some())
 }
@@ -112,15 +190,37 @@ async fn is_migration_applied(client: &Client, version: &str) -> AppResult<bool>
 async fn apply_single_migration(client: &mut Client, version: &str, sql: &str) -> AppResult<()> {
     info!("Applying migration {}...", version);
 
-    let transaction = client
-        .transaction()
-        .await
-        .map_err(|err| create_error!(err, "Failed to start migration transaction"))?;
+    let transaction = client.transaction().await.map_err(|err| {
+        error!(
+            "Failed to start migration transaction for {}: {}. At {}::{}",
+            version,
+            err,
+            file!(),
+            function_name!()
+        );
+        AppError::Internal(log_and_context_error(
+            err,
+            "Failed to start migration transaction",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
-    transaction
-        .batch_execute(sql)
-        .await
-        .map_err(|err| create_error!(err, "Failed to execute migration"))?;
+    transaction.batch_execute(sql).await.map_err(|err| {
+        error!(
+            "Failed to execute migration {}: {}. At {}::{}",
+            version,
+            err,
+            file!(),
+            function_name!()
+        );
+        AppError::Internal(log_and_context_error(
+            err,
+            "Failed to execute migration",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
     transaction
         .execute(
@@ -128,12 +228,37 @@ async fn apply_single_migration(client: &mut Client, version: &str, sql: &str) -
             &[&version],
         )
         .await
-        .map_err(|err| create_error!(err, "Failed to record applied migration"))?;
+        .map_err(|err| {
+            error!(
+                "Failed to record migration {}: {}. At {}::{}",
+                version,
+                err,
+                file!(),
+                function_name!()
+            );
+            AppError::Internal(log_and_context_error(
+                err,
+                "Failed to record applied migration",
+                file!(),
+                function_name!(),
+            ))
+        })?;
 
-    transaction
-        .commit()
-        .await
-        .map_err(|err| create_error!(err, "Failed to commit migration transaction"))?;
+    transaction.commit().await.map_err(|err| {
+        error!(
+            "Failed to commit migration {}: {}. At {}::{}",
+            version,
+            err,
+            file!(),
+            function_name!()
+        );
+        AppError::Internal(log_and_context_error(
+            err,
+            "Failed to commit migration transaction",
+            file!(),
+            function_name!(),
+        ))
+    })?;
 
     info!("Migration {} applied successfully.", version);
     Ok(())

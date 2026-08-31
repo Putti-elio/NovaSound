@@ -1,9 +1,5 @@
-# NovaSound frontend
+# Vue 3 + TypeScript + Vite
 
-This is a framework-free HTML frontend using HTMX and Vite. Bun 1.4 and Vite run only in Docker; do not install Bun, Node, npm, or Vite on the host.
+This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-```sh
-make up-frontend
-```
-
-The development server is available at `http://localhost:5173`. Build production assets from Docker with `make build-frontend`; the output is written to `frontend/dist/` for the host-side Tauri build.
+Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).

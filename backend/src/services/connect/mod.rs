@@ -2,30 +2,33 @@ use std::sync::Arc;
 
 use chrono::NaiveDate;
 use connectrpc::Router;
+use deadpool_postgres::Pool;
 
+use crate::errors::AppError;
 use crate::models::date_serde::DATE_FORMAT;
 use crate::rpc::novasound::album::v1::AlbumServiceExt;
 use crate::rpc::novasound::artist::v1::ArtistServiceExt;
 use crate::rpc::novasound::song::v1::SongServiceExt;
 use crate::rpc::novasound::{album::v1, artist::v1 as artist_v1, song::v1 as song_v1};
-use crate::state::AppState;
 
 pub mod album_service;
 pub mod artist_service;
 pub mod song_service;
 
-pub fn create_connect_router(state: AppState) -> Router {
+pub fn create_connect_router(pool: Pool) -> Router {
     let router = Router::new();
-    let router = Arc::new(artist_service::ConnectArtistService::new(
-        state.db_pool.clone(),
-    ))
-    .register(router);
-    let router = Arc::new(album_service::ConnectAlbumService::new(
-        state.db_pool.clone(),
-    ))
-    .register(router);
+    let router = Arc::new(artist_service::ConnectArtistService::new(pool.clone())).register(router);
+    let router = Arc::new(album_service::ConnectAlbumService::new(pool.clone())).register(router);
 
-    Arc::new(song_service::ConnectSongService::new(state.db_pool)).register(router)
+    Arc::new(song_service::ConnectSongService::new(pool)).register(router)
+}
+
+fn map_app_error(error: AppError) -> connectrpc::ConnectError {
+    match error {
+        | AppError::NotFound(message) => connectrpc::ConnectError::not_found(message),
+        | AppError::Validation(message) => connectrpc::ConnectError::invalid_argument(message),
+        | AppError::Internal(error) => connectrpc::ConnectError::internal(error.to_string()),
+    }
 }
 
 #[allow(clippy::result_large_err)]

@@ -1,20 +1,4 @@
 services:
-  frontend:
-    build:
-      dockerfile: setup/docker/images/frontend/Dockerfile.dev
-      args:
-        BUN_VERSION: ${BUN_VERSION}
-    image: novasound/frontend-dev:${TAG:-latest}
-    working_dir: /app
-    environment:
-      API_BASE_URL: ${API_BASE_URL:-http://127.0.0.1:4000}
-    volumes:
-      - ./frontend:/app
-      - frontend_node_modules:/app/node_modules
-    ports:
-      - "5173:5173"
-    command: ["sh", "-c", "bun install --frozen-lockfile && bun run dev"]
-
   backend:
     build:
       dockerfile: setup/docker/images/backend/Dockerfile.dev
@@ -25,7 +9,7 @@ services:
     environment:
       APP_ENV: ${APP_ENV:-dev}
       RUST_LOG: ${RUST_LOG:-info}
-      DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres_db:${POSTGRES_PORT}/${POSTGRES_DB}"
+      DATABASE_URL: ${DATABASE_URL}
     ports:
       - "4000:4000"
     command: ["sleep", "infinity"]
@@ -45,5 +29,4 @@ services:
 
 volumes:
   backend_data:
-  frontend_node_modules:
   postgres_data:
