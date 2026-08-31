@@ -4,48 +4,48 @@
 ## Cheat Sheet
 | Command | Category | Description |
 | :--- | :--- | :--- |
-| [`make up`](#cmd-up) | [Development](#cat-development) | Start all development containers |
-| [`make up-frontend`](#cmd-up-frontend) | [Development](#cat-development) | Start the frontend container with Vite hot reload |
-| [`make up-backend`](#cmd-up-backend) | [Development](#cat-development) | Start the backend and PostgreSQL containers |
-| [`make up-db`](#cmd-up-db) | [Development](#cat-development) | Start only the PostgreSQL container |
-| [`make run-backend`](#cmd-run-backend) | [Development](#cat-development) | Run the backend in development mode |
-| [`make run-backend-release`](#cmd-run-backend-release) | [Development](#cat-development) | Run the backend in release mode |
-| [`make run-backend-error`](#cmd-run-backend-error) | [Development](#cat-development) | Run the backend with error-only logging |
-| [`make down`](#cmd-down) | [Development](#cat-development) | Stop all containers |
-| [`make down-frontend`](#cmd-down-frontend) | [Development](#cat-development) | Stop the frontend container |
-| [`make down-backend`](#cmd-down-backend) | [Development](#cat-development) | Stop the backend container |
-| [`make down-db`](#cmd-down-db) | [Development](#cat-development) | Stop the PostgreSQL container |
-| [`make restart`](#cmd-restart) | [Development](#cat-development) | Restart all development containers |
-| [`make restart-frontend`](#cmd-restart-frontend) | [Development](#cat-development) | Restart the frontend container |
-| [`make restart-backend`](#cmd-restart-backend) | [Development](#cat-development) | Restart the backend and PostgreSQL containers |
-| [`make restart-db`](#cmd-restart-db) | [Development](#cat-development) | Restart the PostgreSQL container |
-| [`make init-db`](#cmd-init-db) | [Database](#cat-database) | Apply database migrations and load demo data |
-| [`make seed-db`](#cmd-seed-db) | [Database](#cat-database) | Load demo artists, albums, and songs |
-| [`make reset-db`](#cmd-reset-db) | [Database](#cat-database) | Recreate the database schema and reload demo data |
-| [`make generate-clorinde`](#cmd-generate-clorinde) | [Database](#cat-database) | Regenerate Clorinde Rust query types from SQL files |
-| [`make export-db`](#cmd-export-db) | [Database](#cat-database) | Export PostgreSQL data to a SQL file |
-| [`make import-db`](#cmd-import-db) | [Database](#cat-database) | Import a SQL file into PostgreSQL |
-| [`make check-backend`](#cmd-check-backend) | [Quality](#cat-quality) | Check that the backend compiles |
-| [`make lint`](#cmd-lint) | [Quality](#cat-quality) | Run backend formatting and Clippy checks used by CI |
-| [`make lint-backend`](#cmd-lint-backend) | [Quality](#cat-quality) | Run Clippy on the backend |
-| [`make fmt-backend`](#cmd-fmt-backend) | [Quality](#cat-quality) | Format backend Rust code |
-| [`make fmt-check-backend`](#cmd-fmt-check-backend) | [Quality](#cat-quality) | Check backend Rust formatting |
-| [`make fix-backend`](#cmd-fix-backend) | [Quality](#cat-quality) | Apply automatic Rust fixes to the backend |
-| [`make test`](#cmd-test) | [Quality](#cat-quality) | Run all backend tests |
-| [`make build-frontend`](#cmd-build-frontend) | [Build](#cat-build) | Build frontend assets in Docker for Tauri |
-| [`make build-tauri`](#cmd-build-tauri) | [Build](#cat-build) | Build Linux desktop packages on the host |
-| [`make build-prod`](#cmd-build-prod) | [Build](#cat-build) | Build the production backend image |
-| [`make prod`](#cmd-prod) | [Build](#cat-build) | Build and start the production backend and PostgreSQL services |
-| [`make sh-frontend`](#cmd-sh-frontend) | [Shell](#cat-shell) | Open a shell in the frontend container |
-| [`make sh-backend`](#cmd-sh-backend) | [Shell](#cat-shell) | Open a shell in the backend container |
-| [`make sh-db`](#cmd-sh-db) | [Shell](#cat-shell) | Open a PostgreSQL shell |
-| [`make clear`](#cmd-clear) | [Cleanup](#cat-cleanup) | Delete all application containers, images, and data volumes |
-| [`make clear-frontend`](#cmd-clear-frontend) | [Cleanup](#cat-cleanup) | Delete the frontend container, image, and dependency volume |
-| [`make clear-backend`](#cmd-clear-backend) | [Cleanup](#cat-cleanup) | Delete backend containers and images |
-| [`make clear-db`](#cmd-clear-db) | [Cleanup](#cat-cleanup) | Delete PostgreSQL containers, images, and data volumes |
-| [`make clean-git`](#cmd-clean-git) | [Cleanup](#cat-cleanup) | Delete local branches whose remote branch was removed |
-| [`make tag`](#cmd-tag) | [Release](#cat-release) | Create an annotated version tag, for example TAG=v1.2.3 |
-| [`make docs`](#cmd-docs) | [Documentation](#cat-documentation) | Generate Markdown documentation from the Makefile |
+| [`make up`](#development) | Development | Start all development containers |
+| [`make up-frontend`](#development) | Development | Start the frontend container with Vite hot reload |
+| [`make up-backend`](#development) | Development | Start the backend and PostgreSQL containers |
+| [`make up-db`](#development) | Development | Start only the PostgreSQL container |
+| [`make run-backend`](#development) | Development | Run the backend in development mode |
+| [`make run-backend-release`](#development) | Development | Run the backend in release mode |
+| [`make run-backend-error`](#development) | Development | Run the backend with error-only logging |
+| [`make down`](#development) | Development | Stop all containers |
+| [`make down-frontend`](#development) | Development | Stop the frontend container |
+| [`make down-backend`](#development) | Development | Stop the backend container |
+| [`make down-db`](#development) | Development | Stop the PostgreSQL container |
+| [`make restart`](#development) | Development | Restart all development containers |
+| [`make restart-frontend`](#development) | Development | Restart the frontend container |
+| [`make restart-backend`](#development) | Development | Restart the backend and PostgreSQL containers |
+| [`make restart-db`](#development) | Development | Restart the PostgreSQL container |
+| [`make init-db`](#database) | Database | Apply database migrations and load demo data |
+| [`make seed-db`](#database) | Database | Load demo artists, albums, and songs |
+| [`make reset-db`](#database) | Database | Recreate the database schema and reload demo data |
+| [`make generate-clorinde`](#database) | Database | Regenerate Clorinde Rust query types from SQL files |
+| [`make export-db`](#database) | Database | Export PostgreSQL data to a SQL file |
+| [`make import-db`](#database) | Database | Import a SQL file into PostgreSQL |
+| [`make check-backend`](#quality) | Quality | Check that the backend compiles |
+| [`make lint`](#quality) | Quality | Run backend formatting and Clippy checks used by CI |
+| [`make lint-backend`](#quality) | Quality | Run Clippy on the backend |
+| [`make fmt-backend`](#quality) | Quality | Format backend Rust code |
+| [`make fmt-check-backend`](#quality) | Quality | Check backend Rust formatting |
+| [`make fix-backend`](#quality) | Quality | Apply automatic Rust fixes to the backend |
+| [`make test`](#quality) | Quality | Run all backend tests |
+| [`make build-frontend`](#build) | Build | Build frontend assets in Docker for Tauri |
+| [`make build-tauri`](#build) | Build | Build Linux desktop packages on the host |
+| [`make build-prod`](#build) | Build | Build the production backend image |
+| [`make prod`](#build) | Build | Build and start the production backend and PostgreSQL services |
+| [`make sh-frontend`](#shell) | Shell | Open a shell in the frontend container |
+| [`make sh-backend`](#shell) | Shell | Open a shell in the backend container |
+| [`make sh-db`](#shell) | Shell | Open a PostgreSQL shell |
+| [`make clear`](#cleanup) | Cleanup | Delete all application containers, images, and data volumes |
+| [`make clear-frontend`](#cleanup) | Cleanup | Delete the frontend container, image, and dependency volume |
+| [`make clear-backend`](#cleanup) | Cleanup | Delete backend containers and images |
+| [`make clear-db`](#cleanup) | Cleanup | Delete PostgreSQL containers, images, and data volumes |
+| [`make clean-git`](#cleanup) | Cleanup | Delete local branches whose remote branch was removed |
+| [`make tag`](#release) | Release | Create an annotated version tag, for example TAG=v1.2.3 |
+| [`make docs`](#documentation) | Documentation | Generate Markdown documentation from the Makefile |
 
 ---
 
@@ -204,84 +204,76 @@ flowchart LR
 
 ## Section Details
 
-<a id="cat-development"></a>
 ### Development
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| <a id="cmd-up"></a>`make up` | Start all development containers | `up-backend`, `up-frontend` | - |
-| <a id="cmd-up-frontend"></a>`make up-frontend` | Start the frontend container with Vite hot reload | - | - |
-| <a id="cmd-up-backend"></a>`make up-backend` | Start the backend and PostgreSQL containers | - | - |
-| <a id="cmd-up-db"></a>`make up-db` | Start only the PostgreSQL container | - | - |
-| <a id="cmd-run-backend"></a>`make run-backend` | Run the backend in development mode | `up-backend` | - |
-| <a id="cmd-run-backend-release"></a>`make run-backend-release` | Run the backend in release mode | `up-backend` | - |
-| <a id="cmd-run-backend-error"></a>`make run-backend-error` | Run the backend with error-only logging | `up-backend` | - |
-| <a id="cmd-down"></a>`make down` | Stop all containers | - | - |
-| <a id="cmd-down-frontend"></a>`make down-frontend` | Stop the frontend container | - | - |
-| <a id="cmd-down-backend"></a>`make down-backend` | Stop the backend container | - | - |
-| <a id="cmd-down-db"></a>`make down-db` | Stop the PostgreSQL container | - | - |
-| <a id="cmd-restart"></a>`make restart` | Restart all development containers | `down`, `up` | - |
-| <a id="cmd-restart-frontend"></a>`make restart-frontend` | Restart the frontend container | `down-frontend`, `up-frontend` | - |
-| <a id="cmd-restart-backend"></a>`make restart-backend` | Restart the backend and PostgreSQL containers | `down-backend`, `up-backend` | - |
-| <a id="cmd-restart-db"></a>`make restart-db` | Restart the PostgreSQL container | `down-db`, `up-db` | - |
+| `make up` | Start all development containers | `up-backend`, `up-frontend` | - |
+| `make up-frontend` | Start the frontend container with Vite hot reload | - | - |
+| `make up-backend` | Start the backend and PostgreSQL containers | - | - |
+| `make up-db` | Start only the PostgreSQL container | - | - |
+| `make run-backend` | Run the backend in development mode | `up-backend` | - |
+| `make run-backend-release` | Run the backend in release mode | `up-backend` | - |
+| `make run-backend-error` | Run the backend with error-only logging | `up-backend` | - |
+| `make down` | Stop all containers | - | - |
+| `make down-frontend` | Stop the frontend container | - | - |
+| `make down-backend` | Stop the backend container | - | - |
+| `make down-db` | Stop the PostgreSQL container | - | - |
+| `make restart` | Restart all development containers | `down`, `up` | - |
+| `make restart-frontend` | Restart the frontend container | `down-frontend`, `up-frontend` | - |
+| `make restart-backend` | Restart the backend and PostgreSQL containers | `down-backend`, `up-backend` | - |
+| `make restart-db` | Restart the PostgreSQL container | `down-db`, `up-db` | - |
 
-<a id="cat-database"></a>
 ### Database
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| <a id="cmd-init-db"></a>`make init-db` | Apply database migrations and load demo data | `up-backend` | - |
-| <a id="cmd-seed-db"></a>`make seed-db` | Load demo artists, albums, and songs | `up-backend` | - |
-| <a id="cmd-reset-db"></a>`make reset-db` | Recreate the database schema and reload demo data | `up-backend` | - |
-| <a id="cmd-generate-clorinde"></a>`make generate-clorinde` | Regenerate Clorinde Rust query types from SQL files | `init-db` | - |
-| <a id="cmd-export-db"></a>`make export-db` | Export PostgreSQL data to a SQL file | - | - |
-| <a id="cmd-import-db"></a>`make import-db` | Import a SQL file into PostgreSQL | - | - |
+| `make init-db` | Apply database migrations and load demo data | `up-backend` | - |
+| `make seed-db` | Load demo artists, albums, and songs | `up-backend` | - |
+| `make reset-db` | Recreate the database schema and reload demo data | `up-backend` | - |
+| `make generate-clorinde` | Regenerate Clorinde Rust query types from SQL files | `init-db` | - |
+| `make export-db` | Export PostgreSQL data to a SQL file | - | - |
+| `make import-db` | Import a SQL file into PostgreSQL | - | - |
 
-<a id="cat-quality"></a>
 ### Quality
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| <a id="cmd-check-backend"></a>`make check-backend` | Check that the backend compiles | `up-backend` | - |
-| <a id="cmd-lint"></a>`make lint` | Run backend formatting and Clippy checks used by CI | `up-backend` | - |
-| <a id="cmd-lint-backend"></a>`make lint-backend` | Run Clippy on the backend | `up-backend` | - |
-| <a id="cmd-fmt-backend"></a>`make fmt-backend` | Format backend Rust code | `up-backend` | - |
-| <a id="cmd-fmt-check-backend"></a>`make fmt-check-backend` | Check backend Rust formatting | `up-backend` | - |
-| <a id="cmd-fix-backend"></a>`make fix-backend` | Apply automatic Rust fixes to the backend | `up-backend` | - |
-| <a id="cmd-test"></a>`make test` | Run all backend tests | `up-backend` | - |
+| `make check-backend` | Check that the backend compiles | `up-backend` | - |
+| `make lint` | Run backend formatting and Clippy checks used by CI | `up-backend` | - |
+| `make lint-backend` | Run Clippy on the backend | `up-backend` | - |
+| `make fmt-backend` | Format backend Rust code | `up-backend` | - |
+| `make fmt-check-backend` | Check backend Rust formatting | `up-backend` | - |
+| `make fix-backend` | Apply automatic Rust fixes to the backend | `up-backend` | - |
+| `make test` | Run all backend tests | `up-backend` | - |
 
-<a id="cat-build"></a>
 ### Build
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| <a id="cmd-build-frontend"></a>`make build-frontend` | Build frontend assets in Docker for Tauri | - | - |
-| <a id="cmd-build-tauri"></a>`make build-tauri` | Build Linux desktop packages on the host | `build-frontend` | - |
-| <a id="cmd-build-prod"></a>`make build-prod` | Build the production backend image | - | - |
-| <a id="cmd-prod"></a>`make prod` | Build and start the production backend and PostgreSQL services | `build-prod` | - |
+| `make build-frontend` | Build frontend assets in Docker for Tauri | - | - |
+| `make build-tauri` | Build Linux desktop packages on the host | `build-frontend` | - |
+| `make build-prod` | Build the production backend image | - | - |
+| `make prod` | Build and start the production backend and PostgreSQL services | `build-prod` | - |
 
-<a id="cat-shell"></a>
 ### Shell
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| <a id="cmd-sh-frontend"></a>`make sh-frontend` | Open a shell in the frontend container | - | - |
-| <a id="cmd-sh-backend"></a>`make sh-backend` | Open a shell in the backend container | - | - |
-| <a id="cmd-sh-db"></a>`make sh-db` | Open a PostgreSQL shell | - | - |
+| `make sh-frontend` | Open a shell in the frontend container | - | - |
+| `make sh-backend` | Open a shell in the backend container | - | - |
+| `make sh-db` | Open a PostgreSQL shell | - | - |
 
-<a id="cat-cleanup"></a>
 ### Cleanup
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| <a id="cmd-clear"></a>`make clear` | Delete all application containers, images, and data volumes | `clear-frontend`, `clear-backend`, `clear-db` | - |
-| <a id="cmd-clear-frontend"></a>`make clear-frontend` | Delete the frontend container, image, and dependency volume | - | - |
-| <a id="cmd-clear-backend"></a>`make clear-backend` | Delete backend containers and images | - | - |
-| <a id="cmd-clear-db"></a>`make clear-db` | Delete PostgreSQL containers, images, and data volumes | - | - |
-| <a id="cmd-clean-git"></a>`make clean-git` | Delete local branches whose remote branch was removed | - | - |
+| `make clear` | Delete all application containers, images, and data volumes | `clear-frontend`, `clear-backend`, `clear-db` | - |
+| `make clear-frontend` | Delete the frontend container, image, and dependency volume | - | - |
+| `make clear-backend` | Delete backend containers and images | - | - |
+| `make clear-db` | Delete PostgreSQL containers, images, and data volumes | - | - |
+| `make clean-git` | Delete local branches whose remote branch was removed | - | - |
 
-<a id="cat-release"></a>
 ### Release
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| <a id="cmd-tag"></a>`make tag` | Create an annotated version tag, for example TAG=v1.2.3 | - | `TAG` |
+| `make tag` | Create an annotated version tag, for example TAG=v1.2.3 | - | `TAG` |
 
-<a id="cat-documentation"></a>
 ### Documentation
 | Command | Description | Dependencies | Required Variables |
 | :--- | :--- | :--- | :--- |
-| <a id="cmd-docs"></a>`make docs` | Generate Markdown documentation from the Makefile | - | - |
+| `make docs` | Generate Markdown documentation from the Makefile | - | - |
