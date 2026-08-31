@@ -7,7 +7,7 @@ use crate::rpc::novasound::artist::v1::{
     UpdateArtistRequestView, UpdateArtistResponse,
 };
 use crate::services::artist_service;
-use crate::services::connect::{artist_to_proto, map_app_error};
+use crate::services::connect::artist_to_proto;
 
 #[derive(Clone)]
 pub struct ConnectArtistService {
@@ -29,7 +29,7 @@ impl ArtistService for ConnectArtistService {
     {
         let artist = artist_service::get_artist(&self.pool, request.id)
             .await
-            .map_err(map_app_error)?;
+            .map_err(connectrpc::ConnectError::from)?;
 
         Ok((artist_to_proto(artist), ctx))
     }
@@ -41,7 +41,7 @@ impl ArtistService for ConnectArtistService {
     ) -> Result<(GetArtistsResponse, Context), connectrpc::ConnectError> {
         let artists = artist_service::get_all_artists(&self.pool)
             .await
-            .map_err(map_app_error)?;
+            .map_err(connectrpc::ConnectError::from)?;
 
         Ok((
             GetArtistsResponse {
@@ -59,7 +59,7 @@ impl ArtistService for ConnectArtistService {
     ) -> Result<(CreateArtistResponse, Context), connectrpc::ConnectError> {
         let artist = artist_service::create_artist(&self.pool, request.name)
             .await
-            .map_err(map_app_error)?;
+            .map_err(connectrpc::ConnectError::from)?;
 
         Ok((
             CreateArtistResponse {
@@ -77,7 +77,7 @@ impl ArtistService for ConnectArtistService {
     ) -> Result<(UpdateArtistResponse, Context), connectrpc::ConnectError> {
         let artist = artist_service::update_artist(&self.pool, request.id, request.name)
             .await
-            .map_err(map_app_error)?;
+            .map_err(connectrpc::ConnectError::from)?;
 
         Ok((
             UpdateArtistResponse {
@@ -95,7 +95,7 @@ impl ArtistService for ConnectArtistService {
     ) -> Result<(DeleteArtistResponse, Context), connectrpc::ConnectError> {
         artist_service::delete_artist(&self.pool, request.id)
             .await
-            .map_err(map_app_error)?;
+            .map_err(connectrpc::ConnectError::from)?;
 
         Ok((DeleteArtistResponse::default(), ctx))
     }
