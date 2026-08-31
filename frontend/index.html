@@ -1,13 +1,51 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>vuejs</title>
+    <meta name="theme-color" content="#10121a" />
+    <title>NovaSound</title>
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="NovaSound, accueil">Nova<span>Sound</span></a>
+        <p class="eyebrow">Votre collection, en mouvement</p>
+      </header>
+
+      <div class="content-shell">
+        <nav class="navigation" aria-label="Navigation principale">
+          <a class="is-active" href="#catalogue">Catalogue</a>
+          <a href="#bibliotheque">Bibliothèque</a>
+          <a href="#recherche">Recherche</a>
+        </nav>
+
+        <main id="catalogue" class="catalogue">
+          <div class="section-heading">
+            <p class="eyebrow">Découvrir</p>
+            <h1>Le catalogue NovaSound</h1>
+          </div>
+          <section
+            id="artist-catalogue"
+            class="artist-catalogue"
+            hx-get="%API_BASE_URL%/web/artists"
+            hx-trigger="load"
+            hx-swap="innerHTML"
+          >
+            <p class="loading">Chargement des artistes...</p>
+          </section>
+        </main>
+      </div>
+
+      <footer class="player-placeholder">
+        <div class="record-mark" aria-hidden="true"></div>
+        <div>
+          <p class="eyebrow">Lecteur</p>
+          <strong>Le lecteur arrive bientôt</strong>
+        </div>
+        <span>00:00</span>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>
