@@ -1,0 +1,18 @@
+<section class="page" aria-labelledby="history-title">
+  <header class="page-heading">
+    <div><p class="eyebrow">Journal événementiel</p><h1 id="history-title">Chaque écoute, vérifiable.</h1><p class="page-lede">La chronologie qui se trouve derrière les agrégats, avec durée réelle et provenance.</p></div>
+    <div class="heading-actions"><button class="button button-secondary" type="button">Exporter les événements</button></div>
+  </header>
+
+  <form class="filter-bar" hx-get="/src/templates/fragments/history/history-evening.html" hx-target="#history-results" hx-indicator="#history-loader">
+    <label><span>Recherche</span><input name="query" placeholder="Piste, artiste ou album" /></label>
+    <label><span>Moment</span><select name="moment"><option>Toute la journée</option><option selected>Soirée · 18h–00h</option><option>Matin · 06h–12h</option></select></label>
+    <label><span>Source</span><select name="source"><option>Toutes</option><option>Import</option><option>Synchronisation</option></select></label>
+    <button class="button button-primary" type="submit">Filtrer</button>
+    <button class="button button-quiet" type="button" hx-get="/src/templates/fragments/history/history-list.html" hx-target="#history-results" hx-indicator="#history-loader">Réinitialiser</button>
+  </form>
+
+  <div class="history-summary"><span><strong>6 événements affichés</strong><small>sur 1 798 dans la période</small></span><span><strong>19 min 27 s</strong><small>temps réellement écouté</small></span><span><strong>Europe/Paris</strong><small>fuseau d'affichage</small></span></div>
+  <div id="history-loader" class="inline-loader htmx-indicator">Lecture du journal mocké…</div>
+  <div id="history-results" hx-get="/src/templates/fragments/history/history-list.html" hx-trigger="load" hx-indicator="#history-loader"><div class="loading-state"><p>Chronologie en préparation…</p></div></div>
+</section>

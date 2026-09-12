@@ -1,0 +1,20 @@
+<section class="page" aria-labelledby="tops-title">
+  <header class="page-heading">
+    <div><p class="eyebrow">Classés par temps écouté</p><h1 id="tops-title">Ce qui revient, ce qui reste.</h1><p class="page-lede">Les streams racontent la répétition; les minutes déterminent le rang.</p></div>
+    <div class="heading-actions"><button class="button button-secondary" type="button" disabled title="Disponible avec le futur backend">Partager la période</button></div>
+  </header>
+  <div class="context-bar">
+    <div class="period-switcher"><button type="button" disabled>Aujourd'hui</button><button type="button" class="is-selected">4 semaines</button><button type="button" disabled>6 mois</button><button type="button" disabled>Couverture</button></div>
+    <p><strong>05 août – 01 sept. 2026</strong><span>Tri décroissant par temps · Europe/Paris</span></p>
+  </div>
+  <div class="top-tabs" aria-label="Type de classement">
+    <button type="button" hx-get="/src/templates/fragments/tops/tracks.html" hx-target="#top-list" hx-indicator="#tops-loader">Pistes <span>900</span></button>
+    <button type="button" hx-get="/src/templates/fragments/tops/artists.html" hx-target="#top-list" hx-indicator="#tops-loader">Artistes <span>535</span></button>
+    <button type="button" hx-get="/src/templates/fragments/tops/albums.html" hx-target="#top-list" hx-indicator="#tops-loader">Albums <span>655</span></button>
+    <button type="button" hx-get="/src/templates/fragments/tops/genres.html" hx-target="#top-list" hx-indicator="#tops-loader">Genres <span>126</span></button>
+  </div>
+  <div id="tops-loader" class="inline-loader htmx-indicator">Chargement du classement mocké…</div>
+  <div id="top-list" hx-get="/src/templates/fragments/tops/tracks.html" hx-trigger="load" hx-swap="innerHTML" hx-indicator="#tops-loader">
+    <div class="loading-state"><p>Classement en préparation…</p></div>
+  </div>
+</section>

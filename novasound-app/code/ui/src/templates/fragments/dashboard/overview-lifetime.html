@@ -1,0 +1,18 @@
+<button id="period-today" type="button" hx-get="/src/templates/fragments/dashboard/overview-today.html" hx-target="#dashboard-period-content" hx-indicator="#period-loader" hx-swap-oob="outerHTML">Aujourd'hui</button>
+<button id="period-four-weeks" type="button" hx-get="/src/templates/fragments/dashboard/overview.html" hx-target="#main-content" hx-swap="innerHTML show:top" hx-indicator="#period-loader" hx-swap-oob="outerHTML">4 semaines</button>
+<button id="period-lifetime" class="is-selected" type="button" hx-get="/src/templates/fragments/dashboard/overview-lifetime.html" hx-target="#dashboard-period-content" hx-indicator="#period-loader" hx-swap-oob="outerHTML">Toute la couverture</button>
+<p id="period-context" hx-swap-oob="outerHTML"><strong>18 déc. 2019 – 01 sept. 2026</strong><span>Couverture disponible à 94 % · Europe/Paris</span></p>
+<div class="period-result" aria-labelledby="lifetime-result-title">
+  <header class="period-result-heading"><div><p class="eyebrow">Couverture disponible</p><h2 id="lifetime-result-title">Du 18 déc. 2019 au 1 sept. 2026</h2></div><span>94 % estimés · 3 périodes incomplètes</span></header>
+  <div class="coverage-warning"><strong>“Toute la couverture” ne signifie pas toute votre vie d'écoute.</strong><span>Les données reflètent uniquement les événements importés et synchronisés. Trois lacunes ont été détectées.</span></div>
+  <div class="metric-grid">
+    <article class="metric-card metric-card-featured"><div class="metric-label"><span>Temps d'écoute</span><span class="metric-icon">↗</span></div><strong>6 842<small>h</small></strong><p>285 jours cumulés d'exposition</p></article>
+    <article class="metric-card"><div class="metric-label"><span>Streams retenus</span><span class="metric-icon">▶</span></div><strong>128 406</strong><p>Après exclusions et déduplication</p></article>
+    <article class="metric-card"><div class="metric-label"><span>Pistes distinctes</span><span class="metric-icon">♫</span></div><strong>18 744</strong><p>17 980 identités canoniques estimées</p></article>
+    <article class="metric-card"><div class="metric-label"><span>Artistes distincts</span><span class="metric-icon">◎</span></div><strong>6 219</strong><p>1 140 retrouvés chaque année</p></article>
+  </div>
+  <article class="panel coverage-timeline-panel">
+    <header class="panel-heading"><div><p class="eyebrow">Traçabilité</p><h2>Couverture de l'historique</h2></div><a href="/src/templates/fragments/quality/quality.html" hx-get="/src/templates/fragments/quality/quality.html" hx-target="#main-content" hx-indicator="#global-loader">Rapport détaillé</a></header>
+    <div class="coverage-years" aria-label="Couverture de 2019 à 2026"><span style="--coverage: 18%">2019</span><span style="--coverage: 92%">2020</span><span style="--coverage: 100%">2021</span><span style="--coverage: 86%">2022</span><span style="--coverage: 100%">2023</span><span style="--coverage: 100%">2024</span><span style="--coverage: 98%">2025</span><span style="--coverage: 67%">2026</span></div>
+  </article>
+</div>

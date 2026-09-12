@@ -1,0 +1,38 @@
+services:
+  backend:
+    build:
+      dockerfile: project/docker/images/server/Dockerfile.prod
+    image: novasound/server-prod:${TAG:-latest}
+    environment:
+      APP_ENV: ${APP_ENV:-prod}
+      RUST_LOG: ${RUST_LOG:-info}
+      DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres_db:${POSTGRES_PORT}/${POSTGRES_DB}"
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - backend_data:/app/project/data
+    ports:
+      - "4000:4000"
+    command: ["/app/novasound-server"]
+
+  postgres_db:
+    build:
+      dockerfile: project/docker/images/postgres/Dockerfile.prod
+    image: novasound/db-prod:${TAG:-latest}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /run/postgresql
+
+volumes:
+  backend_data:
+  postgres_data:

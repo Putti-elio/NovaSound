@@ -1,0 +1,6 @@
+target/
+project/data/
+*.db
+.env
+project/docker/.env
+*.log

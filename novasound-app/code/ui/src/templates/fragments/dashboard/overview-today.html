@@ -1,0 +1,14 @@
+<button id="period-today" class="is-selected" type="button" hx-get="/src/templates/fragments/dashboard/overview-today.html" hx-target="#dashboard-period-content" hx-indicator="#period-loader" hx-swap-oob="outerHTML">Aujourd'hui</button>
+<button id="period-four-weeks" type="button" hx-get="/src/templates/fragments/dashboard/overview.html" hx-target="#main-content" hx-swap="innerHTML show:top" hx-indicator="#period-loader" hx-swap-oob="outerHTML">4 semaines</button>
+<button id="period-lifetime" type="button" hx-get="/src/templates/fragments/dashboard/overview-lifetime.html" hx-target="#dashboard-period-content" hx-indicator="#period-loader" hx-swap-oob="outerHTML">Toute la couverture</button>
+<p id="period-context" hx-swap-oob="outerHTML"><strong>02 sept. 2026 · 00:00 – 09:15</strong><span>Jour calendaire partiel · Europe/Paris</span></p>
+<div class="period-result" aria-labelledby="today-result-title">
+  <header class="period-result-heading"><div><p class="eyebrow">Aujourd'hui · 00:00 – maintenant</p><h2 id="today-result-title">Une matinée calme</h2></div><span>Europe/Paris · jour calendaire en cours</span></header>
+  <div class="metric-grid">
+    <article class="metric-card metric-card-featured"><div class="metric-label"><span>Temps d'écoute</span><span class="metric-icon">↗</span></div><strong>1<small>h</small> 26<small>min</small></strong><p>Journée partielle, comparaison désactivée</p></article>
+    <article class="metric-card"><div class="metric-label"><span>Streams retenus</span><span class="metric-icon">▶</span></div><strong>27</strong><p>5 événements exclus sous 30 s</p></article>
+    <article class="metric-card"><div class="metric-label"><span>Pistes distinctes</span><span class="metric-icon">♫</span></div><strong>24</strong><p>21 jamais jouées hier</p></article>
+    <article class="metric-card"><div class="metric-label"><span>Artistes distincts</span><span class="metric-icon">◎</span></div><strong>19</strong><p>3 collaborations multi-créditées</p></article>
+  </div>
+  <article class="panel empty-insight"><span class="empty-insight-mark">09:15</span><div><h2>La journée ne fait que commencer</h2><p>Les tendances quotidiennes deviennent plus fiables après une journée complète. Les événements simulés s'arrêtent à 09:15.</p></div></article>
+</div>

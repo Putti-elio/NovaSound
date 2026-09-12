@@ -1,0 +1,16 @@
+[package]
+name = "novasound-application"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+anyhow = "1.0.100"
+chrono = "0.4"
+deadpool-postgres = "0.14"
+function_name = "0.3.0"
+log = "0.4.28"
+novasound-domain = { path = "../domain" }
+novasound-storage-postgres = { path = "../storage-postgres" }
+thiserror = "1.0"
+uuid = { version = "1.19.0", features = ["v4"] }

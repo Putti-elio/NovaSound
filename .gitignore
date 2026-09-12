@@ -4,7 +4,7 @@ node_modules/
 # Build outputs
 dist/
 target/
-frontend/src-tauri/gen/
+novasound-app/src-tauri/gen/
 
 # IDE
 .zed/
@@ -37,7 +37,6 @@ coverage/
 
 # === Cargo / Rust ===
 *.db
-Cargo.lock
 *.rs.bk
 *.rmeta
 *.d
@@ -46,15 +45,10 @@ Cargo.lock
 *.dll
 *.dylib
 *.exe
+*.root-owned/
 
 # === Other Files/Folders ===
 docs/rust-learning/
 docs/PROJECT_SUMMARY.md
 opencode.json
 AGENTS.md
-aidd_docs/
-
-# MemPalace per-project files (issue #185)
-mempalace.yaml
-entities.json
-.mempalace/

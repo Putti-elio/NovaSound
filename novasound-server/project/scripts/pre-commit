@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -e
+
+cd "$(git rev-parse --show-toplevel)/novasound-server"
+
+COMPOSE="docker compose -f project/docker/compose.yml -f project/docker/docker-compose.dev.yml --env-file project/docker/images/versions --env-file project/docker/.env --project-directory ."
+
+echo "Running pre-commit checks..."
+
+echo "Checking for leaked secrets..."
+
+# If the grep pipeline finds a match, it returns 0 (true), meaning a secret WAS found.
+if git diff --cached --name-only | \
+  xargs grep -n -I -E \
+  '((api[_-]?key|secret[_-]?key|access[_-]?token|refresh[_-]?token)[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9_./~+=-]{16,}|authorization[[:space:]]*[:=][[:space:]]*["'"'"']?Bearer[[:space:]]+[A-Za-z0-9_.-]+)' \
+  2>/dev/null | \
+  grep -v -E \
+  '(\$\{\{\s*secrets\.|\$\{\{\s*vars\.|process\.env|std::env|os\.environ|example|test|placeholder|dummy|mock|fixture)' \
+  > /dev/null; then
+  
+  echo "ERROR: Potential leaked secrets detected! Commit aborted."
+  exit 1
+else
+echo "No secrets detected."
+fi
+
+echo "Ensuring protoc is available in backend container..."
+if ! $COMPOSE exec -T backend sh -c 'command -v protoc >/dev/null'; then
+  $COMPOSE exec -T backend sh -c 'apt-get update && apt-get install -y protobuf-compiler'
+fi
+
+echo "Running clippy..."
+make lint
+
+echo "Running fmt check..."
+make fmt-check-backend
+
+echo "Running tests..."
+make test
+
+echo "All checks passed!"
