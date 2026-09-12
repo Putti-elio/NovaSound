@@ -1,12 +1,12 @@
 use deadpool_postgres::Pool;
 use function_name::named;
-use novasound_domain::rules::has_non_empty_name;
+use novasound_domain::models::artist_model::{Artist, CreateArtist, UpdateArtist};
+use novasound_domain::validation::ValidationIssue;
 use novasound_storage_postgres::clorinde;
 use uuid::Uuid;
 
 use crate::create_error;
 use crate::errors::{AppError, AppResult};
-use novasound_domain::models::artist_model::Artist;
 
 fn map_artist(artist: clorinde::queries::artists::Artist) -> Artist {
     Artist {
@@ -34,11 +34,11 @@ pub async fn get_all_artists(pool: &Pool) -> AppResult<Vec<Artist>> {
 
 #[named]
 pub async fn create_artist(pool: &Pool, name: &str) -> AppResult<Artist> {
-    if !has_non_empty_name(name) {
-        return Err(AppError::Validation(
-            "Artist name cannot be empty".to_string(),
-        ));
+    CreateArtist {
+        name: name.to_owned(),
     }
+    .validate()
+    .map_err(AppError::Validation)?;
 
     let client = pool
         .get()
@@ -53,10 +53,14 @@ pub async fn create_artist(pool: &Pool, name: &str) -> AppResult<Artist> {
         .is_some();
 
     if exists {
-        return Err(AppError::Validation(format!(
-            "Artist '{}' already exists",
-            name
-        )));
+        return Err(AppError::Validation(
+            ValidationIssue::new(
+                "name",
+                "already_exists",
+                format!("Artist '{name}' already exists"),
+            )
+            .into(),
+        ));
     }
 
     let id = Uuid::new_v4().to_string();
@@ -93,11 +97,11 @@ pub async fn get_artist(pool: &Pool, id: &str) -> AppResult<Artist> {
 
 #[named]
 pub async fn update_artist(pool: &Pool, id: &str, name: &str) -> AppResult<Artist> {
-    if !has_non_empty_name(name) {
-        return Err(AppError::Validation(
-            "Artist name cannot be empty".to_string(),
-        ));
+    UpdateArtist {
+        name: name.to_owned(),
     }
+    .validate()
+    .map_err(AppError::Validation)?;
 
     let client = pool
         .get()

@@ -1,5 +1,5 @@
 use crate::adapters::connect::{album_to_proto, parse_optional_date, proto_album_type_to_model};
-use crate::errors::connect_error::to_connect_error;
+use crate::errors::connect_error::{to_connect_error, validation_error};
 use crate::models::album_model::{CreateAlbum, UpdateAlbum};
 use crate::rpc::novasound::album::v1::{
     AlbumService, CreateAlbumRequestView, CreateAlbumResponse, DeleteAlbumRequestView,
@@ -9,6 +9,7 @@ use crate::rpc::novasound::album::v1::{
 use connectrpc::Context;
 use deadpool_postgres::Pool;
 use novasound_application::album_service;
+use novasound_domain::validation::ValidationErrors;
 
 #[derive(Clone)]
 pub struct ConnectAlbumService {
@@ -57,12 +58,27 @@ impl AlbumService for ConnectAlbumService {
         ctx: Context,
         request: ::buffa::view::OwnedView<CreateAlbumRequestView<'static>>,
     ) -> Result<(CreateAlbumResponse, Context), connectrpc::ConnectError> {
+        let release_date = parse_optional_date(request.release_date);
+        let album_type = proto_album_type_to_model(request.album_type);
         let album = CreateAlbum {
             name: request.name.to_string(),
-            release_date: parse_optional_date(request.release_date)?,
+            release_date: release_date.clone().unwrap_or(None),
             artist_id: request.artist_id.to_string(),
-            album_type: proto_album_type_to_model(request.album_type)?,
+            album_type: album_type.clone().unwrap_or(None),
         };
+        let mut errors = ValidationErrors::new();
+        if let Err(error) = release_date {
+            errors.push(error);
+        }
+        if let Err(error) = album_type {
+            errors.push(error);
+        }
+        if let Err(error) = album.validate() {
+            errors.extend(error);
+        }
+        if !errors.is_empty() {
+            return Err(validation_error(errors));
+        }
 
         let created_album = album_service::create_album(&self.pool, album)
             .await
@@ -82,11 +98,22 @@ impl AlbumService for ConnectAlbumService {
         ctx: Context,
         request: ::buffa::view::OwnedView<UpdateAlbumRequestView<'static>>,
     ) -> Result<(UpdateAlbumResponse, Context), connectrpc::ConnectError> {
+        let release_date = parse_optional_date(request.release_date);
         let album = UpdateAlbum {
             name: request.name.map(str::to_owned),
-            release_date: parse_optional_date(request.release_date)?,
+            release_date: release_date.clone().unwrap_or(None),
             artist_id: request.artist_id.map(str::to_owned),
         };
+        let mut errors = ValidationErrors::new();
+        if let Err(error) = release_date {
+            errors.push(error);
+        }
+        if let Err(error) = album.validate() {
+            errors.extend(error);
+        }
+        if !errors.is_empty() {
+            return Err(validation_error(errors));
+        }
 
         let updated_album = album_service::update_album(&self.pool, request.id, album)
             .await

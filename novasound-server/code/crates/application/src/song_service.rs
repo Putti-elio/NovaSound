@@ -1,15 +1,14 @@
 use chrono::NaiveTime;
 use deadpool_postgres::{Client, Pool};
 use function_name::named;
-use novasound_domain::rules::{
-    determine_album_type, has_non_empty_name, standalone_collection_for_artist,
-};
+use novasound_domain::rules::{determine_album_type, standalone_collection_for_artist};
 use novasound_storage_postgres::{album_type, clorinde};
 use uuid::Uuid;
 
 use crate::create_error;
 use crate::errors::{AppError, AppResult};
 use novasound_domain::models::song_model::{AlbumType, CreateSong, Song, UpdateSong};
+use novasound_domain::validation::{ValidationErrors, ValidationIssue};
 
 const STANDALONE_COLLECTION_IMAGE_DIRECTORY: &str = "Standalone_Collection";
 
@@ -41,20 +40,6 @@ async fn resolve_song_album_and_image(
     song: &CreateSong,
 ) -> AppResult<(Option<String>, Option<String>)> {
     if let Some(ref album_id) = song.album_id {
-        let album_exists = clorinde::queries::albums::check_album_by_id()
-            .bind(client, album_id)
-            .opt()
-            .await
-            .map_err(|err| create_error!(err, "Failed to check album existence"))?
-            .is_some();
-
-        if !album_exists {
-            return Err(AppError::Validation(format!(
-                "Album with id '{}' does not exist",
-                album_id
-            )));
-        }
-
         let image_path = clorinde::queries::albums::get_album_image_path()
             .bind(client, album_id)
             .one()
@@ -163,11 +148,7 @@ pub async fn get_songs_by_album(pool: &Pool, album_id: &str) -> AppResult<Vec<So
 
 #[named]
 pub async fn create_song(pool: &Pool, song: CreateSong) -> AppResult<Song> {
-    if !has_non_empty_name(&song.name) {
-        return Err(AppError::Validation(
-            "Song name cannot be empty".to_string(),
-        ));
-    }
+    song.validate().map_err(AppError::Validation)?;
 
     let client = pool
         .get()
@@ -181,11 +162,37 @@ pub async fn create_song(pool: &Pool, song: CreateSong) -> AppResult<Song> {
         .map_err(|err| create_error!(err, "Failed to check artist existence"))?
         .is_some();
 
+    let album_exists = if let Some(album_id) = song.album_id.as_deref() {
+        Some(
+            clorinde::queries::albums::check_album_by_id()
+                .bind(&client, &album_id)
+                .opt()
+                .await
+                .map_err(|err| create_error!(err, "Failed to check album existence"))?
+                .is_some(),
+        )
+    } else {
+        None
+    };
+
+    let mut validation_errors = ValidationErrors::new();
     if !artist_exists {
-        return Err(AppError::Validation(format!(
-            "Artist with id '{}' does not exist",
-            song.artist_id
-        )));
+        validation_errors.push(ValidationIssue::new(
+            "artist_id",
+            "not_found",
+            format!("Artist with id '{}' does not exist", song.artist_id),
+        ));
+    }
+    if matches!(album_exists, Some(false)) {
+        let album_id = song.album_id.as_deref().unwrap_or_default();
+        validation_errors.push(ValidationIssue::new(
+            "album_id",
+            "not_found",
+            format!("Album with id '{album_id}' does not exist"),
+        ));
+    }
+    if !validation_errors.is_empty() {
+        return Err(AppError::Validation(validation_errors));
     }
 
     let (album_id, image_path) = resolve_song_album_and_image(pool, &client, &song).await?;
@@ -196,8 +203,7 @@ pub async fn create_song(pool: &Pool, song: CreateSong) -> AppResult<Song> {
         .release_date
         .map(|d| d.and_time(NaiveTime::MIN).and_utc().timestamp());
 
-    let duration_i32 = i32::try_from(song.duration)
-        .map_err(|_| AppError::Validation("Song duration is too large".to_string()))?;
+    let duration_i32 = song.duration as i32;
 
     clorinde::queries::songs::insert_song()
         .bind(
@@ -232,6 +238,8 @@ pub async fn create_song(pool: &Pool, song: CreateSong) -> AppResult<Song> {
 
 #[named]
 pub async fn update_song(pool: &Pool, id: &str, song: UpdateSong) -> AppResult<Song> {
+    song.validate().map_err(AppError::Validation)?;
+
     let client = pool
         .get()
         .await
@@ -248,25 +256,11 @@ pub async fn update_song(pool: &Pool, id: &str, song: UpdateSong) -> AppResult<S
         .transpose()?
         .ok_or_else(|| AppError::NotFound(format!("Song with id '{}' not found", id)))?;
 
-    if let Some(ref name) = song.name
-        && !has_non_empty_name(name)
-    {
-        return Err(AppError::Validation(
-            "Song name cannot be empty".to_string(),
-        ));
-    }
-
     if !song.has_changes() {
         return Ok(existing_song);
     }
 
-    let duration_i32 = song
-        .duration
-        .map(|d| {
-            i32::try_from(d)
-                .map_err(|_| AppError::Validation("Song duration is too large".to_string()))
-        })
-        .transpose()?;
+    let duration_i32 = song.duration.map(|duration| duration as i32);
     let release_date_timestamp = song
         .release_date
         .map(|d| d.and_time(NaiveTime::MIN).and_utc().timestamp());

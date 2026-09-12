@@ -1,5 +1,8 @@
 use chrono::NaiveDate;
 
+use crate::rules::has_non_empty_name;
+use crate::validation::{ValidationErrors, ValidationIssue};
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AlbumType {
     Album,
@@ -46,6 +49,63 @@ impl UpdateSong {
             || self.release_date.is_some()
             || self.track_number.is_some()
     }
+
+    pub fn validate(&self) -> Result<(), ValidationErrors> {
+        let mut errors = ValidationErrors::new();
+        if self
+            .name
+            .as_deref()
+            .is_some_and(|name| !has_non_empty_name(name))
+        {
+            errors.push(ValidationIssue::new(
+                "name",
+                "required",
+                "Song name cannot be empty",
+            ));
+        }
+        if self
+            .duration
+            .is_some_and(|duration| i32::try_from(duration).is_err())
+        {
+            errors.push(ValidationIssue::new(
+                "duration",
+                "out_of_range",
+                "Song duration is too large",
+            ));
+        }
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
+}
+
+impl CreateSong {
+    pub fn validate(&self) -> Result<(), ValidationErrors> {
+        let mut errors = ValidationErrors::new();
+        if !has_non_empty_name(&self.name) {
+            errors.push(ValidationIssue::new(
+                "name",
+                "required",
+                "Song name cannot be empty",
+            ));
+        }
+        if i32::try_from(self.duration).is_err() {
+            errors.push(ValidationIssue::new(
+                "duration",
+                "out_of_range",
+                "Song duration is too large",
+            ));
+        }
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
 }
 
 impl Song {
@@ -61,5 +121,30 @@ impl Song {
             track_number: update.track_number.or(self.track_number),
             image_path: self.image_path,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::CreateSong;
+
+    #[test]
+    fn create_validation_collects_existing_song_failures() {
+        let errors = CreateSong {
+            name: " \t".to_string(),
+            duration: (i32::MAX as u32) + 1,
+            artist_id: "artist-id".to_string(),
+            album_id: None,
+            release_date: None,
+            track_number: None,
+        }
+        .validate()
+        .expect_err("invalid song command");
+
+        assert_eq!(errors.issues().len(), 2);
+        assert_eq!(errors.issues()[0].field, "name");
+        assert_eq!(errors.issues()[0].code, "required");
+        assert_eq!(errors.issues()[1].field, "duration");
+        assert_eq!(errors.issues()[1].code, "out_of_range");
     }
 }

@@ -323,4 +323,55 @@ mod tests {
             .expect_err("invalid date should fail");
         assert_eq!(invalid_error.code, connectrpc::ErrorCode::InvalidArgument);
     }
+
+    #[tokio::test]
+    async fn connect_collects_transport_and_domain_validation_errors() {
+        let Some(uri) = spawn_connect_test_server().await else {
+            return;
+        };
+        let song_client =
+            song_v1::SongServiceClient::new(HttpClient::plaintext(), ClientConfig::new(uri));
+
+        let error = song_client
+            .create_song(song_v1::CreateSongRequest {
+                name: " ".to_string(),
+                duration: (i32::MAX as u32) + 1,
+                artist_id: "artist-id".to_string(),
+                album_id: None,
+                release_date: Some("2024-06-15".to_string()),
+                track_number: None,
+                ..Default::default()
+            })
+            .await
+            .expect_err("invalid request should fail");
+
+        assert_eq!(error.code, connectrpc::ErrorCode::InvalidArgument);
+        assert_eq!(error.details.len(), 1);
+        assert_eq!(
+            error.details[0].type_url,
+            "type.novasound.dev/validation-error-list"
+        );
+        assert_eq!(
+            error.details[0].debug,
+            Some(serde_json::json!({
+                "errors": [
+                    {
+                        "field": "release_date",
+                        "code": "invalid_format",
+                        "message": "Invalid date format. Expected format is DD-MM-YYYY",
+                    },
+                    {
+                        "field": "name",
+                        "code": "required",
+                        "message": "Song name cannot be empty",
+                    },
+                    {
+                        "field": "duration",
+                        "code": "out_of_range",
+                        "message": "Song duration is too large",
+                    },
+                ]
+            }))
+        );
+    }
 }

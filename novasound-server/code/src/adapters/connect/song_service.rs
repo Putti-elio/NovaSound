@@ -2,7 +2,7 @@ use connectrpc::Context;
 use deadpool_postgres::Pool;
 
 use crate::adapters::connect::{parse_optional_date, song_to_proto};
-use crate::errors::connect_error::to_connect_error;
+use crate::errors::connect_error::{to_connect_error, validation_error};
 use crate::models::song_model::{CreateSong, UpdateSong};
 use crate::rpc::novasound::song::v1::{
     CreateSongRequestView, CreateSongResponse, DeleteSongRequestView, DeleteSongResponse,
@@ -10,6 +10,7 @@ use crate::rpc::novasound::song::v1::{
     UpdateSongResponse,
 };
 use novasound_application::song_service;
+use novasound_domain::validation::ValidationErrors;
 
 #[derive(Clone)]
 pub struct ConnectSongService {
@@ -58,14 +59,25 @@ impl SongService for ConnectSongService {
         ctx: Context,
         request: ::buffa::view::OwnedView<CreateSongRequestView<'static>>,
     ) -> Result<(CreateSongResponse, Context), connectrpc::ConnectError> {
+        let release_date = parse_optional_date(request.release_date);
         let song = CreateSong {
             name: request.name.to_string(),
             duration: request.duration,
             artist_id: request.artist_id.to_string(),
             album_id: request.album_id.map(str::to_owned),
-            release_date: parse_optional_date(request.release_date)?,
+            release_date: release_date.clone().unwrap_or(None),
             track_number: request.track_number,
         };
+        let mut errors = ValidationErrors::new();
+        if let Err(error) = release_date {
+            errors.push(error);
+        }
+        if let Err(error) = song.validate() {
+            errors.extend(error);
+        }
+        if !errors.is_empty() {
+            return Err(validation_error(errors));
+        }
 
         let created_song = song_service::create_song(&self.pool, song)
             .await
@@ -85,12 +97,23 @@ impl SongService for ConnectSongService {
         ctx: Context,
         request: ::buffa::view::OwnedView<UpdateSongRequestView<'static>>,
     ) -> Result<(UpdateSongResponse, Context), connectrpc::ConnectError> {
+        let release_date = parse_optional_date(request.release_date);
         let song = UpdateSong {
             name: request.name.map(str::to_owned),
             duration: request.duration,
-            release_date: parse_optional_date(request.release_date)?,
+            release_date: release_date.clone().unwrap_or(None),
             track_number: request.track_number,
         };
+        let mut errors = ValidationErrors::new();
+        if let Err(error) = release_date {
+            errors.push(error);
+        }
+        if let Err(error) = song.validate() {
+            errors.extend(error);
+        }
+        if !errors.is_empty() {
+            return Err(validation_error(errors));
+        }
 
         let updated_song = song_service::update_song(&self.pool, request.id, song)
             .await

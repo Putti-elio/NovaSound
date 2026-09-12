@@ -1,7 +1,6 @@
 use chrono::NaiveTime;
 use deadpool_postgres::Pool;
 use function_name::named;
-use novasound_domain::rules::has_non_empty_name;
 use novasound_storage_postgres::{album_type, clorinde};
 use uuid::Uuid;
 
@@ -9,6 +8,7 @@ use crate::create_error;
 use crate::errors::{AppError, AppResult};
 use novasound_domain::models::album_model::{Album, CreateAlbum, UpdateAlbum};
 use novasound_domain::models::song_model::AlbumType;
+use novasound_domain::validation::ValidationIssue;
 
 #[named]
 fn map_album(album: clorinde::queries::albums::Album) -> AppResult<Album> {
@@ -93,11 +93,7 @@ pub async fn get_albums_by_artist(pool: &Pool, artist_id: &str) -> AppResult<Vec
 
 #[named]
 pub async fn create_album(pool: &Pool, album: CreateAlbum) -> AppResult<Album> {
-    if !has_non_empty_name(&album.name) {
-        return Err(AppError::Validation(
-            "Album name cannot be empty".to_string(),
-        ));
-    }
+    album.validate().map_err(AppError::Validation)?;
 
     let client = pool
         .get()
@@ -112,10 +108,14 @@ pub async fn create_album(pool: &Pool, album: CreateAlbum) -> AppResult<Album> {
         .is_some();
 
     if !artist_exists {
-        return Err(AppError::Validation(format!(
-            "Artist with id '{}' does not exist",
-            album.artist_id
-        )));
+        return Err(AppError::Validation(
+            ValidationIssue::new(
+                "artist_id",
+                "not_found",
+                format!("Artist with id '{}' does not exist", album.artist_id),
+            )
+            .into(),
+        ));
     }
 
     let existing = clorinde::queries::albums::check_album_by_name_and_artist()
@@ -126,10 +126,14 @@ pub async fn create_album(pool: &Pool, album: CreateAlbum) -> AppResult<Album> {
         .is_some();
 
     if existing {
-        return Err(AppError::Validation(format!(
-            "Album '{}' already exists for this artist",
-            album.name
-        )));
+        return Err(AppError::Validation(
+            ValidationIssue::new(
+                "name",
+                "already_exists",
+                format!("Album '{}' already exists for this artist", album.name),
+            )
+            .into(),
+        ));
     }
 
     let id = Uuid::new_v4().to_string();
@@ -168,6 +172,8 @@ pub async fn create_album(pool: &Pool, album: CreateAlbum) -> AppResult<Album> {
 
 #[named]
 pub async fn update_album(pool: &Pool, id: &str, album: UpdateAlbum) -> AppResult<Album> {
+    album.validate().map_err(AppError::Validation)?;
+
     let client = pool
         .get()
         .await
@@ -184,14 +190,6 @@ pub async fn update_album(pool: &Pool, id: &str, album: UpdateAlbum) -> AppResul
         .transpose()?
         .ok_or_else(|| AppError::NotFound(format!("Album with id '{}' not found", id)))?;
 
-    if let Some(ref name) = album.name
-        && !has_non_empty_name(name)
-    {
-        return Err(AppError::Validation(
-            "Album name cannot be empty".to_string(),
-        ));
-    }
-
     if let Some(ref artist_id) = album.artist_id {
         let artist_exists = clorinde::queries::artists::check_artist_by_id()
             .bind(&client, &artist_id)
@@ -201,10 +199,14 @@ pub async fn update_album(pool: &Pool, id: &str, album: UpdateAlbum) -> AppResul
             .is_some();
 
         if !artist_exists {
-            return Err(AppError::Validation(format!(
-                "Artist with id '{}' does not exist",
-                artist_id
-            )));
+            return Err(AppError::Validation(
+                ValidationIssue::new(
+                    "artist_id",
+                    "not_found",
+                    format!("Artist with id '{artist_id}' does not exist"),
+                )
+                .into(),
+            ));
         }
     }
 

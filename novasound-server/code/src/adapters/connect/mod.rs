@@ -8,6 +8,7 @@ use crate::rpc::novasound::artist::v1::ArtistServiceExt;
 use crate::rpc::novasound::song::v1::SongServiceExt;
 use crate::rpc::novasound::{album::v1, artist::v1 as artist_v1, song::v1 as song_v1};
 use crate::state::AppState;
+use novasound_domain::validation::ValidationIssue;
 
 pub mod album_service;
 pub mod artist_service;
@@ -30,11 +31,13 @@ pub fn create_connect_router(state: AppState) -> Router {
 }
 
 #[allow(clippy::result_large_err)]
-fn parse_optional_date(value: Option<&str>) -> Result<Option<NaiveDate>, connectrpc::ConnectError> {
+fn parse_optional_date(value: Option<&str>) -> Result<Option<NaiveDate>, ValidationIssue> {
     value
         .map(|date| {
             NaiveDate::parse_from_str(date, DATE_FORMAT).map_err(|_| {
-                connectrpc::ConnectError::invalid_argument(
+                ValidationIssue::new(
+                    "release_date",
+                    "invalid_format",
                     "Invalid date format. Expected format is DD-MM-YYYY",
                 )
             })
@@ -69,7 +72,7 @@ fn album_type_to_proto(album_type: crate::models::song_model::AlbumType) -> v1::
 #[allow(clippy::result_large_err)]
 fn proto_album_type_to_model(
     album_type: Option<::buffa::EnumValue<v1::AlbumType>>,
-) -> Result<Option<crate::models::song_model::AlbumType>, connectrpc::ConnectError> {
+) -> Result<Option<crate::models::song_model::AlbumType>, ValidationIssue> {
     use buffa::Enumeration;
 
     match album_type {
@@ -88,7 +91,9 @@ fn proto_album_type_to_model(
             | Some(v1::AlbumType::ALBUM_TYPE_STANDALONE_COLLECTION) => Ok(Some(
                 crate::models::song_model::AlbumType::StandaloneCollection,
             )),
-            | None => Err(connectrpc::ConnectError::invalid_argument(
+            | None => Err(ValidationIssue::new(
+                "album_type",
+                "invalid_value",
                 "Invalid album type value",
             )),
         },
@@ -142,10 +147,11 @@ mod tests {
     fn rejects_invalid_connect_date_format() {
         let error = parse_optional_date(Some("2025-12-31")).expect_err("invalid format");
 
-        assert_eq!(error.code, connectrpc::ErrorCode::InvalidArgument);
+        assert_eq!(error.field, "release_date");
+        assert_eq!(error.code, "invalid_format");
         assert_eq!(
-            error.message.as_deref(),
-            Some("Invalid date format. Expected format is DD-MM-YYYY")
+            error.message,
+            "Invalid date format. Expected format is DD-MM-YYYY"
         );
     }
 }

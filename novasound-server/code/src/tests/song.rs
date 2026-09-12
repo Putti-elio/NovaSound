@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    #![allow(clippy::expect_used, clippy::too_many_arguments)]
+    #![allow(clippy::expect_used, clippy::panic, clippy::too_many_arguments)]
     use chrono::NaiveDate;
     use deadpool_postgres::Pool;
 
@@ -162,6 +162,30 @@ mod tests {
 
         let result = song_service::create_song(&pool, song).await;
         assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_create_song_collects_invalid_artist_and_album() {
+        let pool = get_test_pool!();
+        let song = CreateSong {
+            name: "Test Song".to_string(),
+            duration: 240,
+            artist_id: "nonexistent-artist".to_string(),
+            album_id: Some("nonexistent-album".to_string()),
+            release_date: None,
+            track_number: None,
+        };
+
+        let result = song_service::create_song(&pool, song).await;
+        let Err(novasound_application::errors::AppError::Validation(errors)) = result else {
+            panic!("expected validation errors");
+        };
+
+        assert_eq!(errors.issues().len(), 2);
+        assert_eq!(errors.issues()[0].field, "artist_id");
+        assert_eq!(errors.issues()[0].code, "not_found");
+        assert_eq!(errors.issues()[1].field, "album_id");
+        assert_eq!(errors.issues()[1].code, "not_found");
     }
 
     // ==================== GET ALL ====================

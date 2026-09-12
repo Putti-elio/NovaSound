@@ -1,12 +1,13 @@
 use anyhow::Error;
 use log::error;
+use novasound_domain::validation::ValidationErrors;
 
 #[derive(thiserror::Error, Debug)]
 pub enum AppError {
     #[error("Resource not found: {0}")]
     NotFound(String),
     #[error("Validation error: {0}")]
-    Validation(String),
+    Validation(ValidationErrors),
     #[error("Database error")]
     Database(#[source] anyhow::Error),
     #[error("Internal server error")]

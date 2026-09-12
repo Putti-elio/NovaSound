@@ -1,6 +1,8 @@
 use chrono::NaiveDate;
 
 use crate::models::song_model::AlbumType;
+use crate::rules::has_non_empty_name;
+use crate::validation::{ValidationErrors, ValidationIssue};
 
 #[derive(Debug)]
 pub struct Album {
@@ -32,6 +34,24 @@ impl UpdateAlbum {
     #[must_use]
     pub fn has_changes(&self) -> bool {
         self.name.is_some() || self.release_date.is_some() || self.artist_id.is_some()
+    }
+
+    pub fn validate(&self) -> Result<(), ValidationErrors> {
+        if self.name.as_deref().is_none_or(has_non_empty_name) {
+            Ok(())
+        } else {
+            Err(ValidationIssue::new("name", "required", "Album name cannot be empty").into())
+        }
+    }
+}
+
+impl CreateAlbum {
+    pub fn validate(&self) -> Result<(), ValidationErrors> {
+        if has_non_empty_name(&self.name) {
+            Ok(())
+        } else {
+            Err(ValidationIssue::new("name", "required", "Album name cannot be empty").into())
+        }
     }
 }
 
