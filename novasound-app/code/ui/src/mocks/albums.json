@@ -1,0 +1,13 @@
+{
+  "mock": true,
+  "sort": "playedMs:desc",
+  "displayed": 5,
+  "distinct": 655,
+  "items": [
+    { "id": "alb-afterimage", "rank": 1, "title": "Afterimage", "artist": "Noa Vale", "releaseDate": "2025-10-17", "releaseDatePrecision": "day", "streams": 176, "playedMs": 35280000 },
+    { "id": "alb-low-light-fm", "rank": 2, "title": "Low Light FM", "artist": "Halcyon Static", "releaseDate": "2024", "releaseDatePrecision": "year", "streams": 122, "playedMs": 23160000 },
+    { "id": "alb-tidal-memory", "rank": 3, "title": "Tidal Memory", "artist": "Mira Sol", "releaseDate": "2026-03", "releaseDatePrecision": "month", "streams": 104, "playedMs": 20460000 },
+    { "id": "alb-peripheral", "rank": 4, "title": "Peripheral", "artist": "North Arcade", "releaseDate": "2023-09-08", "releaseDatePrecision": "day", "streams": 91, "playedMs": 16980000 },
+    { "id": "alb-borrowed-weather", "rank": 5, "title": "Borrowed Weather", "artist": "Iris Weekend", "releaseDate": "2025-06-20", "releaseDatePrecision": "day", "streams": 79, "playedMs": 14580000 }
+  ]
+}

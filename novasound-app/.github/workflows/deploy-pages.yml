@@ -1,0 +1,8 @@
+# GitHub Pages deployment placeholder.
+#
+# This file is intentionally inactive. When this directory becomes the public
+# novasound-app repository, replace this placeholder with a workflow that:
+# - runs only for UI changes on main;
+# - builds the static demo from the shared UI;
+# - uses only non-sensitive data from code/ui/src/mocks/;
+# - publishes the resulting static files to GitHub Pages.

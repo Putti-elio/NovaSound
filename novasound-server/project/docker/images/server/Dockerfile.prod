@@ -1,0 +1,41 @@
+ARG RUST_VERSION=1.90-slim
+
+FROM rust:${RUST_VERSION} AS builder
+
+WORKDIR /app
+
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends pkg-config libpq-dev ca-certificates protobuf-compiler \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY Cargo.toml /app/
+COPY Cargo.lock /app/
+COPY build.rs /app/
+COPY askama.toml /app/
+COPY code /app/code
+
+RUN cargo build --release
+
+FROM debian:bookworm-slim AS runner
+
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends libpq5 ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && addgroup --system appgroup \
+    && adduser --system --ingroup appgroup --home /app appuser
+
+WORKDIR /app
+
+COPY --from=builder /app/target/release/novasound-server /app/novasound-server
+
+RUN mkdir -p /app/data /tmp \
+    && chown -R appuser:appgroup /app /tmp
+
+ENV APP_ENV=prod
+ENV RUST_LOG=info
+
+USER appuser
+
+EXPOSE 4000
+
+CMD ["/app/novasound-server"]

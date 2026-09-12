@@ -1,0 +1,15 @@
+{
+  "mock": true,
+  "sort": "playedMs:desc",
+  "displayed": 6,
+  "distinct": 535,
+  "multiAttribution": true,
+  "items": [
+    { "id": "art-noa-vale", "rank": 1, "name": "Noa Vale", "streams": 488, "playedMs": 97740000, "share": 0.293, "genres": ["dream pop", "indie electronic"] },
+    { "id": "art-halcyon-static", "rank": 2, "name": "Halcyon Static", "streams": 183, "playedMs": 34920000, "share": 0.105, "genres": ["ambient pop"] },
+    { "id": "art-mira-sol", "rank": 3, "name": "Mira Sol", "streams": 151, "playedMs": 28560000, "share": 0.086, "genres": ["alternative r&b"] },
+    { "id": "art-north-arcade", "rank": 4, "name": "North Arcade", "streams": 132, "playedMs": 24120000, "share": 0.072, "genres": ["indie rock"] },
+    { "id": "art-iris-weekend", "rank": 5, "name": "Iris Weekend", "streams": 109, "playedMs": 19320000, "share": 0.058, "genres": ["art pop"] },
+    { "id": "art-ama-kora", "rank": 6, "name": "Ama Kora", "streams": 94, "playedMs": 16980000, "share": 0.051, "genres": ["neo soul"] }
+  ]
+}

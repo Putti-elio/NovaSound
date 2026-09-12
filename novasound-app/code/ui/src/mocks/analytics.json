@@ -1,0 +1,29 @@
+{
+  "mock": true,
+  "period": "2026-08-05/2026-09-01",
+  "timezone": "Europe/Paris",
+  "daily": [
+    { "date": "2026-08-26", "streams": 58, "playedMs": 10920000 },
+    { "date": "2026-08-27", "streams": 71, "playedMs": 12780000 },
+    { "date": "2026-08-28", "streams": 49, "playedMs": 9120000 },
+    { "date": "2026-08-29", "streams": 82, "playedMs": 15300000 },
+    { "date": "2026-08-30", "streams": 77, "playedMs": 14580000 },
+    { "date": "2026-08-31", "streams": 91, "playedMs": 16860000 },
+    { "date": "2026-09-01", "streams": 64, "playedMs": 12060000 }
+  ],
+  "concentration": { "top1": 0.038, "top5": 0.158, "top10": 0.247, "top50": 0.538 },
+  "behavior": {
+    "completionKnown": 1612,
+    "completed": 1289,
+    "skipKnown": 1498,
+    "skipped": 121,
+    "shuffleKnown": 1430,
+    "shuffle": 586
+  },
+  "genres": [
+    { "name": "dream pop", "playedMs": 103500000, "share": 0.31, "contributors": 42 },
+    { "name": "indie electronic", "playedMs": 80050000, "share": 0.24, "contributors": 67 },
+    { "name": "alternative r&b", "playedMs": 60030000, "share": 0.18, "contributors": 31 },
+    { "name": "ambient pop", "playedMs": 43360000, "share": 0.13, "contributors": 28 }
+  ]
+}

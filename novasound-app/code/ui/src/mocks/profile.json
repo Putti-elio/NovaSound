@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-09-02T09:15:00Z",
+  "mock": true,
+  "profile": {
+    "id": "mock-user-maya",
+    "displayName": "Maya Laurent",
+    "initials": "ML",
+    "timezone": "Europe/Paris"
+  },
+  "period": {
+    "label": "4 dernières semaines",
+    "from": "2026-08-05T00:00:00+02:00",
+    "to": "2026-09-01T23:59:59+02:00",
+    "kind": "rolling"
+  },
+  "coverage": {
+    "firstEvent": "2019-12-18T17:42:11+01:00",
+    "lastEvent": "2026-09-01T22:54:30+02:00",
+    "score": 0.94,
+    "gaps": 3
+  },
+  "metrics": {
+    "streams": 1798,
+    "playedMs": 333530135,
+    "tracks": 900,
+    "artists": 535,
+    "albums": 655,
+    "meanPlayedMs": 185501,
+    "p25PlayedMs": 160200,
+    "medianPlayedMs": 180000,
+    "p75PlayedMs": 211000,
+    "p95PlayedMs": 284000,
+    "p99PlayedMs": 360000
+  }
+}

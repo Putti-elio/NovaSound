@@ -1,0 +1,156 @@
+<section class="page page-dashboard" aria-labelledby="dashboard-title">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Mercredi 2 septembre</p>
+      <h1 id="dashboard-title">Bonjour Maya, voici votre écoute.</h1>
+      <p class="page-lede">Des chiffres lisibles, leur contexte, et rien de caché derrière un score opaque.</p>
+    </div>
+    <div class="heading-actions">
+      <span class="data-freshness"><i></i>Mock actualisé à 09:15</span>
+      <button class="button button-secondary" type="button" disabled title="Disponible avec le futur backend">Exporter la vue</button>
+    </div>
+  </header>
+
+  <div class="context-bar">
+    <div class="period-switcher" aria-label="Choisir une période">
+      <button
+        id="period-today"
+        type="button"
+        hx-get="/src/templates/fragments/dashboard/overview-today.html"
+        hx-target="#dashboard-period-content"
+        hx-swap="innerHTML"
+        hx-indicator="#period-loader"
+      >Aujourd'hui</button>
+      <button
+        id="period-four-weeks"
+        type="button"
+        class="is-selected"
+        hx-get="/src/templates/fragments/dashboard/overview.html"
+        hx-target="#main-content"
+        hx-swap="innerHTML show:top"
+        hx-indicator="#period-loader"
+      >4 semaines</button>
+      <button type="button" disabled title="Période non incluse dans les mocks">6 mois</button>
+      <button
+        id="period-lifetime"
+        type="button"
+        hx-get="/src/templates/fragments/dashboard/overview-lifetime.html"
+        hx-target="#dashboard-period-content"
+        hx-swap="innerHTML"
+        hx-indicator="#period-loader"
+      >Toute la couverture</button>
+    </div>
+    <p id="period-context"><strong>05 août – 01 sept. 2026</strong><span>28 jours glissants · Europe/Paris</span></p>
+    <span id="period-loader" class="inline-loader htmx-indicator">Calcul simulé…</span>
+  </div>
+
+  <div id="dashboard-period-content">
+    <div class="metric-grid">
+      <article class="metric-card metric-card-featured">
+        <div class="metric-label"><span>Temps d'écoute</span><span class="metric-icon">↗</span></div>
+        <strong>92<small>h</small> 38<small>min</small></strong>
+        <p><span class="trend-positive">+12,4 %</span> face aux 4 semaines précédentes</p>
+        <details class="metric-definition">
+          <summary>Définition</summary>
+          <p>Somme de 333 530 135 ms réellement écoutées sur 1 798 événements retenus.</p>
+        </details>
+      </article>
+      <article class="metric-card">
+        <div class="metric-label"><span>Streams retenus</span><span class="metric-icon">▶</span></div>
+        <strong>1 798</strong>
+        <p>64,2 par jour calendaire</p>
+        <details class="metric-definition">
+          <summary>Règle de calcul</summary>
+          <p>Écoutes d'au moins 30 s, non marquées comme skip, hors fichiers locaux et podcasts.</p>
+        </details>
+      </article>
+      <article class="metric-card">
+        <div class="metric-label"><span>Pistes distinctes</span><span class="metric-icon">♫</span></div>
+        <strong>900</strong>
+        <p>312 nouvelles sur la période</p>
+        <details class="metric-definition">
+          <summary>Identité utilisée</summary>
+          <p>Identifiants source distincts. Les remasters ne sont pas encore fusionnés.</p>
+        </details>
+      </article>
+      <article class="metric-card">
+        <div class="metric-label"><span>Artistes distincts</span><span class="metric-icon">◎</span></div>
+        <strong>535</strong>
+        <p>61 retrouvés depuis la période précédente</p>
+        <details class="metric-definition">
+          <summary>À savoir</summary>
+          <p>Une collaboration crédite chacun des artistes mentionnés.</p>
+        </details>
+      </article>
+    </div>
+
+    <div class="dashboard-grid">
+      <article class="panel panel-wide trend-panel">
+        <header class="panel-heading">
+          <div><p class="eyebrow">Rythme récent</p><h2>Une fin de mois plus intense</h2></div>
+          <div class="legend"><span><i class="legend-primary"></i>Minutes</span><span><i class="legend-muted"></i>Streams</span></div>
+        </header>
+        <div class="bar-chart" role="img" aria-label="Temps d'écoute quotidien du 26 août au 1er septembre, pic le 31 août">
+          <div class="chart-grid-lines"><span></span><span></span><span></span><span></span></div>
+          <div class="bar-group"><span class="bar-secondary" style="height: 49%"></span><span class="bar-primary" style="height: 57%"></span><small>26 aoû.</small></div>
+          <div class="bar-group"><span class="bar-secondary" style="height: 61%"></span><span class="bar-primary" style="height: 68%"></span><small>27</small></div>
+          <div class="bar-group"><span class="bar-secondary" style="height: 42%"></span><span class="bar-primary" style="height: 48%"></span><small>28</small></div>
+          <div class="bar-group"><span class="bar-secondary" style="height: 72%"></span><span class="bar-primary" style="height: 81%"></span><small>29</small></div>
+          <div class="bar-group"><span class="bar-secondary" style="height: 67%"></span><span class="bar-primary" style="height: 77%"></span><small>30</small></div>
+          <div class="bar-group is-peak"><span class="bar-secondary" style="height: 80%"></span><span class="bar-primary" style="height: 90%"></span><small>31</small></div>
+          <div class="bar-group"><span class="bar-secondary" style="height: 55%"></span><span class="bar-primary" style="height: 64%"></span><small>1 sept.</small></div>
+        </div>
+        <footer class="panel-footer"><span>Pic : 4 h 41 min le 31 août</span><a href="/src/templates/fragments/analytics/analytics.html" hx-get="/src/templates/fragments/analytics/analytics.html" hx-target="#main-content" hx-indicator="#global-loader">Explorer la série complète →</a></footer>
+      </article>
+
+      <article class="panel duration-panel">
+        <header class="panel-heading"><div><p class="eyebrow">Durée réelle</p><h2>La moitié des écoutes dure 3 min ou plus</h2></div></header>
+        <div class="duration-plot" aria-label="Distribution des durées écoutées">
+          <span class="whisker"></span><span class="box"></span><span class="median"></span><span class="mean-marker"></span>
+        </div>
+        <div class="percentile-row"><span><small>P25</small>2:40</span><span><small>Médiane</small>3:00</span><span><small>Moyenne</small>3:05</span><span><small>P95</small>4:44</span></div>
+        <p class="annotation">La moyenne légèrement supérieure à la médiane signale une petite queue d'écoutes longues.</p>
+      </article>
+
+      <article class="panel top-artists-panel">
+        <header class="panel-heading">
+          <div><p class="eyebrow">Concentration</p><h2>Artistes qui ont occupé votre mois</h2></div>
+          <a href="/src/templates/fragments/tops/tops.html" hx-get="/src/templates/fragments/tops/tops.html" hx-target="#main-content" hx-indicator="#global-loader">Tout voir</a>
+        </header>
+        <ol class="rank-list rank-list-compact">
+          <li>
+            <span class="rank">01</span><span class="artwork artwork-coral">NV</span>
+            <a href="/src/templates/fragments/entities/artist.html" hx-get="/src/templates/fragments/entities/artist.html" hx-target="#main-content" hx-indicator="#global-loader"><strong>Noa Vale</strong><small>1 629 min · 488 streams</small></a>
+            <span class="share">29,3 %</span>
+          </li>
+          <li><span class="rank">02</span><span class="artwork artwork-blue">HS</span><span><strong>Halcyon Static</strong><small>582 min · 183 streams</small></span><span class="share">10,5 %</span></li>
+          <li><span class="rank">03</span><span class="artwork artwork-violet">MS</span><span><strong>Mira Sol</strong><small>476 min · 151 streams</small></span><span class="share">8,6 %</span></li>
+        </ol>
+        <p class="data-note"><span>i</span>Les parts artiste ne sont pas additives : une collaboration peut créditer plusieurs artistes.</p>
+      </article>
+
+      <article class="panel genres-panel">
+        <header class="panel-heading"><div><p class="eyebrow">Affinités</p><h2>Vos territoires sonores</h2></div></header>
+        <div class="genre-bars">
+          <div><p><strong>Dream pop</strong><span>1 725 min · 42 artistes</span></p><div><span style="width: 100%"></span></div><b>31 %</b></div>
+          <div><p><strong>Indie electronic</strong><span>1 334 min · 67 artistes</span></p><div><span style="width: 77%"></span></div><b>24 %</b></div>
+          <div><p><strong>Alternative R&amp;B</strong><span>1 001 min · 31 artistes</span></p><div><span style="width: 58%"></span></div><b>18 %</b></div>
+          <div><p><strong>Ambient pop</strong><span>723 min · 28 artistes</span></p><div><span style="width: 42%"></span></div><b>13 %</b></div>
+        </div>
+        <p class="data-note"><span>i</span>Les genres se chevauchent. Leur somme peut dépasser 100 %.</p>
+      </article>
+
+      <article class="panel recent-panel">
+        <header class="panel-heading">
+          <div><p class="eyebrow">Dernières écoutes</p><h2>Encore frais dans vos oreilles</h2></div>
+          <a href="/src/templates/fragments/history/history.html" hx-get="/src/templates/fragments/history/history.html" hx-target="#main-content" hx-indicator="#global-loader">Historique</a>
+        </header>
+        <ul class="recent-list">
+          <li><span class="artwork artwork-coral">GD</span><span><strong>Glass District</strong><small>Noa Vale · Afterimage</small></span><span><strong>3:18</strong><small>97 % · il y a 10 h</small></span></li>
+          <li><span class="artwork artwork-blue">NS</span><span><strong>Night Signal</strong><small>Halcyon Static · Low Light FM</small></span><span><strong>3:34</strong><small>100 % · il y a 10 h</small></span></li>
+          <li><span class="artwork artwork-violet">SC</span><span><strong>Soft Current</strong><small>Mira Sol · Tidal Memory</small></span><span><strong>2:56</strong><small>88 % · il y a 11 h</small></span></li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>

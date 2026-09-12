@@ -1,0 +1,16 @@
+{
+  "mock": true,
+  "sort": "playedMs:desc",
+  "displayed": 8,
+  "distinct": 900,
+  "items": [
+    { "id": "trk-glass-district", "rank": 1, "title": "Glass District", "artist": "Noa Vale", "album": "Afterimage", "streams": 64, "playedMs": 12672000, "share": 0.038 },
+    { "id": "trk-night-signal", "rank": 2, "title": "Night Signal", "artist": "Halcyon Static", "album": "Low Light FM", "streams": 58, "playedMs": 11310000, "share": 0.034 },
+    { "id": "trk-soft-current", "rank": 3, "title": "Soft Current", "artist": "Mira Sol", "album": "Tidal Memory", "streams": 51, "playedMs": 10506000, "share": 0.031 },
+    { "id": "trk-blue-hour", "rank": 4, "title": "Blue Hour", "artist": "North Arcade", "album": "Peripheral", "streams": 49, "playedMs": 9604000, "share": 0.029 },
+    { "id": "trk-paper-satellites", "rank": 5, "title": "Paper Satellites", "artist": "Iris Weekend", "album": "Borrowed Weather", "streams": 44, "playedMs": 8712000, "share": 0.026 },
+    { "id": "trk-neon-quiet", "rank": 6, "title": "Neon Quiet", "artist": "Noa Vale, Sora June", "album": "Afterimage", "streams": 41, "playedMs": 8446000, "share": 0.025 },
+    { "id": "trk-cinder", "rank": 7, "title": "Cinder", "artist": "Ama Kora", "album": "Gold Static", "streams": 38, "playedMs": 7334000, "share": 0.022 },
+    { "id": "trk-half-awake", "rank": 8, "title": "Half Awake", "artist": "Tessellate", "album": "Open Windows", "streams": 36, "playedMs": 6912000, "share": 0.021 }
+  ]
+}

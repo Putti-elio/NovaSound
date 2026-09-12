@@ -1,0 +1,12 @@
+{
+  "mock": true,
+  "timezone": "Europe/Paris",
+  "events": [
+    { "id": "evt-001", "playedAt": "2026-09-01T22:54:30+02:00", "track": "Glass District", "artist": "Noa Vale", "album": "Afterimage", "playedMs": 198000, "durationMs": 205000, "completion": 0.966, "source": "sync", "platform": "desktop" },
+    { "id": "evt-002", "playedAt": "2026-09-01T22:49:11+02:00", "track": "Night Signal", "artist": "Halcyon Static", "album": "Low Light FM", "playedMs": 214000, "durationMs": 214000, "completion": 1, "source": "import", "platform": "mobile" },
+    { "id": "evt-003", "playedAt": "2026-09-01T21:37:04+02:00", "track": "Soft Current", "artist": "Mira Sol", "album": "Tidal Memory", "playedMs": 176000, "durationMs": 201000, "completion": 0.876, "source": "sync", "platform": "mobile" },
+    { "id": "evt-004", "playedAt": "2026-09-01T18:12:43+02:00", "track": "Blue Hour", "artist": "North Arcade", "album": "Peripheral", "playedMs": 192000, "durationMs": 192000, "completion": 1, "source": "import", "platform": "speaker" },
+    { "id": "evt-005", "playedAt": "2026-08-31T23:08:17+02:00", "track": "Paper Satellites", "artist": "Iris Weekend", "album": "Borrowed Weather", "playedMs": 181000, "durationMs": 208000, "completion": 0.87, "source": "import", "platform": "desktop" },
+    { "id": "evt-006", "playedAt": "2026-08-31T22:41:09+02:00", "track": "Neon Quiet", "artist": "Noa Vale, Sora June", "album": "Afterimage", "playedMs": 206000, "durationMs": 206000, "completion": 1, "source": "sync", "platform": "mobile" }
+  ]
+}
