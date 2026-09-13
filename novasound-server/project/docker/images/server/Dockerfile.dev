@@ -10,6 +10,8 @@ RUN apt-get update -y \
 
 RUN rustup component add clippy rustfmt
 
+RUN cargo install --locked cargo-pretty-build --version 0.3.0
+
 RUN mkdir -p /app/data
 
 EXPOSE 4000
