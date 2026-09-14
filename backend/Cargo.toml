@@ -7,7 +7,7 @@ edition = "2024"
 anyhow = "1.0.100"
 axum = { version = "0.8.6", features = ["macros"] }
 axum-server = "0.7.2"
-buffa = { version = "0.3", features = ["json"] }
+buffa = { version = "0.9", features = ["json"] }
 clorinde = { path = "clorinde", features = ["deadpool"] }
 connectrpc = { version = "0.3", features = ["axum", "client"] }
 deadpool-postgres = "0.14"
