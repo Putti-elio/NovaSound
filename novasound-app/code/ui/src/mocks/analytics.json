@@ -21,9 +21,9 @@
     "shuffle": 586
   },
   "genres": [
-    { "name": "dream pop", "playedMs": 103500000, "share": 0.31, "contributors": 42 },
-    { "name": "indie electronic", "playedMs": 80050000, "share": 0.24, "contributors": 67 },
-    { "name": "alternative r&b", "playedMs": 60030000, "share": 0.18, "contributors": 31 },
-    { "name": "ambient pop", "playedMs": 43360000, "share": 0.13, "contributors": 28 }
+    { "name": "country", "playedMs": 103500000, "share": 0.31, "contributors": 42 },
+    { "name": "hip-hop", "playedMs": 80050000, "share": 0.24, "contributors": 67 },
+    { "name": "pop", "playedMs": 60030000, "share": 0.18, "contributors": 31 },
+    { "name": "r&b", "playedMs": 43360000, "share": 0.13, "contributors": 28 }
   ]
 }
