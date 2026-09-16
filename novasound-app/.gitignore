@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules/
 node_modules.root-owned/
 dist/
+dist.root-owned/
 dist-ssr/
 code/ui/dist/
 code/ui/dist-ssr/
@@ -20,6 +21,7 @@ src-tauri/target/
 src-tauri/gen/
 *.local
 project/setup/.env
+.playwright-cli/
 
 # Editor directories and files
 .vscode/*

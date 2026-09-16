@@ -4,7 +4,7 @@ node_modules/
 # Build outputs
 dist/
 target/
-novasound-app/src-tauri/gen/
+novasound-app/code/desktop/gen/
 
 # IDE
 .zed/
@@ -52,3 +52,11 @@ docs/rust-learning/
 docs/PROJECT_SUMMARY.md
 opencode.json
 AGENTS.md
+aidd_docs/
+
+# MemPalace per-project files (issue #185)
+mempalace.yaml
+entities.json
+.mempalace/
+
+.playwright-cli/
