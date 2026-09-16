@@ -14,31 +14,29 @@ bun install
 bun run dev
 ```
 
-Vite listens on port `5173`. Set `VITE_API_BASE_URL` in
-`project/setup/.env` to the server origin, such as `http://localhost:4000`. The
-current UI uses it to request `GET /web/artists` through HTMX when the catalogue
-loads. Start and initialize the server separately from `novasound-server/` before
-testing that integration. Do not put a password, API secret, or database connection
-string in this file: every `VITE_` value is visible in the browser build.
+Vite listens on port `5173`. The current prototype requests only local HTML
+fragments under `code/ui/src/templates/fragments/`; it does not require the server.
+Do not put a password, API secret, or database connection string in
+`project/setup/.env`: every `VITE_` value is visible in the browser build.
 
 ## How To Place A UI Change
 
 ### Change What The Page Does
 
-Start from `code/ui/src/main.js` when the change concerns browser startup or a
-global HTMX event. The current entry point handles catalogue-request failures.
+Start from `code/ui/src/static/js/app.js` when the change concerns browser startup
+or a global HTMX event. This entry point loads HTMX and the shared stylesheet.
 
-Put page-specific markup in `code/ui/src/templates/`, grouped by feature. Import
-styles from `code/ui/src/styles/` in the module that uses them.
+Put page-specific markup in `code/ui/src/templates/`, grouped by feature. Shared
+styles live in `code/ui/src/static/css/`.
 
 ### Add Assets And Demo Data
 
 Put an imported logo, illustration, or font in `code/ui/src/assets/`. Put a file
 that must be requested by a fixed URL, such as `favicon.svg`, in `code/ui/public/`.
 
-The mock fixtures in `code/ui/src/mocks/` support the reserved static demo. They
-must be fictional or explicitly public and must never call the server, require
-login, or contain a real user's listening data.
+The mock fixtures in `code/ui/src/mocks/` document the fictional data represented
+by the static demo. They must never require login or contain a real user's
+listening data.
 
 ### Add Desktop Support
 
