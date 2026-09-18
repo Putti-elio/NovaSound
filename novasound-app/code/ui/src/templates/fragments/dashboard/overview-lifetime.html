@@ -1,10 +1,10 @@
-<button id="period-today" type="button" hx-get="/src/templates/fragments/dashboard/overview-today.html" hx-target="#dashboard-period-content" hx-indicator="#period-loader" hx-swap-oob="outerHTML">Aujourd'hui</button>
-<button id="period-four-weeks" type="button" hx-get="/src/templates/fragments/dashboard/overview.html" hx-target="#main-content" hx-swap="innerHTML show:top" hx-indicator="#period-loader" hx-swap-oob="outerHTML">4 semaines</button>
-<button id="period-lifetime" class="is-selected" type="button" hx-get="/src/templates/fragments/dashboard/overview-lifetime.html" hx-target="#dashboard-period-content" hx-indicator="#period-loader" hx-swap-oob="outerHTML">Toute la couverture</button>
-<p id="period-context" hx-swap-oob="outerHTML"><strong>18 déc. 2019 – 01 sept. 2026</strong><span>Couverture disponible à 94 % · Europe/Paris</span></p>
+<button id="period-today" type="button" hx-get="/src/templates/fragments/dashboard/overview-today.html" hx-target="#dashboard-period-content" hx-indicator="#period-loader" hx-swap-oob="outerHTML">Today</button>
+<button id="period-four-weeks" type="button" hx-get="/src/templates/fragments/dashboard/overview.html" hx-target="#main-content" hx-swap="innerHTML show:top" hx-indicator="#period-loader" hx-swap-oob="outerHTML">4 weeks</button>
+<button id="period-lifetime" class="is-selected" type="button" hx-get="/src/templates/fragments/dashboard/overview-lifetime.html" hx-target="#dashboard-period-content" hx-indicator="#period-loader" hx-swap-oob="outerHTML">All coverage</button>
+<p id="period-context" hx-swap-oob="outerHTML"><strong>Dec 18, 2019 – Sep 01, 2026</strong><span>94% available coverage · Europe/Paris</span></p>
 <div class="period-result" aria-labelledby="lifetime-result-title">
-  <header class="period-result-heading"><div><p class="eyebrow">Couverture disponible</p><h2 id="lifetime-result-title">Du 18 déc. 2019 au 1 sept. 2026</h2></div><span>94 % estimés · 3 périodes incomplètes</span></header>
-  <div class="coverage-warning"><strong>“Toute la couverture” ne signifie pas toute votre vie d'écoute.</strong><span>Les données reflètent uniquement les événements importés et synchronisés. Trois lacunes ont été détectées.</span></div>
+  <header class="period-result-heading"><div><p class="eyebrow">Available coverage</p><h2 id="lifetime-result-title">Dec 18, 2019 to Sep 1, 2026</h2></div><span>94% estimated · 3 incomplete periods</span></header>
+  <div class="coverage-warning"><strong>“All coverage” does not mean your entire listening life.</strong><span>The data only reflects imported and synchronized events. Three gaps were detected.</span></div>
   <div class="metric-grid">
     <article class="metric-card metric-card-featured"><div class="metric-label"><span>Temps d'écoute</span><span class="metric-icon" aria-hidden="true"></span></div><strong>6 842<small>h</small></strong><p>285 jours cumulés d'exposition</p></article>
     <article class="metric-card"><div class="metric-label"><span>Streams retenus</span><span class="metric-icon" aria-hidden="true"></span></div><strong>128 406</strong><p>Après exclusions et déduplication</p></article>

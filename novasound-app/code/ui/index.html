@@ -1,22 +1,22 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="NovaSound transforme un historique d'écoute en analyses transparentes et vérifiables."
+      content="NovaSound turns listening history into transparent, verifiable insights."
     />
     <meta name="theme-color" content="#f4f1e8" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <title>NovaSound — Votre écoute, mise en perspective</title>
+    <title>NovaSound | Your listening, put in perspective</title>
   </head>
   <body>
-    <a class="skip-link" href="#main-content">Aller au contenu</a>
+    <a class="skip-link" href="#main-content">Skip to content</a>
 
     <div class="app-shell">
-      <aside class="sidebar" aria-label="Navigation principale">
-        <a class="brand" href="/" aria-label="NovaSound, accueil">
+      <aside class="sidebar" aria-label="Main navigation">
+        <a class="brand" href="/" aria-label="NovaSound, home">
           <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
             <path d="M8 29V12M16 29V7M24 29V16M32 29V10" />
             <path d="M6 29h28" />
@@ -24,7 +24,7 @@
           <span>NovaSound</span>
         </a>
 
-        <p class="nav-label">Votre écoute</p>
+        <p class="nav-label">Your listening</p>
         <nav
           class="primary-nav"
           hx-boost="true"
@@ -34,42 +34,42 @@
           hx-push-url="false"
         >
           <a href="/src/templates/fragments/dashboard/overview.html" hx-get="/src/templates/fragments/dashboard/overview.html" hx-push-url="false">
-            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" /></svg>Vue d'ensemble
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" /></svg>Overview
           </a>
           <a href="/src/templates/fragments/analytics/analytics.html" hx-get="/src/templates/fragments/analytics/analytics.html" hx-push-url="false">
-            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18 9 12l4 3 7-9M4 5v14h16" /></svg>Analyses
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18 9 12l4 3 7-9M4 5v14h16" /></svg>Analytics
           </a>
           <a href="/src/templates/fragments/tops/tops.html" hx-get="/src/templates/fragments/tops/tops.html" hx-push-url="false">
-            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>Classements
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>Top lists
           </a>
           <a href="/src/templates/fragments/history/history.html" hx-get="/src/templates/fragments/history/history.html" hx-push-url="false">
-            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2" /></svg>Historique
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2" /></svg>History
           </a>
           <a href="/src/templates/fragments/quality/quality.html" hx-get="/src/templates/fragments/quality/quality.html" hx-push-url="false">
-            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4v5c0 5-3.4 8-8 9-4.6-1-8-4-8-9V7zM9 12l2 2 4-4" /></svg>Qualité des données
+            <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4v5c0 5-3.4 8-8 9-4.6-1-8-4-8-9V7zM9 12l2 2 4-4" /></svg>Data quality
           </a>
         </nav>
 
         <div class="coverage-card">
           <div class="coverage-heading">
-            <span>Couverture importée</span>
+          <span>Imported coverage</span>
             <strong>94%</strong>
           </div>
-          <div class="progress-track" aria-label="Couverture importée à 94%">
+          <div class="progress-track" aria-label="Imported coverage at 94%">
             <span style="width: 94%"></span>
           </div>
-          <p>6 ans et 8 mois analysés</p>
+          <p>6 years and 8 months analyzed</p>
           <a
             href="/src/templates/fragments/quality/quality.html"
             hx-get="/src/templates/fragments/quality/quality.html"
             hx-target="#main-content"
             hx-indicator="#global-loader"
-          >Voir le rapport</a>
+          >View report</a>
         </div>
 
         <div class="profile-chip">
           <span class="avatar" aria-hidden="true">ML</span>
-          <span><strong>Maya Laurent</strong><small>Données mockées</small></span>
+           <span><strong>Maya Laurent</strong><small>Mock data</small></span>
           <span class="profile-more" aria-hidden="true"></span>
         </div>
       </aside>
@@ -77,7 +77,7 @@
       <div class="workspace">
         <header class="topbar">
           <details class="mobile-menu">
-            <summary aria-label="Ouvrir la navigation"><span>Menu</span></summary>
+            <summary aria-label="Open navigation"><span>Menu</span></summary>
             <nav
               hx-boost="true"
               hx-target="#main-content"
@@ -86,11 +86,11 @@
               hx-push-url="false"
               hx-on::after-request="this.closest('details').open = false"
             >
-              <a href="/src/templates/fragments/dashboard/overview.html" hx-get="/src/templates/fragments/dashboard/overview.html" hx-push-url="false">Vue d'ensemble</a>
-              <a href="/src/templates/fragments/analytics/analytics.html" hx-get="/src/templates/fragments/analytics/analytics.html" hx-push-url="false">Analyses</a>
-              <a href="/src/templates/fragments/tops/tops.html" hx-get="/src/templates/fragments/tops/tops.html" hx-push-url="false">Classements</a>
-              <a href="/src/templates/fragments/history/history.html" hx-get="/src/templates/fragments/history/history.html" hx-push-url="false">Historique</a>
-              <a href="/src/templates/fragments/quality/quality.html" hx-get="/src/templates/fragments/quality/quality.html" hx-push-url="false">Qualité</a>
+              <a href="/src/templates/fragments/dashboard/overview.html" hx-get="/src/templates/fragments/dashboard/overview.html" hx-push-url="false">Overview</a>
+              <a href="/src/templates/fragments/analytics/analytics.html" hx-get="/src/templates/fragments/analytics/analytics.html" hx-push-url="false">Analytics</a>
+              <a href="/src/templates/fragments/tops/tops.html" hx-get="/src/templates/fragments/tops/tops.html" hx-push-url="false">Top lists</a>
+              <a href="/src/templates/fragments/history/history.html" hx-get="/src/templates/fragments/history/history.html" hx-push-url="false">History</a>
+              <a href="/src/templates/fragments/quality/quality.html" hx-get="/src/templates/fragments/quality/quality.html" hx-push-url="false">Quality</a>
             </nav>
           </details>
 
@@ -102,21 +102,22 @@
             hx-swap="innerHTML show:top"
             hx-indicator="#global-loader"
           >
-            <label class="sr-only" for="global-search">Rechercher</label>
+             <label class="sr-only" for="global-search">Search</label>
             <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 4.5 4.5"/></svg>
-            <input id="global-search" name="q" value="Morgan" placeholder="Rechercher une piste, un artiste, un album…" />
-            <kbd>Entrée</kbd>
+             <input id="global-search" name="q" value="Morgan" placeholder="Search for a track, artist, or album..." />
+             <kbd>Enter</kbd>
           </form>
 
           <div class="topbar-actions">
-            <span class="mock-badge">Mode démo</span>
-            <button class="icon-button" type="button" aria-label="Notifications indisponibles dans la démo" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16h12l-1.5-2.5V10a4.5 4.5 0 0 0-9 0v3.5zM10 19h4"/></svg></button>
+             <span class="mock-badge">Demo mode</span>
+             <button class="icon-button" type="button" aria-label="Notifications unavailable in the demo" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16h12l-1.5-2.5V10a4.5 4.5 0 0 0-9 0v3.5zM10 19h4"/></svg></button>
           </div>
         </header>
 
-        <div id="global-loader" class="global-loader htmx-indicator" role="status">
+         <div class="development-notice" role="status"><strong>Demo application in active development</strong><span>Features and visuals may change significantly from one day to the next.</span></div>
+         <div id="global-loader" class="global-loader htmx-indicator" role="status">
           <span></span><span></span><span></span>
-          <span class="sr-only">Chargement des données simulées</span>
+           <span class="sr-only">Loading simulated data</span>
         </div>
 
         <main
@@ -128,8 +129,8 @@
           hx-indicator="#global-loader"
           aria-live="polite"
         >
-          <section class="loading-state" aria-label="Chargement du tableau de bord">
-            <p>Préparation de votre paysage musical…</p>
+            <section class="loading-state" aria-label="Loading dashboard">
+             <p>Preparing your music landscape...</p>
           </section>
         </main>
       </div>
@@ -137,7 +138,7 @@
 
     <noscript>
       <p class="noscript-message">
-        HTMX nécessite JavaScript pour charger les fragments de cette démonstration. Les données restent entièrement locales.
+         HTMX requires JavaScript to load this demo's fragments. The data remains entirely local.
       </p>
     </noscript>
     <script type="module" src="/src/static/js/app.js"></script>

@@ -1,21 +1,21 @@
 <section class="page" aria-labelledby="tops-title">
   <header class="page-heading">
-    <div><p class="eyebrow">Classés par temps écouté</p><h1 id="tops-title">Ce qui revient, ce qui reste.</h1><p class="page-lede">Les streams racontent la répétition; les minutes déterminent le rang.</p></div>
+    <div><p class="eyebrow">Ranked by listening time</p><h1 id="tops-title">What comes back, what stays.</h1><p class="page-lede">Streams tell the repetition story; minutes determine the rank.</p></div>
     <div class="heading-actions"><button class="button button-secondary" type="button" disabled title="Disponible avec le futur backend">Partager la période</button></div>
   </header>
   <div class="context-bar">
-    <div class="period-switcher"><button type="button" disabled>Aujourd'hui</button><button type="button" class="is-selected">4 semaines</button><button type="button" disabled>6 mois</button><button type="button" disabled>Couverture</button></div>
-    <p><strong>05 août – 01 sept. 2026</strong><span>Tri décroissant par temps · Europe/Paris</span></p>
+    <div class="period-switcher"><button type="button" disabled>Today</button><button type="button" class="is-selected">4 weeks</button><button type="button" disabled>6 months</button><button type="button" disabled>Coverage</button></div>
+    <p><strong>Aug 05 – Sep 01, 2026</strong><span>Descending by time · Europe/Paris</span></p>
   </div>
-  <div class="top-tabs" aria-label="Type de classement">
+  <div class="top-tabs" aria-label="Ranking type">
     <button type="button" hx-get="/src/templates/fragments/tops/tracks.html" hx-target="#top-list" hx-indicator="#tops-loader">Pistes <span>100</span></button>
     <button type="button" hx-get="/src/templates/fragments/tops/artists.html" hx-target="#top-list" hx-indicator="#tops-loader">Artistes <span>100</span></button>
     <button type="button" hx-get="/src/templates/fragments/tops/albums.html" hx-target="#top-list" hx-indicator="#tops-loader">Albums <span>100</span></button>
     <button type="button" hx-get="/src/templates/fragments/tops/playlists.html" hx-target="#top-list" hx-indicator="#tops-loader">Playlists <span>100</span></button>
     <button type="button" hx-get="/src/templates/fragments/tops/genres.html" hx-target="#top-list" hx-indicator="#tops-loader">Genres <span>126</span></button>
   </div>
-  <div id="tops-loader" class="inline-loader htmx-indicator">Chargement du classement mocké…</div>
+  <div id="tops-loader" class="inline-loader htmx-indicator">Loading mock ranking...</div>
   <div id="top-list" hx-get="/src/templates/fragments/tops/tracks.html" hx-trigger="load" hx-swap="innerHTML" hx-indicator="#tops-loader">
-    <div class="loading-state"><p>Classement en préparation…</p></div>
+    <div class="loading-state"><p>Preparing ranking...</p></div>
   </div>
 </section>

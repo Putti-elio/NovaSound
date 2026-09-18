@@ -1,18 +1,18 @@
 <section class="page page-dashboard" aria-labelledby="dashboard-title">
   <header class="page-heading">
     <div>
-      <p class="eyebrow">Mercredi 2 septembre</p>
-      <h1 id="dashboard-title">Bonjour Maya, voici votre écoute.</h1>
-      <p class="page-lede">Des chiffres lisibles, leur contexte, et rien de caché derrière un score opaque.</p>
+      <p class="eyebrow">Wednesday, September 2</p>
+      <h1 id="dashboard-title">Good morning Maya, here is your listening.</h1>
+      <p class="page-lede">Readable numbers, their context, and nothing hidden behind an opaque score.</p>
     </div>
     <div class="heading-actions">
-      <span class="data-freshness"><i></i>Mock actualisé à 09:15</span>
-      <button class="button button-secondary" type="button" disabled title="Disponible avec le futur backend">Exporter la vue</button>
+      <span class="data-freshness"><i></i>Mock updated at 09:15</span>
+      <button class="button button-secondary" type="button" disabled title="Available with the future backend">Export view</button>
     </div>
   </header>
 
   <div class="context-bar">
-    <div class="period-switcher" aria-label="Choisir une période">
+    <div class="period-switcher" aria-label="Choose a period">
       <button
         id="period-today"
         type="button"
@@ -20,7 +20,7 @@
         hx-target="#dashboard-period-content"
         hx-swap="innerHTML"
         hx-indicator="#period-loader"
-      >Aujourd'hui</button>
+      >Today</button>
       <button
         id="period-four-weeks"
         type="button"
@@ -29,8 +29,8 @@
         hx-target="#main-content"
         hx-swap="innerHTML show:top"
         hx-indicator="#period-loader"
-      >4 semaines</button>
-      <button type="button" disabled title="Période non incluse dans les mocks">6 mois</button>
+      >4 weeks</button>
+      <button type="button" disabled title="Period not included in the mocks">6 months</button>
       <button
         id="period-lifetime"
         type="button"
@@ -38,20 +38,20 @@
         hx-target="#dashboard-period-content"
         hx-swap="innerHTML"
         hx-indicator="#period-loader"
-      >Toute la couverture</button>
+      >All coverage</button>
     </div>
-    <p id="period-context"><strong>05 août – 01 sept. 2026</strong><span>28 jours glissants · Europe/Paris</span></p>
-    <span id="period-loader" class="inline-loader htmx-indicator">Calcul simulé…</span>
+    <p id="period-context"><strong>Aug 05 – Sep 01, 2026</strong><span>28 rolling days · Europe/Paris</span></p>
+    <span id="period-loader" class="inline-loader htmx-indicator">Simulated calculation...</span>
   </div>
 
   <div id="dashboard-period-content">
     <div class="metric-grid">
       <article class="metric-card metric-card-featured">
-        <div class="metric-label"><span>Temps d'écoute</span><span class="metric-icon" aria-hidden="true"></span></div>
+        <div class="metric-label"><span>Listening time</span><span class="metric-icon" aria-hidden="true"></span></div>
         <strong>92<small>h</small> 38<small>min</small></strong>
-        <p><span class="trend-positive">+12,4 %</span> face aux 4 semaines précédentes</p>
+        <p><span class="trend-positive">+12.4%</span> vs. the previous 4 weeks</p>
         <details class="metric-definition">
-          <summary>Définition</summary>
+          <summary>Definition</summary>
           <p>Somme de 333 530 135 ms réellement écoutées sur 1 798 événements retenus.</p>
         </details>
       </article>
@@ -60,7 +60,7 @@
         <strong>1 798</strong>
         <p>64,2 par jour calendaire</p>
         <details class="metric-definition">
-          <summary>Règle de calcul</summary>
+          <summary>Calculation rule</summary>
           <p>Écoutes d'au moins 30 s, non marquées comme skip, hors fichiers locaux et podcasts.</p>
         </details>
       </article>
@@ -69,7 +69,7 @@
         <strong>900</strong>
         <p>312 nouvelles sur la période</p>
         <details class="metric-definition">
-          <summary>Identité utilisée</summary>
+          <summary>Identity used</summary>
           <p>Identifiants source distincts. Les remasters ne sont pas encore fusionnés.</p>
         </details>
       </article>
@@ -78,7 +78,7 @@
         <strong>535</strong>
         <p>61 retrouvés depuis la période précédente</p>
         <details class="metric-definition">
-          <summary>À savoir</summary>
+          <summary>Good to know</summary>
           <p>Une collaboration crédite chacun des artistes mentionnés.</p>
         </details>
       </article>
@@ -87,7 +87,7 @@
     <div class="dashboard-grid">
       <article class="panel panel-wide trend-panel">
         <header class="panel-heading">
-          <div><p class="eyebrow">Rythme récent</p><h2>Une fin de mois plus intense</h2></div>
+          <div><p class="eyebrow">Recent pace</p><h2>A more intense month-end</h2></div>
           <div class="legend"><span><i class="legend-primary"></i>Minutes</span><span><i class="legend-muted"></i>Streams</span></div>
         </header>
         <div class="bar-chart" role="img" aria-label="Temps d'écoute quotidien du 26 août au 1er septembre, pic le 31 août">
@@ -100,11 +100,11 @@
           <div class="bar-group is-peak"><span class="bar-secondary" style="height: 80%"></span><span class="bar-primary" style="height: 90%"></span><small>31</small></div>
           <div class="bar-group"><span class="bar-secondary" style="height: 55%"></span><span class="bar-primary" style="height: 64%"></span><small>1 sept.</small></div>
         </div>
-        <footer class="panel-footer"><span>Pic : 4 h 41 min le 31 août</span><a href="/src/templates/fragments/analytics/analytics.html" hx-get="/src/templates/fragments/analytics/analytics.html" hx-target="#main-content" hx-indicator="#global-loader">Explorer la série complète →</a></footer>
+        <footer class="panel-footer"><span>Peak: 4 h 41 min on Aug 31</span><a href="/src/templates/fragments/analytics/analytics.html" hx-get="/src/templates/fragments/analytics/analytics.html" hx-target="#main-content" hx-indicator="#global-loader">Explore the full series →</a></footer>
       </article>
 
       <article class="panel duration-panel">
-        <header class="panel-heading"><div><p class="eyebrow">Durée réelle</p><h2>La moitié des écoutes dure 3 min ou plus</h2></div></header>
+        <header class="panel-heading"><div><p class="eyebrow">Actual duration</p><h2>Half of your listens last 3 min or more</h2></div></header>
         <div class="duration-plot" aria-label="Distribution des durées écoutées">
           <span class="whisker"></span><span class="box"></span><span class="median"></span><span class="mean-marker"></span>
         </div>

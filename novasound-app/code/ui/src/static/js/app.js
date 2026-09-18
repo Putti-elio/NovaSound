@@ -50,7 +50,7 @@ function getRankingRow(category, item) {
   if (category === 'artists') {
     row.append(
       createEntityCell(item.name, 'Billboard Top Artists 2025'),
-      createElement('span', '', 'Classement annuel'),
+       createElement('span', '', 'Annual ranking'),
       createElement('span', '', `#${item.rank}`),
       createElement('span', '', 'Billboard'),
     )
@@ -59,7 +59,7 @@ function getRankingRow(category, item) {
 
   if (category === 'playlists') {
     row.append(
-      createEntityCell(item.title, 'Playlist publique', item.link),
+       createEntityCell(item.title, 'Public playlist', item.link),
       createElement('span', '', item.creator),
       createElement('span', '', String(item.trackCount)),
       createElement('span', '', 'Deezer'),
@@ -78,7 +78,7 @@ function getRankingRow(category, item) {
   }
 
   row.append(
-    createEntityCell(item.title, 'Piste', item.link),
+     createEntityCell(item.title, 'Track', item.link),
     createElement('span', '', item.artist),
     createElement('span', '', item.album),
     createElement('span', '', 'Deezer'),
@@ -89,16 +89,16 @@ function getRankingRow(category, item) {
 
 function getColumnLabels(category) {
   if (category === 'artists') {
-    return ['Rang', 'Artiste', 'Classement', 'Position', 'Source']
+     return ['Rank', 'Artist', 'Ranking', 'Position', 'Source']
   }
 
   if (category === 'playlists') {
-    return ['Rang', 'Playlist', 'Créateur', 'Titres', 'Source']
+     return ['Rank', 'Playlist', 'Creator', 'Tracks', 'Source']
   }
 
   return category === 'albums'
-    ? ['Rang', 'Album', 'Artiste', 'Type', 'Source']
-    : ['Rang', 'Piste', 'Artiste', 'Album', 'Source']
+     ? ['Rank', 'Album', 'Artist', 'Type', 'Source']
+     : ['Rank', 'Track', 'Artist', 'Album', 'Source']
 }
 
 function renderRanking(rankingElement) {
@@ -129,7 +129,7 @@ function renderRanking(rankingElement) {
 
     list.append(rows)
     displayed += nextItems.length
-    status.textContent = `${displayed} résultats sur ${ranking.items.length} affichés`
+     status.textContent = `${displayed} of ${ranking.items.length} results displayed`
 
     if (displayed === ranking.items.length) {
       loadMoreButton.remove()
@@ -137,7 +137,7 @@ function renderRanking(rankingElement) {
     }
 
     const nextEnd = Math.min(displayed + pageSize, ranking.items.length)
-    loadMoreButton.textContent = `Charger les rangs ${displayed + 1} à ${nextEnd}`
+     loadMoreButton.textContent = `Load ranks ${displayed + 1} to ${nextEnd}`
   }
 
   loadMoreButton.addEventListener('click', renderNextPage)
