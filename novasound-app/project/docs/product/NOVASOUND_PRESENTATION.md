@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-NovaSound app is the music application's browser and desktop client.
+NovaSound is a music application designed to provide a solid foundation for browsing and managing a music catalog, with a path toward a complete streaming and desktop experience.
 
 The current product foundation centers on three catalog entities:
 
@@ -10,10 +10,7 @@ The current product foundation centers on three catalog entities:
 - Albums
 - Songs
 
-The NovaSound server stores the catalog in PostgreSQL and exposes the service API.
-This repository owns the lightweight web interface, which runs in a browser and can
-be packaged in a native desktop shell; it consumes that server as an external
-boundary.
+NovaSound stores this catalog in PostgreSQL and exposes it through a typed backend API. Its user interface is a lightweight web frontend that can run in a browser and is intended to be packaged in a native desktop shell.
 
 ## Direction and Goals
 
@@ -34,21 +31,31 @@ These latter capabilities are future directions, not claims about features alrea
 
 ```mermaid
 flowchart LR
-    Client[Browser or Tauri desktop app] --> App[NovaSound app]
-    App --> Api[External NovaSound server API]
-    Api --> Backend[Rust and Axum server]
-    Backend --> Database[(PostgreSQL)]
+    Client[Browser or Tauri desktop app] --> Frontend[HTMX frontend]
+    Frontend --> Mocks[Fictional local fragments]
+    Frontend -. Future live integration .-> Api[Connect RPC / HTTP API]
+    Api --> Backend[Rust and Axum backend]
+    Backend --> Pool[PostgreSQL connection pool]
+    Pool --> Database[(PostgreSQL)]
+    Proto[Protobuf contracts] --> Api
+    Sql[SQL query files] --> Queries[Clorinde generated Rust queries]
+    Queries --> Backend
 ```
 
-The app communicates with the separately owned NovaSound server API. The server implements business logic, exposes Connect RPC services through Axum, and owns PostgreSQL persistence. API definitions and database queries are maintained in the server repository; see the [server architecture](../../../novasound-server/project/docs/ARCHITECTURE.md) for its implementation details.
+The current frontend prototype loads fictional local fragments and does not call
+the Rust backend. The target live architecture connects it to the backend, which
+implements business logic and exposes Connect RPC services through Axum.
+PostgreSQL is the persistent source of truth. API definitions and database queries
+are generated from explicit source files to reduce drift between the application
+layers.
 
 ## Technology Choices
 
-### NovaSound Server Boundary
+### Rust for the Backend
 
-The separately maintained NovaSound server uses Rust because it combines high performance with memory safety and strong compile-time guarantees. A music platform can grow to handle many concurrent requests, long-running operations, and data-intensive workloads; Rust provides a dependable foundation for that evolution while avoiding garbage-collection pauses.
+Rust is used for the backend because it combines high performance with memory safety and strong compile-time guarantees. A music platform can grow to handle many concurrent requests, long-running operations, and data-intensive workloads; Rust provides a dependable foundation for that evolution while avoiding garbage-collection pauses.
 
-Its type system also helps make domain rules and error paths explicit. This is particularly useful for a catalog where artists, albums, songs, identifiers, dates, and validation rules must remain consistent across the API and database layers. The app consumes the resulting API contract rather than owning these internals.
+Its type system also helps make domain rules and error paths explicit. This is particularly useful for a catalog where artists, albums, songs, identifiers, dates, and validation rules must remain consistent across the API and database layers.
 
 ### Tokio for Asynchronous Execution
 
@@ -71,7 +78,8 @@ This approach was chosen to:
 - Make API changes reviewable through contract changes.
 - Preserve flexibility for multiple clients, including browser and desktop applications.
 
-The Protobuf files under `novasound-server/code/contracts/proto/` are the source of truth for the API.
+The Protobuf files under `novasound-server/code/contracts/proto/` are the source
+of truth for the API.
 
 ### PostgreSQL for Persistent Data
 
@@ -101,43 +109,54 @@ This choice keeps the frontend lightweight and aligns well with server-rendered 
 
 ### Vite and Bun for Frontend Development
 
-Vite provides the frontend development server and build pipeline. Bun installs dependencies and runs frontend scripts locally.
+Vite provides the frontend development server and build pipeline. Bun installs
+dependencies and runs frontend scripts either on the host or in the optional app
+development container.
 
-They were chosen for a fast development loop: quick startup, file watching, and a simple production build.
+They were chosen for a fast development loop: quick startup, file watching, and a
+simple production build. The app workspace can run Bun and Vite directly or use
+Docker for a reproducible environment.
 
 ### Tauri for the Desktop Application
 
 Tauri is the intended native desktop shell for NovaSound. It loads the same frontend used in the browser, using the operating system's WebView instead of shipping a separate Chromium runtime.
 
-This keeps the desktop application smaller and more resource-efficient than many Electron-based applications, while allowing NovaSound to reuse its web UI. The native shell runs on the Linux host during development and consumes the external server API when live data is needed.
+This keeps the desktop application smaller and more resource-efficient than many
+Electron-based applications, while allowing NovaSound to reuse its web UI. The
+app and server workspaces have independent development lifecycles.
 
 ### Docker Compose for Local Infrastructure
 
-The app's Docker configuration runs only the Bun/Vite development service. The server repository owns the backend and PostgreSQL Docker stack.
+Docker Compose runs the backend and PostgreSQL stack from `novasound-server/` and
+can run the Vite service independently from `novasound-app/`. It provides
+repeatable local environments and isolates development dependencies from the host
+machine.
 
-This reduces setup differences between contributors while keeping app configuration separate from server credentials and database lifecycle.
+This reduces setup differences between contributors and makes the database lifecycle, service networking, and environment variables predictable.
 
 ### Make for Development Commands
 
-The Makefile provides a stable set of project commands, including:
+Each workspace Makefile provides a focused set of project commands, including:
 
-- `make dev` to start the browser development server.
-- `make build` to build browser assets.
-- `make build-tauri` to build the desktop application.
+- `make dev` in `novasound-app/` to start the browser UI.
+- `make build-tauri` in `novasound-app/` to build the desktop application.
+- `make up` in `novasound-server/` to start the backend stack.
+- `make init-db`, `make test`, and `make lint` in `novasound-server/` to manage
+  and validate the backend.
 
 Using named commands makes the expected workflow discoverable and avoids requiring contributors to remember long Docker or Cargo invocations.
 
 ## Current State
 
-NovaSound app currently provides the client-side basis for artist, album, and song catalog experiences:
+NovaSound currently provides the technical basis for artist, album, and song catalog management:
 
-- A lightweight HTMX frontend development setup.
-- A browser client and Tauri desktop shell.
-- A static demo that loads fictional local HTMX fragments and does not call the
-  NovaSound server.
-- A documented external HTTP boundary for future live catalogue integration.
-- No browser test script or test suite at present; `bun run build` is the available
-  browser validation command.
+- PostgreSQL-backed persistence.
+- Database migrations and seeded demo data.
+- Create, read, list, update, and delete operations for catalog resources.
+- Connect RPC services generated from Protobuf contracts.
+- A lightweight HTMX frontend prototype with fictional local fragments.
+- Separate Docker-based app and server development services and Rust quality
+  checks.
 
 The product is still in its foundation phase. Playback, account management, personal libraries, recommendations, streaming delivery, and production-ready desktop packaging remain future work.
 
@@ -145,8 +164,11 @@ The product is still in its foundation phase. Playback, account management, pers
 
 NovaSound favors explicit contracts and maintainable boundaries:
 
-- The external server API defines the client-server contract.
-- App Docker configuration remains independent from server credentials and persistence.
+- Protobuf defines the API contract.
+- SQL defines database behavior.
+- Generated code connects those definitions to typed Rust services.
+- PostgreSQL remains the source of truth for persistent catalog data.
+- Docker Compose makes development infrastructure repeatable.
 - The web frontend remains reusable by the native desktop shell.
 
 This structure is intended to let NovaSound add product features without sacrificing reliability, performance, or clarity of ownership between the frontend, API, and database layers.

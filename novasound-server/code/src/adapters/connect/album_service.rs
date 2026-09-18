@@ -2,11 +2,10 @@ use crate::adapters::connect::{album_to_proto, parse_optional_date, proto_album_
 use crate::errors::connect_error::{to_connect_error, validation_error};
 use crate::models::album_model::{CreateAlbum, UpdateAlbum};
 use crate::rpc::novasound::album::v1::{
-    AlbumService, CreateAlbumRequestView, CreateAlbumResponse, DeleteAlbumRequestView,
-    DeleteAlbumResponse, GetAlbumRequestView, GetAlbumsRequestView, GetAlbumsResponse,
-    UpdateAlbumRequestView, UpdateAlbumResponse,
+    AlbumService, CreateAlbumRequest, CreateAlbumResponse, DeleteAlbumRequest, DeleteAlbumResponse,
+    GetAlbumRequest, GetAlbumsRequest, GetAlbumsResponse, UpdateAlbumRequest, UpdateAlbumResponse,
 };
-use connectrpc::Context;
+use connectrpc::RequestContext;
 use deadpool_postgres::Pool;
 use novasound_application::album_service;
 use novasound_domain::validation::ValidationErrors;
@@ -22,42 +21,43 @@ impl ConnectAlbumService {
     }
 }
 
+#[allow(refining_impl_trait)]
 impl AlbumService for ConnectAlbumService {
     async fn get_album(
         &self,
-        ctx: Context,
-        request: ::buffa::view::OwnedView<GetAlbumRequestView<'static>>,
-    ) -> Result<(crate::rpc::novasound::album::v1::Album, Context), connectrpc::ConnectError> {
+        _ctx: RequestContext,
+        request: connectrpc::ServiceRequest<'_, GetAlbumRequest>,
+    ) -> Result<
+        connectrpc::Response<crate::rpc::novasound::album::v1::Album>,
+        connectrpc::ConnectError,
+    > {
         let album = album_service::get_album_by_id(&self.pool, request.id)
             .await
             .map_err(to_connect_error)?;
 
-        Ok((album_to_proto(album), ctx))
+        Ok(connectrpc::Response::new(album_to_proto(album)))
     }
 
     async fn get_albums(
         &self,
-        ctx: Context,
-        _request: ::buffa::view::OwnedView<GetAlbumsRequestView<'static>>,
-    ) -> Result<(GetAlbumsResponse, Context), connectrpc::ConnectError> {
+        _ctx: RequestContext,
+        _request: connectrpc::ServiceRequest<'_, GetAlbumsRequest>,
+    ) -> Result<connectrpc::Response<GetAlbumsResponse>, connectrpc::ConnectError> {
         let albums = album_service::get_all_albums(&self.pool)
             .await
             .map_err(to_connect_error)?;
 
-        Ok((
-            GetAlbumsResponse {
-                albums: albums.into_iter().map(album_to_proto).collect(),
-                ..Default::default()
-            },
-            ctx,
-        ))
+        Ok(connectrpc::Response::new(GetAlbumsResponse {
+            albums: albums.into_iter().map(album_to_proto).collect(),
+            ..Default::default()
+        }))
     }
 
     async fn create_album(
         &self,
-        ctx: Context,
-        request: ::buffa::view::OwnedView<CreateAlbumRequestView<'static>>,
-    ) -> Result<(CreateAlbumResponse, Context), connectrpc::ConnectError> {
+        _ctx: RequestContext,
+        request: connectrpc::ServiceRequest<'_, CreateAlbumRequest>,
+    ) -> Result<connectrpc::Response<CreateAlbumResponse>, connectrpc::ConnectError> {
         let release_date = parse_optional_date(request.release_date);
         let album_type = proto_album_type_to_model(request.album_type);
         let album = CreateAlbum {
@@ -84,20 +84,17 @@ impl AlbumService for ConnectAlbumService {
             .await
             .map_err(to_connect_error)?;
 
-        Ok((
-            CreateAlbumResponse {
-                album: ::buffa::MessageField::some(album_to_proto(created_album)),
-                ..Default::default()
-            },
-            ctx,
-        ))
+        Ok(connectrpc::Response::new(CreateAlbumResponse {
+            album: ::buffa::MessageField::some(album_to_proto(created_album)),
+            ..Default::default()
+        }))
     }
 
     async fn update_album(
         &self,
-        ctx: Context,
-        request: ::buffa::view::OwnedView<UpdateAlbumRequestView<'static>>,
-    ) -> Result<(UpdateAlbumResponse, Context), connectrpc::ConnectError> {
+        _ctx: RequestContext,
+        request: connectrpc::ServiceRequest<'_, UpdateAlbumRequest>,
+    ) -> Result<connectrpc::Response<UpdateAlbumResponse>, connectrpc::ConnectError> {
         let release_date = parse_optional_date(request.release_date);
         let album = UpdateAlbum {
             name: request.name.map(str::to_owned),
@@ -119,24 +116,21 @@ impl AlbumService for ConnectAlbumService {
             .await
             .map_err(to_connect_error)?;
 
-        Ok((
-            UpdateAlbumResponse {
-                album: ::buffa::MessageField::some(album_to_proto(updated_album)),
-                ..Default::default()
-            },
-            ctx,
-        ))
+        Ok(connectrpc::Response::new(UpdateAlbumResponse {
+            album: ::buffa::MessageField::some(album_to_proto(updated_album)),
+            ..Default::default()
+        }))
     }
 
     async fn delete_album(
         &self,
-        ctx: Context,
-        request: ::buffa::view::OwnedView<DeleteAlbumRequestView<'static>>,
-    ) -> Result<(DeleteAlbumResponse, Context), connectrpc::ConnectError> {
+        _ctx: RequestContext,
+        request: connectrpc::ServiceRequest<'_, DeleteAlbumRequest>,
+    ) -> Result<connectrpc::Response<DeleteAlbumResponse>, connectrpc::ConnectError> {
         album_service::delete_album(&self.pool, request.id)
             .await
             .map_err(to_connect_error)?;
 
-        Ok((DeleteAlbumResponse::default(), ctx))
+        Ok(connectrpc::Response::new(DeleteAlbumResponse::default()))
     }
 }

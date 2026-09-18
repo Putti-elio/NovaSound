@@ -1,12 +1,12 @@
-use connectrpc::Context;
+use connectrpc::RequestContext;
 use deadpool_postgres::Pool;
 
 use crate::adapters::connect::artist_to_proto;
 use crate::errors::connect_error::to_connect_error;
 use crate::rpc::novasound::artist::v1::{
-    ArtistService, CreateArtistRequestView, CreateArtistResponse, DeleteArtistRequestView,
-    DeleteArtistResponse, GetArtistRequestView, GetArtistsRequestView, GetArtistsResponse,
-    UpdateArtistRequestView, UpdateArtistResponse,
+    ArtistService, CreateArtistRequest, CreateArtistResponse, DeleteArtistRequest,
+    DeleteArtistResponse, GetArtistRequest, GetArtistsRequest, GetArtistsResponse,
+    UpdateArtistRequest, UpdateArtistResponse,
 };
 use novasound_application::artist_service;
 
@@ -21,83 +21,77 @@ impl ConnectArtistService {
     }
 }
 
+#[allow(refining_impl_trait)]
 impl ArtistService for ConnectArtistService {
     async fn get_artist(
         &self,
-        ctx: Context,
-        request: ::buffa::view::OwnedView<GetArtistRequestView<'static>>,
-    ) -> Result<(crate::rpc::novasound::artist::v1::Artist, Context), connectrpc::ConnectError>
-    {
+        _ctx: RequestContext,
+        request: connectrpc::ServiceRequest<'_, GetArtistRequest>,
+    ) -> Result<
+        connectrpc::Response<crate::rpc::novasound::artist::v1::Artist>,
+        connectrpc::ConnectError,
+    > {
         let artist = artist_service::get_artist(&self.pool, request.id)
             .await
             .map_err(to_connect_error)?;
 
-        Ok((artist_to_proto(artist), ctx))
+        Ok(connectrpc::Response::new(artist_to_proto(artist)))
     }
 
     async fn get_artists(
         &self,
-        ctx: Context,
-        _request: ::buffa::view::OwnedView<GetArtistsRequestView<'static>>,
-    ) -> Result<(GetArtistsResponse, Context), connectrpc::ConnectError> {
+        _ctx: RequestContext,
+        _request: connectrpc::ServiceRequest<'_, GetArtistsRequest>,
+    ) -> Result<connectrpc::Response<GetArtistsResponse>, connectrpc::ConnectError> {
         let artists = artist_service::get_all_artists(&self.pool)
             .await
             .map_err(to_connect_error)?;
 
-        Ok((
-            GetArtistsResponse {
-                artists: artists.into_iter().map(artist_to_proto).collect(),
-                ..Default::default()
-            },
-            ctx,
-        ))
+        Ok(connectrpc::Response::new(GetArtistsResponse {
+            artists: artists.into_iter().map(artist_to_proto).collect(),
+            ..Default::default()
+        }))
     }
 
     async fn create_artist(
         &self,
-        ctx: Context,
-        request: ::buffa::view::OwnedView<CreateArtistRequestView<'static>>,
-    ) -> Result<(CreateArtistResponse, Context), connectrpc::ConnectError> {
+        _ctx: RequestContext,
+        request: connectrpc::ServiceRequest<'_, CreateArtistRequest>,
+    ) -> Result<connectrpc::Response<CreateArtistResponse>, connectrpc::ConnectError> {
         let artist = artist_service::create_artist(&self.pool, request.name)
             .await
             .map_err(to_connect_error)?;
 
-        Ok((
-            CreateArtistResponse {
-                artist: ::buffa::MessageField::some(artist_to_proto(artist)),
-                ..Default::default()
-            },
-            ctx,
-        ))
+        Ok(connectrpc::Response::new(CreateArtistResponse {
+            artist: ::buffa::MessageField::some(artist_to_proto(artist)),
+            ..Default::default()
+        }))
     }
 
     async fn update_artist(
         &self,
-        ctx: Context,
-        request: ::buffa::view::OwnedView<UpdateArtistRequestView<'static>>,
-    ) -> Result<(UpdateArtistResponse, Context), connectrpc::ConnectError> {
+        _ctx: RequestContext,
+        request: connectrpc::ServiceRequest<'_, UpdateArtistRequest>,
+    ) -> Result<connectrpc::Response<UpdateArtistResponse>, connectrpc::ConnectError> {
         let artist = artist_service::update_artist(&self.pool, request.id, request.name)
             .await
             .map_err(to_connect_error)?;
 
-        Ok((
-            UpdateArtistResponse {
-                artist: ::buffa::MessageField::some(artist_to_proto(artist)),
-                ..Default::default()
-            },
-            ctx,
-        ))
+        Ok(connectrpc::Response::new(UpdateArtistResponse {
+            artist: ::buffa::MessageField::some(artist_to_proto(artist)),
+            ..Default::default()
+        }))
     }
 
     async fn delete_artist(
         &self,
-        ctx: Context,
-        request: ::buffa::view::OwnedView<DeleteArtistRequestView<'static>>,
-    ) -> Result<(DeleteArtistResponse, Context), connectrpc::ConnectError> {
+        _ctx: RequestContext,
+        request: connectrpc::ServiceRequest<'_, DeleteArtistRequest>,
+    ) -> Result<connectrpc::Response<DeleteArtistResponse>, connectrpc::ConnectError> {
         artist_service::delete_artist(&self.pool, request.id)
             .await
             .map_err(to_connect_error)?;
 
-        Ok((DeleteArtistResponse::default(), ctx))
+        Ok(connectrpc::Response::new(DeleteArtistResponse::default()))
     }
 }

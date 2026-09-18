@@ -5,4 +5,4 @@ edition = "2024"
 publish = false
 
 [dependencies]
-chrono = "0.4"
+chrono = "0.4.45"

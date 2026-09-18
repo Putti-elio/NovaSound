@@ -44,13 +44,13 @@ up-db:
 ## @description Run the backend in development mode
 ## @depends up-backend
 run-backend: up-backend
-	$(COMPOSE) exec backend cargo run --bin rust
+	$(COMPOSE) exec backend cargo pretty run --bin novasound-server
 
 run-backend-release: up-backend
-	$(COMPOSE) exec backend cargo run --release --bin rust
+	$(COMPOSE) exec backend cargo pretty run --release --bin novasound-server
 
 run-backend-error: up-backend
-	$(COMPOSE) exec backend env RUST_LOG=error cargo run --bin rust
+	$(COMPOSE) exec backend env RUST_LOG=error cargo pretty run --bin novasound-server
 
 ## @description Stop backend and PostgreSQL containers
 down:

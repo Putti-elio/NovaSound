@@ -5,12 +5,12 @@ edition = "2024"
 publish = false
 
 [dependencies]
-anyhow = "1.0.100"
-chrono = "0.4"
-deadpool-postgres = "0.14"
+anyhow = "1.0.104"
+chrono = "0.4.45"
+deadpool-postgres = "0.14.2"
 function_name = "0.3.0"
-log = "0.4.28"
+log = "0.4.34"
 novasound-domain = { path = "../domain" }
 novasound-storage-postgres = { path = "../storage-postgres" }
-thiserror = "1.0"
-uuid = { version = "1.19.0", features = ["v4"] }
+thiserror = "2.0.20"
+uuid = { version = "1.26.1", features = ["v4"] }

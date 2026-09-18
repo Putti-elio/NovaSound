@@ -1,0 +1,1318 @@
+{
+  "mock": true,
+  "sort": "rank:asc",
+  "displayed": 100,
+  "distinct": 100,
+  "provenance": {
+    "sources": [
+      {
+        "name": "Deezer public playlist chart",
+        "recordCount": 100,
+        "sourceUrl": "https://api.deezer.com/chart/0/playlists?limit=100",
+        "rankMethod": "Response order"
+      }
+    ]
+  },
+  "items": [
+    {
+      "id": "deezer-playlist-53362031",
+      "rank": 1,
+      "title": "Les titres du moment",
+      "public": true,
+      "trackCount": 59,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/53362031",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/53362031"
+      }
+    },
+    {
+      "id": "deezer-playlist-4590807924",
+      "rank": 2,
+      "title": "Calm Piano",
+      "public": true,
+      "trackCount": 200,
+      "creator": "Yannick - Deezer Classical Editor",
+      "link": "https://www.deezer.com/playlist/4590807924",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/4590807924"
+      }
+    },
+    {
+      "id": "deezer-playlist-1154685481",
+      "rank": 3,
+      "title": "Sport Motivation",
+      "public": true,
+      "trackCount": 70,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/1154685481",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1154685481"
+      }
+    },
+    {
+      "id": "deezer-playlist-1479458365",
+      "rank": 4,
+      "title": "Happy Hits",
+      "public": true,
+      "trackCount": 70,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/1479458365",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1479458365"
+      }
+    },
+    {
+      "id": "deezer-playlist-1363560485",
+      "rank": 5,
+      "title": "Deezer Hits",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/1363560485",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1363560485"
+      }
+    },
+    {
+      "id": "deezer-playlist-1189520191",
+      "rank": 6,
+      "title": "Bleu Blanc Hits",
+      "public": true,
+      "trackCount": 60,
+      "creator": "Laeti - Deezer Editrice Variété Française",
+      "link": "https://www.deezer.com/playlist/1189520191",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1189520191"
+      }
+    },
+    {
+      "id": "deezer-playlist-1910344822",
+      "rank": 7,
+      "title": "Relaxation",
+      "public": true,
+      "trackCount": 93,
+      "creator": "Rudy - Deezer Moods Editor",
+      "link": "https://www.deezer.com/playlist/1910344822",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1910344822"
+      }
+    },
+    {
+      "id": "deezer-playlist-2055080624",
+      "rank": 8,
+      "title": "Pop acoustique",
+      "public": true,
+      "trackCount": 70,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/2055080624",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/2055080624"
+      }
+    },
+    {
+      "id": "deezer-playlist-1109890291",
+      "rank": 9,
+      "title": "Top France",
+      "public": true,
+      "trackCount": 100,
+      "creator": "Deezer Charts",
+      "link": "https://www.deezer.com/playlist/1109890291",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1109890291"
+      }
+    },
+    {
+      "id": "deezer-playlist-9498815582",
+      "rank": 10,
+      "title": "Automne Vibes | Playlist autumn cosy 🍂",
+      "public": true,
+      "trackCount": 96,
+      "creator": "Digster France",
+      "link": "https://www.deezer.com/playlist/9498815582",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/9498815582"
+      }
+    },
+    {
+      "id": "deezer-playlist-1290316405",
+      "rank": 11,
+      "title": "Chill relax",
+      "public": true,
+      "trackCount": 100,
+      "creator": "Laeti - Deezer Dance & EDM Editor",
+      "link": "https://www.deezer.com/playlist/1290316405",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1290316405"
+      }
+    },
+    {
+      "id": "deezer-playlist-3272614282",
+      "rank": 12,
+      "title": "Rapstars",
+      "public": true,
+      "trackCount": 45,
+      "creator": "Narjes - Deezer Rap & R&B Editrice France",
+      "link": "https://www.deezer.com/playlist/3272614282",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/3272614282"
+      }
+    },
+    {
+      "id": "deezer-playlist-788022051",
+      "rank": 13,
+      "title": "Les Variétés françaises",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Laeti - Deezer Editrice Variété Française",
+      "link": "https://www.deezer.com/playlist/788022051",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/788022051"
+      }
+    },
+    {
+      "id": "deezer-playlist-932386265",
+      "rank": 14,
+      "title": "Hits de l'été",
+      "public": true,
+      "trackCount": 69,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/932386265",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/932386265"
+      }
+    },
+    {
+      "id": "deezer-playlist-1163842311",
+      "rank": 15,
+      "title": "En mode 80",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/1163842311",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1163842311"
+      }
+    },
+    {
+      "id": "deezer-playlist-1787912442",
+      "rank": 16,
+      "title": "Piano Meditation",
+      "public": true,
+      "trackCount": 201,
+      "creator": "Yannick - Deezer Classical Editor",
+      "link": "https://www.deezer.com/playlist/1787912442",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1787912442"
+      }
+    },
+    {
+      "id": "deezer-playlist-759282441",
+      "rank": 17,
+      "title": "Douce Pop",
+      "public": true,
+      "trackCount": 90,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/759282441",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/759282441"
+      }
+    },
+    {
+      "id": "deezer-playlist-7393760844",
+      "rank": 18,
+      "title": "Soul Coffee",
+      "public": true,
+      "trackCount": 70,
+      "creator": "Yannick - Soul & Funk Deezer Editor",
+      "link": "https://www.deezer.com/playlist/7393760844",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/7393760844"
+      }
+    },
+    {
+      "id": "deezer-playlist-1295010615",
+      "rank": 19,
+      "title": "Belle époque",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Laeti - Deezer Editrice Variété Française",
+      "link": "https://www.deezer.com/playlist/1295010615",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1295010615"
+      }
+    },
+    {
+      "id": "deezer-playlist-9128596442",
+      "rank": 20,
+      "title": "Essentiels pop rock français",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Rod - Deezer Rock Editor",
+      "link": "https://www.deezer.com/playlist/9128596442",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/9128596442"
+      }
+    },
+    {
+      "id": "deezer-playlist-9346933942",
+      "rank": 21,
+      "title": "Acoustic Hits",
+      "public": true,
+      "trackCount": 80,
+      "creator": "Laeti - Deezer Pop Editor",
+      "link": "https://www.deezer.com/playlist/9346933942",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/9346933942"
+      }
+    },
+    {
+      "id": "deezer-playlist-1565553361",
+      "rank": 22,
+      "title": "Hits Cultes (Pop, Rock, Années 80, 70, 90, 00...)",
+      "public": true,
+      "trackCount": 225,
+      "creator": "Topsify France",
+      "link": "https://www.deezer.com/playlist/1565553361",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1565553361"
+      }
+    },
+    {
+      "id": "deezer-playlist-6399367984",
+      "rank": 23,
+      "title": "Lofi Girl - beats to relax/study to",
+      "public": true,
+      "trackCount": 481,
+      "creator": "Lofi Girl",
+      "link": "https://www.deezer.com/playlist/6399367984",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/6399367984"
+      }
+    },
+    {
+      "id": "deezer-playlist-8749345882",
+      "rank": 24,
+      "title": "study lofi",
+      "public": true,
+      "trackCount": 92,
+      "creator": "Rudy - Deezer Moods Editor",
+      "link": "https://www.deezer.com/playlist/8749345882",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/8749345882"
+      }
+    },
+    {
+      "id": "deezer-playlist-13650084141",
+      "rank": 25,
+      "title": "20s Hits",
+      "public": true,
+      "trackCount": 80,
+      "creator": "Laeti - Deezer Pop Editor",
+      "link": "https://www.deezer.com/playlist/13650084141",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/13650084141"
+      }
+    },
+    {
+      "id": "deezer-playlist-1817195742",
+      "rank": 26,
+      "title": "Céline Dion - Top Tracks",
+      "public": true,
+      "trackCount": 77,
+      "creator": "Filtr France",
+      "link": "https://www.deezer.com/playlist/1817195742",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1817195742"
+      }
+    },
+    {
+      "id": "deezer-playlist-751764391",
+      "rank": 27,
+      "title": "En mode 2000",
+      "public": true,
+      "trackCount": 60,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/751764391",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/751764391"
+      }
+    },
+    {
+      "id": "deezer-playlist-1420459465",
+      "rank": 28,
+      "title": "Essentiels variété française",
+      "public": true,
+      "trackCount": 70,
+      "creator": "Laeti - Deezer Editrice Variété Française",
+      "link": "https://www.deezer.com/playlist/1420459465",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1420459465"
+      }
+    },
+    {
+      "id": "deezer-playlist-914651125",
+      "rank": 29,
+      "title": "Chill Relax ☀️Lounge Chillout Electro Apéro",
+      "public": true,
+      "trackCount": 341,
+      "creator": "Filtr France",
+      "link": "https://www.deezer.com/playlist/914651125",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/914651125"
+      }
+    },
+    {
+      "id": "deezer-playlist-1478649355",
+      "rank": 30,
+      "title": "Les nouveautés du vendredi",
+      "public": true,
+      "trackCount": 90,
+      "creator": "Deezer Editors",
+      "link": "https://www.deezer.com/playlist/1478649355",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1478649355"
+      }
+    },
+    {
+      "id": "deezer-playlist-1337933445",
+      "rank": 31,
+      "title": "Feel Good Alternative",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Georges - Deezer Alternative Editor",
+      "link": "https://www.deezer.com/playlist/1337933445",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1337933445"
+      }
+    },
+    {
+      "id": "deezer-playlist-8326097522",
+      "rank": 32,
+      "title": "00s Pop",
+      "public": true,
+      "trackCount": 80,
+      "creator": "Laeti - Deezer Pop Editor",
+      "link": "https://www.deezer.com/playlist/8326097522",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/8326097522"
+      }
+    },
+    {
+      "id": "deezer-playlist-1071669561",
+      "rank": 33,
+      "title": "Actu Rap",
+      "public": true,
+      "trackCount": 81,
+      "creator": "Narjes - Deezer Rap & R&B Editrice France",
+      "link": "https://www.deezer.com/playlist/1071669561",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1071669561"
+      }
+    },
+    {
+      "id": "deezer-playlist-8873748882",
+      "rank": 34,
+      "title": "00s Happy Hits",
+      "public": true,
+      "trackCount": 80,
+      "creator": "Laeti - Deezer Pop Editor",
+      "link": "https://www.deezer.com/playlist/8873748882",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/8873748882"
+      }
+    },
+    {
+      "id": "deezer-playlist-1976454162",
+      "rank": 35,
+      "title": "Chill Hits",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Laeti - Deezer Pop Editor",
+      "link": "https://www.deezer.com/playlist/1976454162",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1976454162"
+      }
+    },
+    {
+      "id": "deezer-playlist-6237851904",
+      "rank": 36,
+      "title": "Été 2026 playlist 🌴 Musique été / hit summer fête",
+      "public": true,
+      "trackCount": 230,
+      "creator": "Filtr France",
+      "link": "https://www.deezer.com/playlist/6237851904",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/6237851904"
+      }
+    },
+    {
+      "id": "deezer-playlist-687945565",
+      "rank": 37,
+      "title": "Hits Dance",
+      "public": true,
+      "trackCount": 49,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/687945565",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/687945565"
+      }
+    },
+    {
+      "id": "deezer-playlist-11370699204",
+      "rank": 38,
+      "title": "528 hz Musique pour dormir",
+      "public": true,
+      "trackCount": 114,
+      "creator": "Filtr France",
+      "link": "https://www.deezer.com/playlist/11370699204",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/11370699204"
+      }
+    },
+    {
+      "id": "deezer-playlist-2051712324",
+      "rank": 39,
+      "title": "En mode 2010",
+      "public": true,
+      "trackCount": 70,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/2051712324",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/2051712324"
+      }
+    },
+    {
+      "id": "deezer-playlist-3180445442",
+      "rank": 40,
+      "title": "Playlist Bonne humeur 🌞 | Hits feel good",
+      "public": true,
+      "trackCount": 98,
+      "creator": "Digster France",
+      "link": "https://www.deezer.com/playlist/3180445442",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/3180445442"
+      }
+    },
+    {
+      "id": "deezer-playlist-2228601362",
+      "rank": 41,
+      "title": "Fresh Pop",
+      "public": true,
+      "trackCount": 82,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/2228601362",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/2228601362"
+      }
+    },
+    {
+      "id": "deezer-playlist-3181211662",
+      "rank": 42,
+      "title": "Acoustic Rock",
+      "public": true,
+      "trackCount": 90,
+      "creator": "Rod - Deezer Rock Editor",
+      "link": "https://www.deezer.com/playlist/3181211662",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/3181211662"
+      }
+    },
+    {
+      "id": "deezer-playlist-821019291",
+      "rank": 43,
+      "title": "Bleu blanc hits 70",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Laeti - Deezer Editrice Variété Française",
+      "link": "https://www.deezer.com/playlist/821019291",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/821019291"
+      }
+    },
+    {
+      "id": "deezer-playlist-733113466",
+      "rank": 44,
+      "title": "Sleep",
+      "public": true,
+      "trackCount": 60,
+      "creator": "Rudy - Deezer Moods Editor",
+      "link": "https://www.deezer.com/playlist/733113466",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/733113466"
+      }
+    },
+    {
+      "id": "deezer-playlist-1306931615",
+      "rank": 45,
+      "title": "Rock Essentials",
+      "public": true,
+      "trackCount": 100,
+      "creator": "Rod - Deezer Rock Editor",
+      "link": "https://www.deezer.com/playlist/1306931615",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1306931615"
+      }
+    },
+    {
+      "id": "deezer-playlist-957995855",
+      "rank": 46,
+      "title": "Actu Chanson",
+      "public": true,
+      "trackCount": 60,
+      "creator": "Laeti - Deezer Editrice Variété Française",
+      "link": "https://www.deezer.com/playlist/957995855",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/957995855"
+      }
+    },
+    {
+      "id": "deezer-playlist-155017031",
+      "rank": 47,
+      "title": "Sport Booster 💪 la playlist pour courir, workout, running, crossfit, fitness, muscu...",
+      "public": true,
+      "trackCount": 198,
+      "creator": "Filtr France",
+      "link": "https://www.deezer.com/playlist/155017031",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/155017031"
+      }
+    },
+    {
+      "id": "deezer-playlist-1251125011",
+      "rank": 48,
+      "title": "En mode 90",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/1251125011",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1251125011"
+      }
+    },
+    {
+      "id": "deezer-playlist-3277000346",
+      "rank": 49,
+      "title": "Été 2026 ☀️ Piscine, soleil & fête | Summer hits, ",
+      "public": true,
+      "trackCount": 99,
+      "creator": "Digster France",
+      "link": "https://www.deezer.com/playlist/3277000346",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/3277000346"
+      }
+    },
+    {
+      "id": "deezer-playlist-11163687224",
+      "rank": 50,
+      "title": "Women Of The 80s",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Laeti - Deezer Pop Editor",
+      "link": "https://www.deezer.com/playlist/11163687224",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/11163687224"
+      }
+    },
+    {
+      "id": "deezer-playlist-1602108955",
+      "rank": 51,
+      "title": "Futurs Hits",
+      "public": true,
+      "trackCount": 51,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/1602108955",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1602108955"
+      }
+    },
+    {
+      "id": "deezer-playlist-1082651151",
+      "rank": 52,
+      "title": "TikTok Hits France",
+      "public": true,
+      "trackCount": 60,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/1082651151",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1082651151"
+      }
+    },
+    {
+      "id": "deezer-playlist-1390327745",
+      "rank": 53,
+      "title": "Cozy Coffeeshop",
+      "public": true,
+      "trackCount": 100,
+      "creator": "Georges - Deezer Folk Editor",
+      "link": "https://www.deezer.com/playlist/1390327745",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1390327745"
+      }
+    },
+    {
+      "id": "deezer-playlist-1117568241",
+      "rank": 54,
+      "title": "Motivation au top !",
+      "public": true,
+      "trackCount": 182,
+      "creator": "Topsify France",
+      "link": "https://www.deezer.com/playlist/1117568241",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1117568241"
+      }
+    },
+    {
+      "id": "deezer-playlist-8074584322",
+      "rank": 55,
+      "title": "2000s Pop Rock",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Rod - Deezer Rock Editor",
+      "link": "https://www.deezer.com/playlist/8074584322",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/8074584322"
+      }
+    },
+    {
+      "id": "deezer-playlist-3598519202",
+      "rank": 56,
+      "title": "Classique pour travailler",
+      "public": true,
+      "trackCount": 208,
+      "creator": "Erato Warner Classics France",
+      "link": "https://www.deezer.com/playlist/3598519202",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/3598519202"
+      }
+    },
+    {
+      "id": "deezer-playlist-1914526462",
+      "rank": 57,
+      "title": "Chill Jazz",
+      "public": true,
+      "trackCount": 80,
+      "creator": "Yannick - Deezer Jazz & Blues Editor",
+      "link": "https://www.deezer.com/playlist/1914526462",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1914526462"
+      }
+    },
+    {
+      "id": "deezer-playlist-1600104235",
+      "rank": 58,
+      "title": "Travailler au calme",
+      "public": true,
+      "trackCount": 70,
+      "creator": "Rudy - Deezer Moods Editor",
+      "link": "https://www.deezer.com/playlist/1600104235",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1600104235"
+      }
+    },
+    {
+      "id": "deezer-playlist-706093725",
+      "rank": 59,
+      "title": "Global Dance Hits",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Laeti - Deezer Dance & EDM Editor",
+      "link": "https://www.deezer.com/playlist/706093725",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/706093725"
+      }
+    },
+    {
+      "id": "deezer-playlist-705469375",
+      "rank": 60,
+      "title": "Les beaux jours",
+      "public": true,
+      "trackCount": 70,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/705469375",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/705469375"
+      }
+    },
+    {
+      "id": "deezer-playlist-7456464544",
+      "rank": 61,
+      "title": "Feel Good Classics",
+      "public": true,
+      "trackCount": 70,
+      "creator": "Rudy - Deezer Moods Editor",
+      "link": "https://www.deezer.com/playlist/7456464544",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/7456464544"
+      }
+    },
+    {
+      "id": "deezer-playlist-12673058961",
+      "rank": 62,
+      "title": "Afro House",
+      "public": true,
+      "trackCount": 100,
+      "creator": "Laeti - Deezer Dance & EDM Editor",
+      "link": "https://www.deezer.com/playlist/12673058961",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/12673058961"
+      }
+    },
+    {
+      "id": "deezer-playlist-1904124402",
+      "rank": 63,
+      "title": "Cozy Acoustic",
+      "public": true,
+      "trackCount": 70,
+      "creator": "Rudy - Deezer Moods Editor",
+      "link": "https://www.deezer.com/playlist/1904124402",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1904124402"
+      }
+    },
+    {
+      "id": "deezer-playlist-11340737284",
+      "rank": 64,
+      "title": "Lounge",
+      "public": true,
+      "trackCount": 100,
+      "creator": "Laeti - Deezer Dance & EDM Editor",
+      "link": "https://www.deezer.com/playlist/11340737284",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/11340737284"
+      }
+    },
+    {
+      "id": "deezer-playlist-13546042803",
+      "rank": 65,
+      "title": "Reverie",
+      "public": true,
+      "trackCount": 40,
+      "creator": "Rudy - Deezer Moods Editor",
+      "link": "https://www.deezer.com/playlist/13546042803",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/13546042803"
+      }
+    },
+    {
+      "id": "deezer-playlist-747148961",
+      "rank": 66,
+      "title": "Classical Essentials",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Yannick - Deezer Classical Editor",
+      "link": "https://www.deezer.com/playlist/747148961",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/747148961"
+      }
+    },
+    {
+      "id": "deezer-playlist-178699142",
+      "rank": 67,
+      "title": "Fuego Latino",
+      "public": true,
+      "trackCount": 99,
+      "creator": "Camojada - Deezer Latin Editor",
+      "link": "https://www.deezer.com/playlist/178699142",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/178699142"
+      }
+    },
+    {
+      "id": "deezer-playlist-3338949242",
+      "rank": 68,
+      "title": "chill lofi",
+      "public": true,
+      "trackCount": 90,
+      "creator": "Rudy - Deezer Moods Editor",
+      "link": "https://www.deezer.com/playlist/3338949242",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/3338949242"
+      }
+    },
+    {
+      "id": "deezer-playlist-2295638322",
+      "rank": 69,
+      "title": "Elles",
+      "public": true,
+      "trackCount": 60,
+      "creator": "Laeti - Deezer Editrice Variété Française",
+      "link": "https://www.deezer.com/playlist/2295638322",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/2295638322"
+      }
+    },
+    {
+      "id": "deezer-playlist-8749343942",
+      "rank": 70,
+      "title": "Focus",
+      "public": true,
+      "trackCount": 102,
+      "creator": "Rudy - Deezer Moods Editor",
+      "link": "https://www.deezer.com/playlist/8749343942",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/8749343942"
+      }
+    },
+    {
+      "id": "deezer-playlist-1010522191",
+      "rank": 71,
+      "title": "Chansons douces",
+      "public": true,
+      "trackCount": 70,
+      "creator": "Laeti - Deezer Editrice Variété Française",
+      "link": "https://www.deezer.com/playlist/1010522191",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1010522191"
+      }
+    },
+    {
+      "id": "deezer-playlist-10749273142",
+      "rank": 72,
+      "title": "Cardio 💪 sport, fitness, playlist pour courir, pla",
+      "public": true,
+      "trackCount": 90,
+      "creator": "Digster France",
+      "link": "https://www.deezer.com/playlist/10749273142",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/10749273142"
+      }
+    },
+    {
+      "id": "deezer-playlist-1581126725",
+      "rank": 73,
+      "title": "Acoustic Covers",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Georges - Deezer Folk Editor",
+      "link": "https://www.deezer.com/playlist/1581126725",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1581126725"
+      }
+    },
+    {
+      "id": "deezer-playlist-3830830902",
+      "rank": 74,
+      "title": "Certifié",
+      "public": true,
+      "trackCount": 51,
+      "creator": "Narjes - Deezer Rap & R&B Editrice France",
+      "link": "https://www.deezer.com/playlist/3830830902",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/3830830902"
+      }
+    },
+    {
+      "id": "deezer-playlist-1459249921",
+      "rank": 75,
+      "title": "La playlist pour courir",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Laeti - Deezer Dance & EDM Editor",
+      "link": "https://www.deezer.com/playlist/1459249921",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1459249921"
+      }
+    },
+    {
+      "id": "deezer-playlist-9563400362",
+      "rank": 76,
+      "title": "Rapstars : années 2020",
+      "public": true,
+      "trackCount": 87,
+      "creator": "Narjes - Deezer Rap & R&B Editrice France",
+      "link": "https://www.deezer.com/playlist/9563400362",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/9563400362"
+      }
+    },
+    {
+      "id": "deezer-playlist-713806955",
+      "rank": 77,
+      "title": "Bleu blanc hits 2000",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Laeti - Deezer Editrice Variété Française",
+      "link": "https://www.deezer.com/playlist/713806955",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/713806955"
+      }
+    },
+    {
+      "id": "deezer-playlist-11915740641",
+      "rank": 78,
+      "title": "En mode 2020",
+      "public": true,
+      "trackCount": 60,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/11915740641",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/11915740641"
+      }
+    },
+    {
+      "id": "deezer-playlist-2448918882",
+      "rank": 79,
+      "title": "Reggae Essentials",
+      "public": true,
+      "trackCount": 80,
+      "creator": "Camojada Deezer Reggae Editor",
+      "link": "https://www.deezer.com/playlist/2448918882",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/2448918882"
+      }
+    },
+    {
+      "id": "deezer-playlist-1950386602",
+      "rank": 80,
+      "title": "Queens Of Soul",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Yannick - Soul & Funk Deezer Editor",
+      "link": "https://www.deezer.com/playlist/1950386602",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1950386602"
+      }
+    },
+    {
+      "id": "deezer-playlist-2021626162",
+      "rank": 81,
+      "title": "2000s R&B",
+      "public": true,
+      "trackCount": 46,
+      "creator": "Ayoub - Deezer R&B Editor",
+      "link": "https://www.deezer.com/playlist/2021626162",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/2021626162"
+      }
+    },
+    {
+      "id": "deezer-playlist-1072714781",
+      "rank": 82,
+      "title": "Soirée Shatta",
+      "public": true,
+      "trackCount": 35,
+      "creator": "Narjes - Deezer Rap & R&B Editrice France",
+      "link": "https://www.deezer.com/playlist/1072714781",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1072714781"
+      }
+    },
+    {
+      "id": "deezer-playlist-1044663671",
+      "rank": 83,
+      "title": "Hits Poprock",
+      "public": true,
+      "trackCount": 60,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/1044663671",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1044663671"
+      }
+    },
+    {
+      "id": "deezer-playlist-1371651955",
+      "rank": 84,
+      "title": "Chill House",
+      "public": true,
+      "trackCount": 100,
+      "creator": "Laeti - Deezer Dance & EDM Editor",
+      "link": "https://www.deezer.com/playlist/1371651955",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1371651955"
+      }
+    },
+    {
+      "id": "deezer-playlist-1195092841",
+      "rank": 85,
+      "title": "Rester ZEN",
+      "public": true,
+      "trackCount": 70,
+      "creator": "Rudy - Deezer Moods Editor",
+      "link": "https://www.deezer.com/playlist/1195092841",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1195092841"
+      }
+    },
+    {
+      "id": "deezer-playlist-9111402082",
+      "rank": 86,
+      "title": "Feel Good acoustic",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Rudy - Deezer Moods Editor",
+      "link": "https://www.deezer.com/playlist/9111402082",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/9111402082"
+      }
+    },
+    {
+      "id": "deezer-playlist-1351827495",
+      "rank": 87,
+      "title": "Rap Marseille",
+      "public": true,
+      "trackCount": 40,
+      "creator": "Narjes - Deezer Rap & R&B Editrice France",
+      "link": "https://www.deezer.com/playlist/1351827495",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1351827495"
+      }
+    },
+    {
+      "id": "deezer-playlist-1310262685",
+      "rank": 88,
+      "title": "Rain to fall asleep",
+      "public": true,
+      "trackCount": 40,
+      "creator": "Rudy - Deezer Moods Editor",
+      "link": "https://www.deezer.com/playlist/1310262685",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1310262685"
+      }
+    },
+    {
+      "id": "deezer-playlist-1495242491",
+      "rank": 89,
+      "title": "Mainstage",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Laeti - Deezer Dance & EDM Editor",
+      "link": "https://www.deezer.com/playlist/1495242491",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1495242491"
+      }
+    },
+    {
+      "id": "deezer-playlist-9140318542",
+      "rank": 90,
+      "title": "RAP ÉTÉ 2026🌴 Playlist Rap Soirée / Summer Rap Fr",
+      "public": true,
+      "trackCount": 151,
+      "creator": "Filtr France",
+      "link": "https://www.deezer.com/playlist/9140318542",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/9140318542"
+      }
+    },
+    {
+      "id": "deezer-playlist-1907881662",
+      "rank": 91,
+      "title": "Soul to Chill",
+      "public": true,
+      "trackCount": 80,
+      "creator": "Yannick - Soul & Funk Deezer Editor",
+      "link": "https://www.deezer.com/playlist/1907881662",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1907881662"
+      }
+    },
+    {
+      "id": "deezer-playlist-2578576804",
+      "rank": 92,
+      "title": "sunny day",
+      "public": true,
+      "trackCount": 60,
+      "creator": "Rudy - Deezer Moods Editor",
+      "link": "https://www.deezer.com/playlist/2578576804",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/2578576804"
+      }
+    },
+    {
+      "id": "deezer-playlist-700895155",
+      "rank": 93,
+      "title": "Essentiels chanson française",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Laeti - Deezer Editrice Variété Française",
+      "link": "https://www.deezer.com/playlist/700895155",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/700895155"
+      }
+    },
+    {
+      "id": "deezer-playlist-764714001",
+      "rank": 94,
+      "title": "Cocoripop",
+      "public": true,
+      "trackCount": 60,
+      "creator": "Laeti - Deezer Editrice Variété Française",
+      "link": "https://www.deezer.com/playlist/764714001",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/764714001"
+      }
+    },
+    {
+      "id": "deezer-playlist-2113355604",
+      "rank": 95,
+      "title": "Feel Good Dance",
+      "public": true,
+      "trackCount": 50,
+      "creator": "Laeti - Deezer Dance & EDM Editor",
+      "link": "https://www.deezer.com/playlist/2113355604",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/2113355604"
+      }
+    },
+    {
+      "id": "deezer-playlist-1203212111",
+      "rank": 96,
+      "title": "Feel Good",
+      "public": true,
+      "trackCount": 79,
+      "creator": "Alexandre - Pop & Hits Editor",
+      "link": "https://www.deezer.com/playlist/1203212111",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1203212111"
+      }
+    },
+    {
+      "id": "deezer-playlist-3830120162",
+      "rank": 97,
+      "title": "No Stress",
+      "public": true,
+      "trackCount": 70,
+      "creator": "Yannick - Soul & Funk Deezer Editor",
+      "link": "https://www.deezer.com/playlist/3830120162",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/3830120162"
+      }
+    },
+    {
+      "id": "deezer-playlist-2477790684",
+      "rank": 98,
+      "title": "Soirée Hits 2026 : La Playlist Certifiée",
+      "public": true,
+      "trackCount": 151,
+      "creator": "Topsify France",
+      "link": "https://www.deezer.com/playlist/2477790684",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/2477790684"
+      }
+    },
+    {
+      "id": "deezer-playlist-1910358422",
+      "rank": 99,
+      "title": "super sad",
+      "public": true,
+      "trackCount": 60,
+      "creator": "Georges - Deezer Alternative Editor",
+      "link": "https://www.deezer.com/playlist/1910358422",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1910358422"
+      }
+    },
+    {
+      "id": "deezer-playlist-1311336155",
+      "rank": 100,
+      "title": "Jazz Lounge",
+      "public": true,
+      "trackCount": 80,
+      "creator": "Yannick - Deezer Jazz & Blues Editor",
+      "link": "https://www.deezer.com/playlist/1311336155",
+      "provenance": {
+        "source": "Deezer public playlist chart",
+        "recordUrl": "https://www.deezer.com/playlist/1311336155"
+      }
+    }
+  ]
+}

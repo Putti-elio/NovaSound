@@ -5,10 +5,10 @@ edition = "2024"
 publish = false
 
 [dependencies]
-anyhow = "1.0.100"
+anyhow = "1.0.104"
 clorinde = { path = "../../generated/clorinde", features = ["deadpool"] }
-deadpool-postgres = "0.14"
+deadpool-postgres = "0.14.2"
 function_name = "0.3.0"
-log = "0.4.28"
+log = "0.4.34"
 novasound-domain = { path = "../domain" }
 tokio-postgres = "0.7"

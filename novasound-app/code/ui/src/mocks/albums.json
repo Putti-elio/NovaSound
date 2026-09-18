@@ -1,13 +1,1117 @@
 {
   "mock": true,
-  "sort": "playedMs:desc",
-  "displayed": 5,
-  "distinct": 655,
+  "sort": "rank:asc",
+  "displayed": 100,
+  "distinct": 100,
+  "provenance": {
+    "sources": [
+      {
+        "name": "Deezer public album chart",
+        "recordCount": 100,
+        "sourceUrl": "https://api.deezer.com/chart/0/albums?limit=100"
+      }
+    ]
+  },
   "items": [
-    { "id": "alb-afterimage", "rank": 1, "title": "Afterimage", "artist": "Noa Vale", "releaseDate": "2025-10-17", "releaseDatePrecision": "day", "streams": 176, "playedMs": 35280000 },
-    { "id": "alb-low-light-fm", "rank": 2, "title": "Low Light FM", "artist": "Halcyon Static", "releaseDate": "2024", "releaseDatePrecision": "year", "streams": 122, "playedMs": 23160000 },
-    { "id": "alb-tidal-memory", "rank": 3, "title": "Tidal Memory", "artist": "Mira Sol", "releaseDate": "2026-03", "releaseDatePrecision": "month", "streams": 104, "playedMs": 20460000 },
-    { "id": "alb-peripheral", "rank": 4, "title": "Peripheral", "artist": "North Arcade", "releaseDate": "2023-09-08", "releaseDatePrecision": "day", "streams": 91, "playedMs": 16980000 },
-    { "id": "alb-borrowed-weather", "rank": 5, "title": "Borrowed Weather", "artist": "Iris Weekend", "releaseDate": "2025-06-20", "releaseDatePrecision": "day", "streams": 79, "playedMs": 14580000 }
+    {
+      "id": "deezer-album-1039247562",
+      "rank": 1,
+      "title": "L'histoire sans fin",
+      "artist": "BEN plg",
+      "link": "https://www.deezer.com/album/1039247562",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1039247562"
+      }
+    },
+    {
+      "id": "deezer-album-1207534",
+      "rank": 2,
+      "title": "D'eux",
+      "artist": "Céline Dion",
+      "link": "https://www.deezer.com/album/1207534",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1207534"
+      }
+    },
+    {
+      "id": "deezer-album-1030792492",
+      "rank": 3,
+      "title": "Numéro UN",
+      "artist": "Kaelvo",
+      "link": "https://www.deezer.com/album/1030792492",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1030792492"
+      }
+    },
+    {
+      "id": "deezer-album-600725072",
+      "rank": 4,
+      "title": "Resonance (Ambient Mix)",
+      "artist": "Solith",
+      "link": "https://www.deezer.com/album/600725072",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/600725072"
+      }
+    },
+    {
+      "id": "deezer-album-1018288431",
+      "rank": 5,
+      "title": "Naïri",
+      "artist": "Jeanne",
+      "link": "https://www.deezer.com/album/1018288431",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1018288431"
+      }
+    },
+    {
+      "id": "deezer-album-1075809082",
+      "rank": 6,
+      "title": "Westside Whimsy",
+      "artist": "Jhené Aiko",
+      "link": "https://www.deezer.com/album/1075809082",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1075809082"
+      }
+    },
+    {
+      "id": "deezer-album-1048191862",
+      "rank": 7,
+      "title": "KPop Demon Hunters, la bande originale du film Netflix",
+      "artist": "KPop Demon Hunters Cast",
+      "link": "https://www.deezer.com/album/1048191862",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1048191862"
+      }
+    },
+    {
+      "id": "deezer-album-1071060052",
+      "rank": 8,
+      "title": "L'Ultrableu (Réédition)",
+      "artist": "Benjamin Biolay",
+      "link": "https://www.deezer.com/album/1071060052",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1071060052"
+      }
+    },
+    {
+      "id": "deezer-album-987345321",
+      "rank": 9,
+      "title": "Tyber",
+      "artist": "FKJ",
+      "link": "https://www.deezer.com/album/987345321",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/987345321"
+      }
+    },
+    {
+      "id": "deezer-album-1048886412",
+      "rank": 10,
+      "title": "Dai Dai",
+      "artist": "Shakira",
+      "link": "https://www.deezer.com/album/1048886412",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1048886412"
+      }
+    },
+    {
+      "id": "deezer-album-438441",
+      "rank": 11,
+      "title": "D'eux - Édition 15ème Anniversaire",
+      "artist": "Céline Dion",
+      "link": "https://www.deezer.com/album/438441",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/438441"
+      }
+    },
+    {
+      "id": "deezer-album-977175381",
+      "rank": 12,
+      "title": "Here Because of Hope",
+      "artist": "Ezra Collective",
+      "link": "https://www.deezer.com/album/977175381",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/977175381"
+      }
+    },
+    {
+      "id": "deezer-album-967827501",
+      "rank": 13,
+      "title": "Karaoke Bar",
+      "artist": "Angus & Julia Stone",
+      "link": "https://www.deezer.com/album/967827501",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/967827501"
+      }
+    },
+    {
+      "id": "deezer-album-1066661811",
+      "rank": 14,
+      "title": "De l'autre côté",
+      "artist": "YANAMKO",
+      "link": "https://www.deezer.com/album/1066661811",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1066661811"
+      }
+    },
+    {
+      "id": "deezer-album-1001626931",
+      "rank": 15,
+      "title": "Distance in Static",
+      "artist": "Bonobo",
+      "link": "https://www.deezer.com/album/1001626931",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1001626931"
+      }
+    },
+    {
+      "id": "deezer-album-994229691",
+      "rank": 16,
+      "title": "A Gospel of Some Sort",
+      "artist": "Syd Matters",
+      "link": "https://www.deezer.com/album/994229691",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/994229691"
+      }
+    },
+    {
+      "id": "deezer-album-1064827231",
+      "rank": 17,
+      "title": "PRIMA",
+      "artist": "ADÉLA",
+      "link": "https://www.deezer.com/album/1064827231",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1064827231"
+      }
+    },
+    {
+      "id": "deezer-album-113275592",
+      "rank": 18,
+      "title": "Dans la légende",
+      "artist": "PNL",
+      "link": "https://www.deezer.com/album/113275592",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/113275592"
+      }
+    },
+    {
+      "id": "deezer-album-1053348852",
+      "rank": 19,
+      "title": "Le Nine",
+      "artist": "Brulux",
+      "link": "https://www.deezer.com/album/1053348852",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1053348852"
+      }
+    },
+    {
+      "id": "deezer-album-1036320242",
+      "rank": 20,
+      "title": "Demain t'es ou",
+      "artist": "Romsii",
+      "link": "https://www.deezer.com/album/1036320242",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1036320242"
+      }
+    },
+    {
+      "id": "deezer-album-1028564592",
+      "rank": 21,
+      "title": "The Odyssey (Original Motion Picture Soundtrack)",
+      "artist": "Ludwig Göransson",
+      "link": "https://www.deezer.com/album/1028564592",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1028564592"
+      }
+    },
+    {
+      "id": "deezer-album-1058137402",
+      "rank": 22,
+      "title": "Bonjour docteur",
+      "artist": "Hoshi",
+      "link": "https://www.deezer.com/album/1058137402",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1058137402"
+      }
+    },
+    {
+      "id": "deezer-album-116180752",
+      "rank": 23,
+      "title": "Deux frères",
+      "artist": "PNL",
+      "link": "https://www.deezer.com/album/116180752",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/116180752"
+      }
+    },
+    {
+      "id": "deezer-album-1062646261",
+      "rank": 24,
+      "title": "Baekdudaegan : Le Cycle du Bonheur (Original Motion Picture Soundtrack)",
+      "artist": "HEALER",
+      "link": "https://www.deezer.com/album/1062646261",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1062646261"
+      }
+    },
+    {
+      "id": "deezer-album-1057252582",
+      "rank": 25,
+      "title": "Liminal",
+      "artist": "Canine",
+      "link": "https://www.deezer.com/album/1057252582",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1057252582"
+      }
+    },
+    {
+      "id": "deezer-album-1002561451",
+      "rank": 26,
+      "title": "you seem pretty sad for a girl so in love",
+      "artist": "Olivia Rodrigo",
+      "link": "https://www.deezer.com/album/1002561451",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1002561451"
+      }
+    },
+    {
+      "id": "deezer-album-11524812",
+      "rank": 27,
+      "title": "Le monde Chico",
+      "artist": "PNL",
+      "link": "https://www.deezer.com/album/11524812",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/11524812"
+      }
+    },
+    {
+      "id": "deezer-album-933704401",
+      "rank": 28,
+      "title": "Karma",
+      "artist": "Bigflo & Oli",
+      "link": "https://www.deezer.com/album/933704401",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/933704401"
+      }
+    },
+    {
+      "id": "deezer-album-969081331",
+      "rank": 29,
+      "title": "Anatomy Of A Brief Romance",
+      "artist": "Bloc Party",
+      "link": "https://www.deezer.com/album/969081331",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/969081331"
+      }
+    },
+    {
+      "id": "deezer-album-1058739242",
+      "rank": 30,
+      "title": "The Singer in My Band",
+      "artist": "This Is Lorelei",
+      "link": "https://www.deezer.com/album/1058739242",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1058739242"
+      }
+    },
+    {
+      "id": "deezer-album-925504991",
+      "rank": 31,
+      "title": "Grand Garçon",
+      "artist": "PLK",
+      "link": "https://www.deezer.com/album/925504991",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/925504991"
+      }
+    },
+    {
+      "id": "deezer-album-1064004301",
+      "rank": 32,
+      "title": "Practical Magic 2 (Original Motion Picture Soundtrack)",
+      "artist": "Rupert Gregson-Williams",
+      "link": "https://www.deezer.com/album/1064004301",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1064004301"
+      }
+    },
+    {
+      "id": "deezer-album-1052615932",
+      "rank": 33,
+      "title": "Three (25th Anniversary deluxe)",
+      "artist": "John Butler",
+      "link": "https://www.deezer.com/album/1052615932",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1052615932"
+      }
+    },
+    {
+      "id": "deezer-album-1047626112",
+      "rank": 34,
+      "title": "Before The World Blows",
+      "artist": "Erykah Badu",
+      "link": "https://www.deezer.com/album/1047626112",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1047626112"
+      }
+    },
+    {
+      "id": "deezer-album-1070500812",
+      "rank": 35,
+      "title": "Para Cuando Sean Mayores",
+      "artist": "Camilo",
+      "link": "https://www.deezer.com/album/1070500812",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1070500812"
+      }
+    },
+    {
+      "id": "deezer-album-1036233102",
+      "rank": 36,
+      "title": "Nouvelle École | Saison 5 | Partie 1 (Série Netflix)",
+      "artist": "Nouvelle Ecole",
+      "link": "https://www.deezer.com/album/1036233102",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1036233102"
+      }
+    },
+    {
+      "id": "deezer-album-996541901",
+      "rank": 37,
+      "title": "Broken Halo",
+      "artist": "Kathy Williamser",
+      "link": "https://www.deezer.com/album/996541901",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/996541901"
+      }
+    },
+    {
+      "id": "deezer-album-837961612",
+      "rank": 38,
+      "title": "Deadbeat",
+      "artist": "Tame Impala",
+      "link": "https://www.deezer.com/album/837961612",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/837961612"
+      }
+    },
+    {
+      "id": "deezer-album-423368",
+      "rank": 39,
+      "title": "Michael Jackson's This Is It",
+      "artist": "Michael Jackson",
+      "link": "https://www.deezer.com/album/423368",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/423368"
+      }
+    },
+    {
+      "id": "deezer-album-1062366472",
+      "rank": 40,
+      "title": "l'inverse d'un miracle",
+      "artist": "Spider ZED",
+      "link": "https://www.deezer.com/album/1062366472",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1062366472"
+      }
+    },
+    {
+      "id": "deezer-album-1035417912",
+      "rank": 41,
+      "title": "Reality Awaits",
+      "artist": "The Strokes",
+      "link": "https://www.deezer.com/album/1035417912",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1035417912"
+      }
+    },
+    {
+      "id": "deezer-album-739483941",
+      "rank": 42,
+      "title": "Clair Obscur: Expedition 33 (Original Soundtrack)",
+      "artist": "Lorien Testard",
+      "link": "https://www.deezer.com/album/739483941",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/739483941"
+      }
+    },
+    {
+      "id": "deezer-album-993167141",
+      "rank": 43,
+      "title": "HUG",
+      "artist": "HUG",
+      "link": "https://www.deezer.com/album/993167141",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/993167141"
+      }
+    },
+    {
+      "id": "deezer-album-1040524432",
+      "rank": 44,
+      "title": "Walls",
+      "artist": "Billy Jerik",
+      "link": "https://www.deezer.com/album/1040524432",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1040524432"
+      }
+    },
+    {
+      "id": "deezer-album-1009506731",
+      "rank": 45,
+      "title": "Sunshine Bath",
+      "artist": "Willie West",
+      "link": "https://www.deezer.com/album/1009506731",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1009506731"
+      }
+    },
+    {
+      "id": "deezer-album-1065219481",
+      "rank": 46,
+      "title": "L'undertaker, Pt.2",
+      "artist": "Mauvais djo",
+      "link": "https://www.deezer.com/album/1065219481",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1065219481"
+      }
+    },
+    {
+      "id": "deezer-album-980211671",
+      "rank": 47,
+      "title": "Oubliez-moi",
+      "artist": "Jul",
+      "link": "https://www.deezer.com/album/980211671",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/980211671"
+      }
+    },
+    {
+      "id": "deezer-album-1041594312",
+      "rank": 48,
+      "title": "PREMIÈRE DOSE",
+      "artist": "Doz",
+      "link": "https://www.deezer.com/album/1041594312",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1041594312"
+      }
+    },
+    {
+      "id": "deezer-album-161924",
+      "rank": 49,
+      "title": "Mamma Mia! The Movie Soundtrack",
+      "artist": "Cast of Mamma Mia! The Movie",
+      "link": "https://www.deezer.com/album/161924",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/161924"
+      }
+    },
+    {
+      "id": "deezer-album-1069921552",
+      "rank": 50,
+      "title": "DEATH OF ME",
+      "artist": "EVAN",
+      "link": "https://www.deezer.com/album/1069921552",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1069921552"
+      }
+    },
+    {
+      "id": "deezer-album-78976",
+      "rank": 51,
+      "title": "The Rocky Story",
+      "artist": "Original Soundtrack",
+      "link": "https://www.deezer.com/album/78976",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/78976"
+      }
+    },
+    {
+      "id": "deezer-album-970728301",
+      "rank": 52,
+      "title": "CONFESSIONS II",
+      "artist": "Madonna",
+      "link": "https://www.deezer.com/album/970728301",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/970728301"
+      }
+    },
+    {
+      "id": "deezer-album-6575789",
+      "rank": 53,
+      "title": "Random Access Memories",
+      "artist": "Daft Punk",
+      "link": "https://www.deezer.com/album/6575789",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/6575789"
+      }
+    },
+    {
+      "id": "deezer-album-927507111",
+      "rank": 54,
+      "title": "The Romantic",
+      "artist": "Bruno Mars",
+      "link": "https://www.deezer.com/album/927507111",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/927507111"
+      }
+    },
+    {
+      "id": "deezer-album-14781199",
+      "rank": 55,
+      "title": "La La Land (Original Motion Picture Soundtrack)",
+      "artist": "Justin Hurwitz",
+      "link": "https://www.deezer.com/album/14781199",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/14781199"
+      }
+    },
+    {
+      "id": "deezer-album-850342142",
+      "rank": 56,
+      "title": "Et si j'échoue ??",
+      "artist": "Bouss",
+      "link": "https://www.deezer.com/album/850342142",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/850342142"
+      }
+    },
+    {
+      "id": "deezer-album-415094607",
+      "rank": 57,
+      "title": "Cœur blanc",
+      "artist": "Jul",
+      "link": "https://www.deezer.com/album/415094607",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/415094607"
+      }
+    },
+    {
+      "id": "deezer-album-1028123642",
+      "rank": 58,
+      "title": "Oh yeah?",
+      "artist": "Steve Lacy",
+      "link": "https://www.deezer.com/album/1028123642",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1028123642"
+      }
+    },
+    {
+      "id": "deezer-album-1030795082",
+      "rank": 59,
+      "title": "T.Y",
+      "artist": "Typhee",
+      "link": "https://www.deezer.com/album/1030795082",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1030795082"
+      }
+    },
+    {
+      "id": "deezer-album-697911301",
+      "rank": 60,
+      "title": "Paraît que les miracles n'existent pas",
+      "artist": "BEN plg",
+      "link": "https://www.deezer.com/album/697911301",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/697911301"
+      }
+    },
+    {
+      "id": "deezer-album-998845781",
+      "rank": 61,
+      "title": "nature curve",
+      "artist": "Klen Karthos",
+      "link": "https://www.deezer.com/album/998845781",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/998845781"
+      }
+    },
+    {
+      "id": "deezer-album-1434890",
+      "rank": 62,
+      "title": "Toxicity",
+      "artist": "System of A Down",
+      "link": "https://www.deezer.com/album/1434890",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1434890"
+      }
+    },
+    {
+      "id": "deezer-album-153406392",
+      "rank": 63,
+      "title": "(What's The Story) Morning Glory?",
+      "artist": "Oasis",
+      "link": "https://www.deezer.com/album/153406392",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/153406392"
+      }
+    },
+    {
+      "id": "deezer-album-1056359312",
+      "rank": 64,
+      "title": "A Different Kind of Happiness",
+      "artist": "Nothing But Thieves",
+      "link": "https://www.deezer.com/album/1056359312",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1056359312"
+      }
+    },
+    {
+      "id": "deezer-album-602928042",
+      "rank": 65,
+      "title": "I AM: CELINE DION (Original Motion Picture Soundtrack)",
+      "artist": "Céline Dion",
+      "link": "https://www.deezer.com/album/602928042",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/602928042"
+      }
+    },
+    {
+      "id": "deezer-album-1040370172",
+      "rank": 66,
+      "title": "Riverse",
+      "artist": "Helli Kale",
+      "link": "https://www.deezer.com/album/1040370172",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1040370172"
+      }
+    },
+    {
+      "id": "deezer-album-113528",
+      "rank": 67,
+      "title": "Live à Paris",
+      "artist": "Céline Dion",
+      "link": "https://www.deezer.com/album/113528",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/113528"
+      }
+    },
+    {
+      "id": "deezer-album-1046560312",
+      "rank": 68,
+      "title": "THIS & THAT",
+      "artist": "Stray Kids",
+      "link": "https://www.deezer.com/album/1046560312",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1046560312"
+      }
+    },
+    {
+      "id": "deezer-album-771853201",
+      "rank": 69,
+      "title": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "KPop Demon Hunters Cast",
+      "link": "https://www.deezer.com/album/771853201",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/771853201"
+      }
+    },
+    {
+      "id": "deezer-album-1029749312",
+      "rank": 70,
+      "title": "En Croix",
+      "artist": "Lagui",
+      "link": "https://www.deezer.com/album/1029749312",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1029749312"
+      }
+    },
+    {
+      "id": "deezer-album-1040312642",
+      "rank": 71,
+      "title": "petal",
+      "artist": "Ariana Grande",
+      "link": "https://www.deezer.com/album/1040312642",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1040312642"
+      }
+    },
+    {
+      "id": "deezer-album-983665221",
+      "rank": 72,
+      "title": "Éclipse",
+      "artist": "Beendo Z",
+      "link": "https://www.deezer.com/album/983665221",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/983665221"
+      }
+    },
+    {
+      "id": "deezer-album-1040530892",
+      "rank": 73,
+      "title": "Witcher",
+      "artist": "ronny Bellei",
+      "link": "https://www.deezer.com/album/1040530892",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1040530892"
+      }
+    },
+    {
+      "id": "deezer-album-998853021",
+      "rank": 74,
+      "title": "Last Wall",
+      "artist": "Alexandria Woomes",
+      "link": "https://www.deezer.com/album/998853021",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/998853021"
+      }
+    },
+    {
+      "id": "deezer-album-1038395662",
+      "rank": 75,
+      "title": "Silenced",
+      "artist": "Keith Walkiner",
+      "link": "https://www.deezer.com/album/1038395662",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1038395662"
+      }
+    },
+    {
+      "id": "deezer-album-1075607192",
+      "rank": 76,
+      "title": "You Know Too Much",
+      "artist": "Ellie Goulding",
+      "link": "https://www.deezer.com/album/1075607192",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1075607192"
+      }
+    },
+    {
+      "id": "deezer-album-12114240",
+      "rank": 77,
+      "title": "The Dark Side of the Moon",
+      "artist": "Pink Floyd",
+      "link": "https://www.deezer.com/album/12114240",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/12114240"
+      }
+    },
+    {
+      "id": "deezer-album-1025631432",
+      "rank": 78,
+      "title": "Descendants: Wicked Wonderland (Original Soundtrack)",
+      "artist": "Descendants – Cast",
+      "link": "https://www.deezer.com/album/1025631432",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1025631432"
+      }
+    },
+    {
+      "id": "deezer-album-153450592",
+      "rank": 79,
+      "title": "Definitely Maybe",
+      "artist": "Oasis",
+      "link": "https://www.deezer.com/album/153450592",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/153450592"
+      }
+    },
+    {
+      "id": "deezer-album-848097372",
+      "rank": 80,
+      "title": "Ego Death At A Bachelorette Party",
+      "artist": "Hayley Williams",
+      "link": "https://www.deezer.com/album/848097372",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/848097372"
+      }
+    },
+    {
+      "id": "deezer-album-894481382",
+      "rank": 81,
+      "title": "Minecraft - Volume Alpha",
+      "artist": "C418",
+      "link": "https://www.deezer.com/album/894481382",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/894481382"
+      }
+    },
+    {
+      "id": "deezer-album-958558731",
+      "rank": 82,
+      "title": "Necropolitan",
+      "artist": "Green Lung",
+      "link": "https://www.deezer.com/album/958558731",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/958558731"
+      }
+    },
+    {
+      "id": "deezer-album-239166352",
+      "rank": 83,
+      "title": "Le Fabuleux destin d'Amélie Poulain (Bande originale du film)",
+      "artist": "Yann Tiersen",
+      "link": "https://www.deezer.com/album/239166352",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/239166352"
+      }
+    },
+    {
+      "id": "deezer-album-81044812",
+      "rank": 84,
+      "title": "La zone en personne",
+      "artist": "Jul",
+      "link": "https://www.deezer.com/album/81044812",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/81044812"
+      }
+    },
+    {
+      "id": "deezer-album-91095382",
+      "rank": 85,
+      "title": "Destin",
+      "artist": "Ninho",
+      "link": "https://www.deezer.com/album/91095382",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/91095382"
+      }
+    },
+    {
+      "id": "deezer-album-1063691591",
+      "rank": 86,
+      "title": "Fallen Angel (Digital EP)",
+      "artist": "JENNIE",
+      "link": "https://www.deezer.com/album/1063691591",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1063691591"
+      }
+    },
+    {
+      "id": "deezer-album-693008911",
+      "rank": 87,
+      "title": "DeBÍ TiRAR MáS FOToS",
+      "artist": "Bad Bunny",
+      "link": "https://www.deezer.com/album/693008911",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/693008911"
+      }
+    },
+    {
+      "id": "deezer-album-795245871",
+      "rank": 88,
+      "title": "Millénium",
+      "artist": "Suzane",
+      "link": "https://www.deezer.com/album/795245871",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/795245871"
+      }
+    },
+    {
+      "id": "deezer-album-941826421",
+      "rank": 89,
+      "title": "The Wow! Signal",
+      "artist": "Muse",
+      "link": "https://www.deezer.com/album/941826421",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/941826421"
+      }
+    },
+    {
+      "id": "deezer-album-1040312472",
+      "rank": 90,
+      "title": "petal",
+      "artist": "Ariana Grande",
+      "link": "https://www.deezer.com/album/1040312472",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1040312472"
+      }
+    },
+    {
+      "id": "deezer-album-1050716582",
+      "rank": 91,
+      "title": "Lost Weekend",
+      "artist": "Phoebe Bridgers",
+      "link": "https://www.deezer.com/album/1050716582",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1050716582"
+      }
+    },
+    {
+      "id": "deezer-album-1038394072",
+      "rank": 92,
+      "title": "Vintage",
+      "artist": "Wirek Elast",
+      "link": "https://www.deezer.com/album/1038394072",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1038394072"
+      }
+    },
+    {
+      "id": "deezer-album-1009411211",
+      "rank": 93,
+      "title": "Shifter",
+      "artist": "Kenzie Kieth",
+      "link": "https://www.deezer.com/album/1009411211",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1009411211"
+      }
+    },
+    {
+      "id": "deezer-album-1034231422",
+      "rank": 94,
+      "title": "Water Clicks",
+      "artist": "Shanny Zesler",
+      "link": "https://www.deezer.com/album/1034231422",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1034231422"
+      }
+    },
+    {
+      "id": "deezer-album-998854761",
+      "rank": 95,
+      "title": "Gates",
+      "artist": "Suman Kelvin",
+      "link": "https://www.deezer.com/album/998854761",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/998854761"
+      }
+    },
+    {
+      "id": "deezer-album-1050743822",
+      "rank": 96,
+      "title": "Sunshine",
+      "artist": "Jungle",
+      "link": "https://www.deezer.com/album/1050743822",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1050743822"
+      }
+    },
+    {
+      "id": "deezer-album-1070393162",
+      "rank": 97,
+      "title": "Thievery 30",
+      "artist": "Thievery Corporation",
+      "link": "https://www.deezer.com/album/1070393162",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1070393162"
+      }
+    },
+    {
+      "id": "deezer-album-902793672",
+      "rank": 98,
+      "title": "Fête foraine",
+      "artist": "Christophe Maé",
+      "link": "https://www.deezer.com/album/902793672",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/902793672"
+      }
+    },
+    {
+      "id": "deezer-album-1007306771",
+      "rank": 99,
+      "title": "Yours Sincerely",
+      "artist": "Haruomi Hosono",
+      "link": "https://www.deezer.com/album/1007306771",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/1007306771"
+      }
+    },
+    {
+      "id": "deezer-album-572260071",
+      "rank": 100,
+      "title": "Challengers (Original Score)",
+      "artist": "Trent Reznor and Atticus Ross",
+      "link": "https://www.deezer.com/album/572260071",
+      "provenance": {
+        "source": "Deezer public album chart",
+        "recordUrl": "https://www.deezer.com/album/572260071"
+      }
+    }
   ]
 }

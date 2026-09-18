@@ -4,5 +4,5 @@
 # =============================================================================
 
 BUN_VERSION=latest
-RUST_VERSION=stable
+RUST_VERSION=1.98.1
 MAKEFILE2DOC_VERSION=v0.1.2
