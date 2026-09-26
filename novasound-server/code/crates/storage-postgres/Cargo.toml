@@ -12,3 +12,5 @@ function_name = "0.3.0"
 log = "0.4.34"
 novasound-domain = { path = "../domain" }
 tokio-postgres = "0.7"
+chrono = "0.4.45"
+serde_json = "1.0.151"

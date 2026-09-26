@@ -60,6 +60,7 @@ async fn clear_test_data(pool: &Pool) -> Result<(), TestSetupError> {
         .batch_execute(
             "
             TRUNCATE TABLE songs, albums, artists CASCADE;
+            TRUNCATE TABLE top_artists_owners CASCADE;
             ",
         )
         .await

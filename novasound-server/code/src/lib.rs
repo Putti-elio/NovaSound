@@ -27,4 +27,5 @@ mod tests {
     mod connect;
     mod song;
     pub mod test_helpers;
+    mod top_artists;
 }

@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package novasound.top_artists.v1;
+
+// Identity comes from trusted server context, NEVER from these requests.
+enum Provider {
+  PROVIDER_UNSPECIFIED = 0;
+  PROVIDER_SPOTIFY = 1;
+}
+
+enum NativePeriod {
+  NATIVE_PERIOD_UNSPECIFIED = 0;
+  NATIVE_PERIOD_SHORT_TERM = 1;
+  NATIVE_PERIOD_MEDIUM_TERM = 2;
+  NATIVE_PERIOD_LONG_TERM = 3;
+}
+
+enum RankingSource {
+  RANKING_SOURCE_UNSPECIFIED = 0;
+  RANKING_SOURCE_NATIVE_AFFINITY = 1;
+  RANKING_SOURCE_IMPORTED_HISTORY = 2;
+}
+
+message DateRange {
+  // RFC 3339 instants; start is inclusive and end is exclusive.
+  string start = 1;
+  string end = 2;
+}
+
+message GetTopArtistsRequest {
+  Provider provider = 1;
+  oneof period {
+    NativePeriod native_period = 2;
+    DateRange custom_period = 3;
+  }
+  // 0 defaults to 50; otherwise 1..1000.
+  uint32 limit = 4;
+}
+
+message ProviderAssociation {
+  Provider provider = 1;
+  // Unavailable for name-only imported identities.
+  optional string artist_id = 2;
+}
+
+message ArtistIdentity {
+  string id = 1;
+  string name = 2;
+  optional string image_url = 3;
+  repeated ProviderAssociation providers = 4;
+}
+
+message ListeningMetrics {
+  int64 play_count = 1;
+  int64 played_ms = 2;
+  int64 streams_30s = 3;
+  // First/last known plays across all imported history for this artist, not just the window.
+  string first_play = 4;
+  string last_play = 5;
+}
+
+message TopArtistEntry {
+  int64 rank = 1;
+  ArtistIdentity artist = 2;
+  // Absent for native affinity: Spotify does not supply listening counts or duration.
+  ListeningMetrics metrics = 3;
+  // Previous rank minus current rank; absent for new/unobserved entries.
+  optional int64 rank_change = 4;
+  RankingSource source = 5;
+}
+
+message GetTopArtistsResponse {
+  repeated TopArtistEntry entries = 1;
+  Provider provider = 2;
+  RankingSource source = 3;
+  string observed_at = 4;
+  // Prior native snapshot timestamp, or start of preceding equal-length custom window.
+  optional string comparison_at = 5;
+  // Observed import bounds; they do NOT imply complete history between these instants.
+  optional string history_start = 6;
+  optional string history_end = 7;
+}
+
+enum HistoryFormat {
+  HISTORY_FORMAT_UNSPECIFIED = 0;
+  HISTORY_FORMAT_JSON = 1;
+  HISTORY_FORMAT_ZIP = 2;
+}
+
+message ImportListeningHistoryRequest {
+  Provider provider = 1;
+  HistoryFormat format = 2;
+  bytes content = 3;
+}
+
+message ImportListeningHistoryResponse {
+  uint64 inserted = 1;
+  uint64 duplicates = 2;
+  uint64 skipped = 3;
+}
+
+// Not registered by the production router until authentication/account linking exist.
+service UserTopArtistsService {
+  rpc GetTopArtists(GetTopArtistsRequest) returns (GetTopArtistsResponse);
+  rpc ImportListeningHistory(ImportListeningHistoryRequest) returns (ImportListeningHistoryResponse);
+}

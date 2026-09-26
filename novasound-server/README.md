@@ -20,6 +20,10 @@ Protobuf contracts in `code/contracts/proto/`. See the
 [architecture](project/docs/ARCHITECTURE.md), and
 [installation guide](project/docs/INSTALLATION.md).
 
+The [User Top Artists backend contract](project/docs/TOP_ARTISTS_API.md) covers
+Spotify affinity rankings and imported listening history. Its transport remains
+unregistered until authentication and account linking are implemented.
+
 If you already have `project/setup/.env`, it is not moved automatically. Manually
 migrate it to `project/docker/.env` before running server commands.
 

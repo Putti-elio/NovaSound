@@ -13,6 +13,7 @@ use novasound_domain::validation::ValidationIssue;
 pub mod album_service;
 pub mod artist_service;
 pub mod song_service;
+pub mod top_artists_service;
 
 const DATE_FORMAT: &str = "%d-%m-%Y";
 

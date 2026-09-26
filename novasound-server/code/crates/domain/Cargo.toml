@@ -5,4 +5,7 @@ edition = "2024"
 publish = false
 
 [dependencies]
-chrono = "0.4.45"
+chrono = { version = "0.4.45", features = ["serde"] }
+serde = { version = "1.0.229", features = ["derive"] }
+thiserror = "2.0.20"
+uuid = { version = "1.26.1", features = ["v5", "serde"] }

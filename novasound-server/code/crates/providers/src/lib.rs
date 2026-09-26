@@ -1,1 +1,2 @@
-//! Provider integration boundary. Provider modules are added here when implemented.
+//! Provider wire formats are private to their adapters.
+pub mod spotify;

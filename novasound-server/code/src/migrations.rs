@@ -65,6 +65,10 @@ pub async fn reset_database(client: &Client) -> AppResult<()> {
     client
         .batch_execute(
             "
+            DROP TABLE IF EXISTS top_artists_native_snapshots;
+            DROP TABLE IF EXISTS top_artists_events;
+            DROP TABLE IF EXISTS top_artists_identities;
+            DROP TABLE IF EXISTS top_artists_owners;
             DROP TABLE IF EXISTS songs;
             DROP TABLE IF EXISTS albums;
             DROP TABLE IF EXISTS artists CASCADE;
